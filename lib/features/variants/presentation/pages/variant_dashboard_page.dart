@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant_5.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen2.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen3.dart';
 import 'package:variant_dashboard/home_page_variant_4/presentation/home_page_variant4.dart';
 
 import '../../domain/entities/variant_group.dart';
@@ -10,6 +13,20 @@ import '../variants/pages/home/home_page_variant3.dart';
 import '../variants/pages/settings/user_settings_variant1.dart';
 import '../variants/pages/settings/user_settings_variant2.dart';
 import '../widgets/variant_preview.dart';
+
+const job = {
+  'title': 'Senior Flutter Developer',
+  'company': 'TechCorp Nepal',
+  'location': 'Kathmandu, Nepal',
+  'salary': 'NPR 80,000 - 120,000',
+  'type': 'Full Time',
+  'experience': '3-5 years',
+  'posted': '2 days ago',
+  'isRemote': true,
+  'isFeatured': true,
+  'companyLogo': 'T',
+  'matchPercentage': 95,
+};
 
 class VariantDashboardPage extends StatelessWidget {
   VariantDashboardPage({super.key});
@@ -37,6 +54,23 @@ class VariantDashboardPage extends StatelessWidget {
         VariantItem(
           name: 'Home V5 - View',
           builder: (BuildContext context) => const HomePageVariant5(),
+        ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Job Details Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Job Details V1',
+          builder: (BuildContext context) => JobDetailScreen(job: job),
+        ),
+        VariantItem(
+          name: 'Job Details V2',
+          builder: (BuildContext context) => const JobDetailScreen2(job: job),
+        ),
+        VariantItem(
+          name: 'Job Details V2',
+          builder: (BuildContext context) => const JobDetailScreen3(job: job),
         ),
       ],
     ),
