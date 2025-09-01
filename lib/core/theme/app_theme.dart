@@ -17,10 +17,11 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
+
+  static const Color warningLight = Color(0xFFD97706);
+  static const Color successLight = Color(0xFF059669);
 }

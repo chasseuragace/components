@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../domain/entities/variant_item.dart';
 
 class VariantPreview extends StatelessWidget {
@@ -6,8 +7,8 @@ class VariantPreview extends StatelessWidget {
 
   const VariantPreview({super.key, required this.variant});
 
-  static const double _mobileWidth = 320.0;
-  static const double _mobileHeight = 568.0;
+  static const double _mobileWidth = 540.0;
+  static const double _mobileHeight = 1170.0;
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +46,11 @@ class VariantPreview extends StatelessWidget {
                     theme: ThemeData(
                       useMaterial3: true,
                       colorSchemeSeed: Colors.blueGrey,
-                      appBarTheme: const AppBarTheme(
-                        centerTitle: true,
-                      ),
+                      appBarTheme: const AppBarTheme(centerTitle: true),
                     ),
                     home: Builder(
-                      builder: (BuildContext innerContext) => variant.builder(innerContext),
+                      builder: (BuildContext innerContext) =>
+                          variant.builder(innerContext),
                     ),
                   ),
                 ),

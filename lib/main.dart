@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
 import 'app.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 /// Data model for a single UI variant.
@@ -29,39 +31,39 @@ class VariantGroup {
 }
 
 /// A simple variant for a home page.
-class HomePageVariant1 extends StatelessWidget {
-  const HomePageVariant1({super.key});
+// class HomePageVariant1 extends StatelessWidget {
+//   const HomePageVariant1({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page V1'),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Welcome to Variant 1!',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Get Started'),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.info),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Home Page V1'),
+//         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text(
+//               'Welcome to Variant 1!',
+//               style: Theme.of(context).textTheme.headlineSmall,
+//             ),
+//             const SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: () {},
+//               child: const Text('Get Started'),
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () {},
+//         child: const Icon(Icons.info),
+//       ),
+//     );
+//   }
+// }
 
 /// Another variant for a home page, featuring a list.
 class HomePageVariant2 extends StatelessWidget {
@@ -80,7 +82,10 @@ class HomePageVariant2 extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListTile(
-              leading: Icon(Icons.list_alt, color: Theme.of(context).colorScheme.primary),
+              leading: Icon(
+                Icons.list_alt,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               title: Text('List Item ${index + 1}'),
               subtitle: Text('Details for item ${index + 1}'),
               onTap: () {},
@@ -118,9 +123,16 @@ class HomePageVariant3 extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(Icons.dashboard_customize, size: 40, color: Theme.of(context).colorScheme.secondary),
+                Icon(
+                  Icons.dashboard_customize,
+                  size: 40,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
                 const SizedBox(height: 8),
-                Text('Grid ${index + 1}', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Grid ${index + 1}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ],
             ),
           );
@@ -232,7 +244,10 @@ class UserSettingsVariant2 extends StatelessWidget {
                 icon: const Icon(Icons.save),
                 label: const Text('Save Changes'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 15,
+                  ),
                 ),
               ),
             ),
@@ -283,7 +298,8 @@ class VariantPreview extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: FittedBox(
-                fit: BoxFit.contain, // Ensures the entire app fits within the box
+                fit: BoxFit
+                    .contain, // Ensures the entire app fits within the box
                 child: SizedBox(
                   width: _mobileWidth,
                   height: _mobileHeight,
@@ -292,14 +308,14 @@ class VariantPreview extends StatelessWidget {
                     debugShowCheckedModeBanner: false,
                     theme: ThemeData(
                       useMaterial3: true,
-                      colorSchemeSeed: Colors.blueGrey, // Consistent seed for nested apps
-                      appBarTheme: const AppBarTheme(
-                        centerTitle: true,
-                      ),
+                      colorSchemeSeed:
+                          Colors.blueGrey, // Consistent seed for nested apps
+                      appBarTheme: const AppBarTheme(centerTitle: true),
                     ),
                     home: Builder(
                       // Builder is crucial to provide a context that is a descendant of this MaterialApp
-                      builder: (BuildContext innerContext) => variant.builder(innerContext),
+                      builder: (BuildContext innerContext) =>
+                          variant.builder(innerContext),
                     ),
                   ),
                 ),
@@ -321,16 +337,31 @@ class VariantDashboardPage extends StatelessWidget {
     VariantGroup(
       title: 'Home Page Variants',
       variants: <VariantItem>[
-        VariantItem(name: 'Home V1 - Basic', builder: (BuildContext context) => const HomePageVariant1()),
-        VariantItem(name: 'Home V2 - List View', builder: (BuildContext context) => const HomePageVariant2()),
-        VariantItem(name: 'Home V3 - Grid View', builder: (BuildContext context) => const HomePageVariant3()),
+        VariantItem(
+          name: 'Home V1 - Basic',
+          builder: (BuildContext context) => const HomePageVariant1(),
+        ),
+        VariantItem(
+          name: 'Home V2 - List View',
+          builder: (BuildContext context) => const HomePageVariant2(),
+        ),
+        VariantItem(
+          name: 'Home V3 - Grid View',
+          builder: (BuildContext context) => const HomePageVariant3(),
+        ),
       ],
     ),
     VariantGroup(
       title: 'User Settings Variants',
       variants: <VariantItem>[
-        VariantItem(name: 'Settings V1 - Switches', builder: (BuildContext context) => const UserSettingsVariant1()),
-        VariantItem(name: 'Settings V2 - Form Inputs', builder: (BuildContext context) => const UserSettingsVariant2()),
+        VariantItem(
+          name: 'Settings V1 - Switches',
+          builder: (BuildContext context) => const UserSettingsVariant1(),
+        ),
+        VariantItem(
+          name: 'Settings V2 - Form Inputs',
+          builder: (BuildContext context) => const UserSettingsVariant2(),
+        ),
       ],
     ),
   ];
@@ -354,7 +385,10 @@ class VariantDashboardPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: Text(
                     group.title,
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -363,10 +397,15 @@ class VariantDashboardPage extends StatelessWidget {
                 // Using Wrap to display variants flexibly, allowing them to flow to new lines.
                 Wrap(
                   spacing: 24.0, // Horizontal space between variant cards
-                  runSpacing: 24.0, // Vertical space between rows of variant cards
-                  alignment: WrapAlignment.center, // Center the cards if there's extra space
+                  runSpacing:
+                      24.0, // Vertical space between rows of variant cards
+                  alignment: WrapAlignment
+                      .center, // Center the cards if there's extra space
                   children: group.variants
-                      .map<Widget>((VariantItem variant) => VariantPreview(variant: variant))
+                      .map<Widget>(
+                        (VariantItem variant) =>
+                            VariantPreview(variant: variant),
+                      )
                       .toList(),
                 ),
               ],
@@ -400,7 +439,8 @@ class LegacyMyApp extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        cardTheme: CardThemeData( // Fix: Changed CardTheme to CardThemeData
+        cardTheme: CardThemeData(
+          // Fix: Changed CardTheme to CardThemeData
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

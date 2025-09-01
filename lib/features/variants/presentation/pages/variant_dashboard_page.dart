@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant_5.dart';
+import 'package:variant_dashboard/home_page_variant_4/presentation/home_page_variant4.dart';
+
 import '../../domain/entities/variant_group.dart';
 import '../../domain/entities/variant_item.dart';
-import '../widgets/variant_preview.dart';
 import '../variants/pages/home/home_page_variant1.dart';
 import '../variants/pages/home/home_page_variant2.dart';
 import '../variants/pages/home/home_page_variant3.dart';
 import '../variants/pages/settings/user_settings_variant1.dart';
 import '../variants/pages/settings/user_settings_variant2.dart';
+import '../widgets/variant_preview.dart';
 
 class VariantDashboardPage extends StatelessWidget {
   VariantDashboardPage({super.key});
@@ -15,16 +18,39 @@ class VariantDashboardPage extends StatelessWidget {
     VariantGroup(
       title: 'Home Page Variants',
       variants: <VariantItem>[
-        VariantItem(name: 'Home V1 - Basic', builder: (BuildContext context) => const HomePageVariant1()),
-        VariantItem(name: 'Home V2 - List View', builder: (BuildContext context) => const HomePageVariant2()),
-        VariantItem(name: 'Home V3 - Grid View', builder: (BuildContext context) => const HomePageVariant3()),
+        VariantItem(
+          name: 'Home V1 - Bassic',
+          builder: (BuildContext context) => const HomePageVariant1(),
+        ),
+        VariantItem(
+          name: 'Home V2 - List View',
+          builder: (BuildContext context) => const HomePageVariant2(),
+        ),
+        VariantItem(
+          name: 'Home V3 - Grid View',
+          builder: (BuildContext context) => const HomePageVariant3(),
+        ),
+        VariantItem(
+          name: 'Home V4 - View',
+          builder: (BuildContext context) => const HomePageVariant4(),
+        ),
+        VariantItem(
+          name: 'Home V5 - View',
+          builder: (BuildContext context) => const HomePageVariant5(),
+        ),
       ],
     ),
     VariantGroup(
       title: 'User Settings Variants',
       variants: <VariantItem>[
-        VariantItem(name: 'Settings V1 - Switches', builder: (BuildContext context) => const UserSettingsVariant1()),
-        VariantItem(name: 'Settings V2 - Form Inputs', builder: (BuildContext context) => const UserSettingsVariant2()),
+        VariantItem(
+          name: 'Settings V1 - Switches',
+          builder: (BuildContext context) => const UserSettingsVariant1(),
+        ),
+        VariantItem(
+          name: 'Settings V2 - Form Inputs',
+          builder: (BuildContext context) => const UserSettingsVariant2(),
+        ),
       ],
     ),
   ];
@@ -48,7 +74,10 @@ class VariantDashboardPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: Text(
                     group.title,
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -59,7 +88,10 @@ class VariantDashboardPage extends StatelessWidget {
                   runSpacing: 24.0,
                   alignment: WrapAlignment.center,
                   children: group.variants
-                      .map<Widget>((VariantItem variant) => VariantPreview(variant: variant))
+                      .map<Widget>(
+                        (VariantItem variant) =>
+                            VariantPreview(variant: variant),
+                      )
                       .toList(),
                 ),
               ],

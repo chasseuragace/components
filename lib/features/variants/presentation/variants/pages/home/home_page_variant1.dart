@@ -1,34 +1,2207 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
+import 'package:intl/intl.dart';
 
+// Global Riverpod provider for JobDashboardData
+final jobDashboardDataProvider = ChangeNotifierProvider<JobDashboardData>((
+  ref,
+) {
+  return JobDashboardData();
+});
+
+// ENHANCED DATA MODELS (matching backend)
+class Candidate {
+  final String id;
+  final String fullName;
+  final String phone;
+  final Map<String, dynamic>? address;
+  final String? passportNumber;
+  final List<String> skills;
+  final List<Map<String, dynamic>> education;
+  final bool isActive;
+
+  Candidate({
+    required this.id,
+    required this.fullName,
+    required this.phone,
+    this.address,
+    this.passportNumber,
+    this.skills = const [],
+    this.education = const [],
+    this.isActive = true,
+  });
+}
+
+class CandidatePreference {
+  final String title;
+  final int priority;
+
+  CandidatePreference({required this.title, required this.priority});
+}
+
+class JobProfile {
+  final String id;
+  final String candidateId;
+  final Map<String, dynamic> profileBlob;
+  final String? label;
+  final DateTime updatedAt;
+
+  JobProfile({
+    required this.id,
+    required this.candidateId,
+    required this.profileBlob,
+    this.label,
+    required this.updatedAt,
+  });
+}
+
+class JobPosting {
+  final String id;
+  final String postingTitle;
+  final String country;
+  final String city;
+  final String agency;
+  final String employer;
+  final List<JobPosition> positions;
+  final String description;
+  final Map<String, dynamic> contractTerms;
+  final bool isActive;
+  final DateTime postedDate;
+
+  JobPosting({
+    required this.id,
+    required this.postingTitle,
+    required this.country,
+    required this.city,
+    required this.agency,
+    required this.employer,
+    required this.positions,
+    required this.description,
+    required this.contractTerms,
+    this.isActive = true,
+    required this.postedDate,
+  });
+}
+
+class JobPosition {
+  final String id;
+  final String title;
+  final String? baseSalary;
+  final String? convertedSalary;
+  final String? currency;
+  final List<String> requirements;
+
+  JobPosition({
+    required this.id,
+    required this.title,
+    this.baseSalary,
+    this.convertedSalary,
+    this.currency,
+    this.requirements = const [],
+  });
+}
+
+class Application {
+  final String id;
+  final String candidateId;
+  final String postingId;
+  final JobPosting posting;
+  final ApplicationStatus status;
+  final String? note;
+  final List<ApplicationHistory> history;
+  final DateTime appliedAt;
+  final InterviewDetail? interviewDetail;
+
+  Application({
+    required this.id,
+    required this.candidateId,
+    required this.postingId,
+    required this.posting,
+    required this.status,
+    this.note,
+    this.history = const [],
+    required this.appliedAt,
+    this.interviewDetail,
+  });
+}
+
+class InterviewDetail {
+  final String id;
+  final DateTime scheduledAt;
+  final String location;
+  final String contact;
+  final String? notes;
+  final bool isRescheduled;
+
+  InterviewDetail({
+    required this.id,
+    required this.scheduledAt,
+    required this.location,
+    required this.contact,
+    this.notes,
+    this.isRescheduled = false,
+  });
+}
+
+class ApplicationHistory {
+  final String id;
+  final ApplicationStatus status;
+  final DateTime timestamp;
+  final String? note;
+  final String? updatedBy;
+
+  ApplicationHistory({
+    required this.id,
+    required this.status,
+    required this.timestamp,
+    this.note,
+    this.updatedBy,
+  });
+}
+
+enum ApplicationStatus {
+  applied,
+  underReview,
+  interviewScheduled,
+  interviewRescheduled,
+  interviewPassed,
+  interviewFailed,
+  withdrawn,
+  rejected,
+  accepted,
+}
+
+class JobFilters {
+  final List<String>? countries;
+  final SalaryFilter? salary;
+  final String combineWith; // 'AND' or 'OR'
+
+  JobFilters({this.countries, this.salary, this.combineWith = 'OR'});
+}
+
+class SalaryFilter {
+  final double? min;
+  final double? max;
+  final String currency;
+  final String source; // 'base' or 'converted'
+
+  SalaryFilter({
+    this.min,
+    this.max,
+    required this.currency,
+    this.source = 'base',
+  });
+}
+
+class DashboardAnalytics {
+  final int recommendedJobsCount;
+  final List<String> topMatchedTitles;
+  final Map<String, int> countriesDistribution;
+  final int recentlyAppliedCount;
+  final int totalApplications;
+  final int interviewsScheduled;
+
+  DashboardAnalytics({
+    required this.recommendedJobsCount,
+    required this.topMatchedTitles,
+    required this.countriesDistribution,
+    required this.recentlyAppliedCount,
+    required this.totalApplications,
+    required this.interviewsScheduled,
+  });
+}
+
+// ENHANCED DATA PROVIDER
+class JobDashboardData extends ChangeNotifier {
+  final Candidate _candidate;
+  final List<CandidatePreference> _preferences;
+  final List<JobProfile> _jobProfiles;
+  final List<JobPosting> _recommendedJobs;
+  final List<Application> _applications;
+  final DashboardAnalytics _analytics;
+  JobFilters _currentFilters;
+
+  JobDashboardData()
+    : _candidate = Candidate(
+        id: 'cand_001',
+        fullName: 'Alex Johnson',
+        phone: '+9779812345678',
+        address: {
+          'street': 'Thamel, Kathmandu',
+          'city': 'Kathmandu',
+          'country': 'Nepal',
+          'coordinates': {'lat': 27.7172, 'lng': 85.3240},
+        },
+        skills: ['Flutter', 'React', 'Node.js', 'Python'],
+        education: [
+          {
+            'degree': 'Computer Science',
+            'institution': 'Tribhuvan University',
+            'year': 2020,
+          },
+        ],
+      ),
+      _preferences = [
+        CandidatePreference(title: 'Flutter Developer', priority: 1),
+        CandidatePreference(title: 'Mobile Developer', priority: 2),
+        CandidatePreference(title: 'Frontend Developer', priority: 3),
+      ],
+      _jobProfiles = [
+        JobProfile(
+          id: 'prof_001',
+          candidateId: 'cand_001',
+          profileBlob: {
+            'preferred_titles': ['Flutter Developer', 'Mobile Developer'],
+            'experience_level': 'Mid-level',
+            'remote_preference': true,
+          },
+          label: 'Tech Profile',
+          updatedAt: DateTime.now().subtract(Duration(days: 2)),
+        ),
+      ],
+      _recommendedJobs = [
+        JobPosting(
+          id: 'post_001',
+          postingTitle: 'Mobile Development Team - Multiple Positions',
+          country: 'Nepal',
+          city: 'Kathmandu',
+          agency: 'Tech Recruitment Agency',
+          employer: 'Innovation Tech Solutions',
+          description:
+              'Looking for skilled mobile developers for various projects...',
+          contractTerms: {'duration': '2 years', 'type': 'Full-time'},
+          postedDate: DateTime.now().subtract(Duration(days: 3)),
+          positions: [
+            JobPosition(
+              id: 'pos_001',
+              title: 'Senior Flutter Developer',
+              baseSalary: 'NPR 1,200,000',
+              convertedSalary: '\$9,000',
+              currency: 'USD',
+              requirements: ['Flutter', 'Dart', '3+ years experience'],
+            ),
+            JobPosition(
+              id: 'pos_002',
+              title: 'Mobile App Developer',
+              baseSalary: 'NPR 800,000',
+              convertedSalary: '\$6,000',
+              currency: 'USD',
+              requirements: [
+                'React Native',
+                'JavaScript',
+                '2+ years experience',
+              ],
+            ),
+          ],
+        ),
+        JobPosting(
+          id: 'post_002',
+          postingTitle: 'International Development Program',
+          country: 'Qatar',
+          city: 'Doha',
+          agency: 'Global Talent Solutions',
+          employer: 'Middle East Tech Hub',
+          description: 'Seeking developers for international assignments...',
+          contractTerms: {'duration': '3 years', 'type': 'Contract'},
+          postedDate: DateTime.now().subtract(Duration(days: 1)),
+          positions: [
+            JobPosition(
+              id: 'pos_003',
+              title: 'Full Stack Developer',
+              baseSalary: 'QAR 15,000',
+              convertedSalary: '\$4,100',
+              currency: 'USD',
+              requirements: [
+                'React',
+                'Node.js',
+                'MongoDB',
+                '4+ years experience',
+              ],
+            ),
+          ],
+        ),
+      ],
+      _applications = [
+        Application(
+          id: 'app_001',
+          candidateId: 'cand_001',
+          postingId: 'post_001',
+          posting: JobPosting(
+            id: 'post_003',
+            postingTitle: 'Software Development Team',
+            country: 'Nepal',
+            city: 'Pokhara',
+            agency: 'Local Tech Agency',
+            employer: 'StartupCo',
+            description: 'Early stage startup opportunity...',
+            contractTerms: {'duration': '1 year', 'type': 'Full-time'},
+            postedDate: DateTime.now().subtract(Duration(days: 7)),
+            positions: [],
+          ),
+          status: ApplicationStatus.interviewScheduled,
+          appliedAt: DateTime.now().subtract(Duration(days: 5)),
+          interviewDetail: InterviewDetail(
+            id: 'int_001',
+            scheduledAt: DateTime.now().add(Duration(days: 3)),
+            location: 'Lakeside, Pokhara',
+            contact: 'HR Team - +977-61-123456',
+            notes: 'Technical interview with the founding team',
+          ),
+          history: [
+            ApplicationHistory(
+              id: 'hist_001',
+              status: ApplicationStatus.applied,
+              timestamp: DateTime.now().subtract(Duration(days: 5)),
+            ),
+            ApplicationHistory(
+              id: 'hist_002',
+              status: ApplicationStatus.underReview,
+              timestamp: DateTime.now().subtract(Duration(days: 3)),
+            ),
+            ApplicationHistory(
+              id: 'hist_003',
+              status: ApplicationStatus.interviewScheduled,
+              timestamp: DateTime.now().subtract(Duration(days: 1)),
+            ),
+          ],
+        ),
+      ],
+      _analytics = DashboardAnalytics(
+        recommendedJobsCount: 15,
+        topMatchedTitles: [
+          'Flutter Developer',
+          'Mobile Developer',
+          'Frontend Developer',
+        ],
+        countriesDistribution: {
+          'Nepal': 8,
+          'Qatar': 4,
+          'UAE': 2,
+          'Malaysia': 1,
+        },
+        recentlyAppliedCount: 3,
+        totalApplications: 12,
+        interviewsScheduled: 2,
+      ),
+      _currentFilters = JobFilters();
+
+  // Getters
+  Candidate get candidate => _candidate;
+  List<CandidatePreference> get preferences => _preferences;
+  List<JobProfile> get jobProfiles => _jobProfiles;
+  List<JobPosting> get recommendedJobs => _recommendedJobs;
+  List<Application> get applications => _applications;
+  DashboardAnalytics get analytics => _analytics;
+  JobFilters get currentFilters => _currentFilters;
+
+  // Business Logic Methods
+  void addPreference(String title) {
+    // Remove if exists and add to top
+    _preferences.removeWhere((p) => p.title == title);
+    _preferences.insert(0, CandidatePreference(title: title, priority: 1));
+    _reindexPreferences();
+    notifyListeners();
+  }
+
+  void removePreference(String title) {
+    _preferences.removeWhere((p) => p.title == title);
+    _reindexPreferences();
+    notifyListeners();
+  }
+
+  void _reindexPreferences() {
+    for (int i = 0; i < _preferences.length; i++) {
+      _preferences[i] = CandidatePreference(
+        title: _preferences[i].title,
+        priority: i + 1,
+      );
+    }
+  }
+
+  void updateFilters(JobFilters filters) {
+    _currentFilters = filters;
+    notifyListeners();
+  }
+
+  List<Application> getApplicationsByStatus(ApplicationStatus? status) {
+    if (status == null) return _applications;
+    return _applications.where((app) => app.status == status).toList();
+  }
+
+  List<Application> getUpcomingInterviews() {
+    return _applications
+        .where(
+          (app) =>
+              app.status == ApplicationStatus.interviewScheduled &&
+              app.interviewDetail != null &&
+              app.interviewDetail!.scheduledAt.isAfter(DateTime.now()),
+        )
+        .toList();
+  }
+}
+
+// ENHANCED UI COMPONENTS
+
+class DashboardHeader extends ConsumerWidget {
+  // Changed to ConsumerWidget
+  const DashboardHeader({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Added WidgetRef ref
+    final dashboardData = ref.watch(
+      jobDashboardDataProvider,
+    ); // Access data via ref
+    final candidate = dashboardData.candidate;
+    final analytics = dashboardData.analytics;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Good ${_getGreeting()},',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white.withOpacity(0.8),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          candidate.fullName,
+                          style: TextStyle(
+                            fontSize: 28,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text(
+                          '${analytics.recommendedJobsCount} jobs match your profile',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24.0),
+              // Quick Stats Row
+              Row(
+                children: [
+                  _buildQuickStat(
+                    'Applications',
+                    analytics.totalApplications.toString(),
+                    Icons.send_rounded,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickStat(
+                    'Interviews',
+                    analytics.interviewsScheduled.toString(),
+                    Icons.event_rounded,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickStat(
+                    'Countries',
+                    analytics.countriesDistribution.length.toString(),
+                    Icons.public_rounded,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickStat(String label, String value, IconData icon) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.white, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withOpacity(0.8),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Morning';
+    if (hour < 17) return 'Afternoon';
+    return 'Evening';
+  }
+}
+
+class PreferencesSection extends ConsumerWidget {
+  // Changed to ConsumerWidget
+  const PreferencesSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Added WidgetRef ref
+    final preferences = ref
+        .watch(jobDashboardDataProvider)
+        .preferences; // Access data via ref
+
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Job Preferences',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2D3748),
+                ),
+              ),
+              TextButton(
+                onPressed: () => _showPreferencesModal(context),
+                child: Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Color(0xFF4F7DF9),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          preferences.isEmpty
+              ? _buildEmptyPreferences(context)
+              : Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: preferences
+                      .map<Widget>((pref) => _buildPreferenceChip(pref))
+                      .toList(),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPreferences(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Color(0xFFF7FAFC),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.work_outline_rounded, size: 48, color: Color(0xFF9CA3AF)),
+          const SizedBox(height: 16),
+          Text(
+            'No job preferences set',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF4B5563),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Add your preferred job titles to get personalized recommendations',
+            style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => _showPreferencesModal(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF4F7DF9),
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text('Add Preferences'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreferenceChip(CandidatePreference pref) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.3),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                pref.priority.toString(),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            pref.title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPreferencesModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => PreferencesModal(),
+    );
+  }
+}
+
+class PreferencesModal extends ConsumerStatefulWidget {
+  const PreferencesModal({super.key});
+  // Changed to ConsumerStatefulWidget
+  @override
+  _PreferencesModalState createState() => _PreferencesModalState();
+}
+
+class _PreferencesModalState extends ConsumerState<PreferencesModal> {
+  // Changed to ConsumerState
+  final TextEditingController _controller = TextEditingController();
+  final List<String> _availableTitles = [
+    'Flutter Developer',
+    'Mobile Developer',
+    'Frontend Developer',
+    'Backend Developer',
+    'Full Stack Developer',
+    'React Developer',
+    'Node.js Developer',
+    'Python Developer',
+    'DevOps Engineer',
+    'UI/UX Designer',
+    'Project Manager',
+    'Data Scientist',
+  ];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Access dashboardData using ref.watch
+    final dashboardData = ref.watch(jobDashboardDataProvider);
+    final preferences = dashboardData.preferences;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      padding: EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Job Preferences',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2D3748),
+                ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close_rounded),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Select your preferred job titles in order of priority',
+            style: TextStyle(fontSize: 16, color: Color(0xFF6B7280)),
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: ListView(
+              children: [
+                if (preferences.isNotEmpty) ...[
+                  Text(
+                    'Your Preferences (in priority order)',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF4B5563),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ...preferences.map<Widget>(
+                    (pref) => _buildPreferenceItem(pref),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                Text(
+                  'Available Job Titles',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF4B5563),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ..._availableTitles
+                    .where(
+                      (title) =>
+                          !preferences.any((pref) => pref.title == title),
+                    )
+                    .map<Widget>((title) => _buildAvailableTitleItem(title)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreferenceItem(CandidatePreference pref) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              pref.priority.toString(),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ),
+        title: Text(
+          pref.title,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF2D3748),
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+          // Call method on notifier via ref.read
+          onPressed: () =>
+              ref.read(jobDashboardDataProvider).removePreference(pref.title),
+        ),
+        tileColor: Color(0xFFF7FAFC),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  Widget _buildAvailableTitleItem(String title) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(Icons.add_circle_outline, color: Color(0xFF4F7DF9)),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF2D3748),
+          ),
+        ),
+        // Call method on notifier via ref.read
+        onTap: () => ref.read(jobDashboardDataProvider).addPreference(title),
+        tileColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+      ),
+    );
+  }
+}
+
+class RecommendedJobsSection extends ConsumerWidget {
+  // Changed to ConsumerWidget
+  const RecommendedJobsSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Added WidgetRef ref
+    final jobs = ref
+        .watch(jobDashboardDataProvider)
+        .recommendedJobs; // Access data via ref
+
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recommended Jobs',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2D3748),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'View All',
+                  style: TextStyle(
+                    color: Color(0xFF4F7DF9),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          ...jobs.map<Widget>((job) => JobPostingCard(posting: job)),
+        ],
+      ),
+    );
+  }
+}
+
+class JobPostingCard extends StatelessWidget {
+  final JobPosting posting;
+
+  const JobPostingCard({super.key, required this.posting});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.business_center_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        posting.postingTitle,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D3748),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        '${posting.employer} via ${posting.agency}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF718096),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            Row(
+              children: <Widget>[
+                _buildInfoChip(
+                  Icons.location_on_rounded,
+                  '${posting.city}, ${posting.country}',
+                ),
+                const SizedBox(width: 12.0),
+                _buildInfoChip(
+                  Icons.work_history_rounded,
+                  posting.contractTerms['type'] ?? 'Contract',
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+
+            // Positions
+            Text(
+              'Available Positions (${posting.positions.length})',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF2D3748),
+              ),
+            ),
+            const SizedBox(height: 12.0),
+
+            ...posting.positions
+                .take(2)
+                .map<Widget>((position) => _buildPositionRow(position)),
+
+            if (posting.positions.length > 2)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  '+ ${posting.positions.length - 2} more positions',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF4F7DF9),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 16.0),
+            Row(
+              children: [
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 16,
+                  color: Color(0xFF718096),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Posted ${_formatDate(posting.postedDate)}',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF718096)),
+                ),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: posting.isActive
+                        ? Colors.green.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    posting.isActive ? 'Active' : 'Closed',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: posting.isActive ? Colors.green : Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color(0xFF4F7DF9).withOpacity(0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextButton(
+                      onPressed: () => _showJobDetails(context, posting),
+                      child: Text(
+                        'View Details',
+                        style: TextStyle(
+                          color: Color(0xFF4F7DF9),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12.0),
+                Expanded(
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextButton(
+                      onPressed: posting.isActive
+                          ? () => _applyToJob(context, posting)
+                          : null,
+                      child: Text(
+                        'Apply Now',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(IconData icon, String text) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Color(0xFFF7FAFC),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Color(0xFF718096)),
+          const SizedBox(width: 6.0),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xFF718096),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPositionRow(JobPosition position) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  position.title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D3748),
+                  ),
+                ),
+                if (position.convertedSalary != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${position.convertedSalary} (${position.baseSalary})',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF4F7DF9),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 16,
+            color: Color(0xFF9CA3AF),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date).inDays;
+
+    if (difference == 0) return 'today';
+    if (difference == 1) return '1 day ago';
+    if (difference < 7) return '$difference days ago';
+    if (difference < 30) return '${(difference / 7).floor()} weeks ago';
+    return DateFormat.yMMMd().format(date);
+  }
+
+  void _showJobDetails(BuildContext context, JobPosting posting) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => JobDetailsModal(posting: posting),
+    );
+  }
+
+  void _applyToJob(BuildContext context, JobPosting posting) {
+    showDialog(
+      context: context,
+      builder: (context) => ApplyJobDialog(posting: posting),
+    );
+  }
+}
+
+class JobDetailsModal extends StatelessWidget {
+  final JobPosting posting;
+
+  const JobDetailsModal({super.key, required this.posting});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      padding: EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  posting.postingTitle,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2D3748),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close_rounded),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${posting.employer} via ${posting.agency}',
+            style: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF718096),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSection('Location & Contract', [
+                    _buildDetailRow(
+                      'Location',
+                      '${posting.city}, ${posting.country}',
+                    ),
+                    _buildDetailRow(
+                      'Contract Type',
+                      posting.contractTerms['type'] ?? 'Not specified',
+                    ),
+                    _buildDetailRow(
+                      'Duration',
+                      posting.contractTerms['duration'] ?? 'Not specified',
+                    ),
+                    _buildDetailRow('Posted', _formatDate(posting.postedDate)),
+                  ]),
+
+                  const SizedBox(height: 24),
+                  _buildSection('Description', [
+                    Text(
+                      posting.description,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF4B5563),
+                        height: 1.6,
+                      ),
+                    ),
+                  ]),
+
+                  const SizedBox(height: 24),
+                  _buildSection(
+                    'Available Positions (${posting.positions.length})',
+                    posting.positions
+                        .map<Widget>((pos) => _buildPositionCard(pos))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Container(
+            width: double.infinity,
+            height: 52,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+              ),
+              borderRadius: BorderRadius.circular(26),
+            ),
+            child: TextButton(
+              onPressed: posting.isActive
+                  ? () {
+                      Navigator.pop(context);
+                      _applyToJob(context, posting);
+                    }
+                  : null,
+              child: Text(
+                posting.isActive ? 'Apply Now' : 'Position Closed',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2D3748),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...children,
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF6B7280),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF374151),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPositionCard(JobPosition position) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  position.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2D3748),
+                  ),
+                ),
+              ),
+              if (position.convertedSalary != null)
+                Text(
+                  position.convertedSalary!,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF4F7DF9),
+                  ),
+                ),
+            ],
+          ),
+          if (position.baseSalary != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Base: ${position.baseSalary}',
+              style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+            ),
+          ],
+          if (position.requirements.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              'Requirements:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF374151),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: position.requirements
+                  .map<Widget>(
+                    (req) => Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF4F7DF9).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        req,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF4F7DF9),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date).inDays;
+
+    if (difference == 0) return 'today';
+    if (difference == 1) return '1 day ago';
+    if (difference < 7) return '$difference days ago';
+    if (difference < 30) return '${(difference / 7).floor()} weeks ago';
+    return DateFormat.yMMMd().format(date);
+  }
+
+  void _applyToJob(BuildContext context, JobPosting posting) {
+    showDialog(
+      context: context,
+      builder: (context) => ApplyJobDialog(posting: posting),
+    );
+  }
+}
+
+class ApplyJobDialog extends ConsumerStatefulWidget {
+  // Changed to ConsumerStatefulWidget
+  final JobPosting posting;
+
+  const ApplyJobDialog({super.key, required this.posting});
+
+  @override
+  _ApplyJobDialogState createState() => _ApplyJobDialogState();
+}
+
+class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog> {
+  // Changed to ConsumerState
+  final TextEditingController _noteController = TextEditingController();
+  bool _isApplying = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        'Apply to Job',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF2D3748),
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.posting.postingTitle,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF4B5563),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Add a note (optional):',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF374151),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _noteController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: 'Why are you interested in this position?',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Color(0xFFE2E8F0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Color(0xFF4F7DF9)),
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isApplying ? null : () => Navigator.pop(context),
+          child: Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: TextButton(
+            onPressed: _isApplying ? null : _submitApplication,
+            child: _isApplying
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    'Apply Now',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _submitApplication() async {
+    setState(() {
+      _isApplying = true;
+    });
+
+    // Simulate API call
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      _isApplying = false;
+    });
+
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Application submitted successfully!'),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        action: SnackBarAction(
+          label: 'View',
+          textColor: Colors.white,
+          onPressed: () {
+            // Navigate to applications screen - if this needed to interact with state,
+            // it would use ref.read(jobDashboardDataProvider).someMethod()
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+}
+
+class ApplicationsSection extends ConsumerWidget {
+  // Changed to ConsumerWidget
+  const ApplicationsSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Added WidgetRef ref
+    final dashboardData = ref.watch(
+      jobDashboardDataProvider,
+    ); // Access data via ref
+    final upcomingInterviews = dashboardData.getUpcomingInterviews();
+    final recentApplications = dashboardData.applications.take(3).toList();
+
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (upcomingInterviews.isNotEmpty) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Upcoming Interviews',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2D3748),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'View All',
+                    style: TextStyle(
+                      color: Color(0xFF4F7DF9),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ...upcomingInterviews.map<Widget>(
+              (app) => InterviewCard(application: app),
+            ),
+            const SizedBox(height: 32),
+          ],
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recent Applications',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2D3748),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'View All',
+                  style: TextStyle(
+                    color: Color(0xFF4F7DF9),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (recentApplications.isEmpty)
+            _buildEmptyApplications(context)
+          else
+            ...recentApplications.map<Widget>(
+              (app) => ApplicationCard(application: app),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyApplications(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Color(0xFFF7FAFC),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.work_off_outlined, size: 48, color: Color(0xFF9CA3AF)),
+          const SizedBox(height: 16),
+          Text(
+            'No applications yet',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF4B5563),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Start applying to jobs that match your preferences',
+            style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class InterviewCard extends StatelessWidget {
+  final Application application;
+
+  const InterviewCard({super.key, required this.application});
+
+  @override
+  Widget build(BuildContext context) {
+    final interview = application.interviewDetail!;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.event_rounded, color: Colors.white, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  application.posting.postingTitle,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(
+                Icons.schedule_rounded,
+                color: Colors.white.withOpacity(0.8),
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                DateFormat(
+                  'MMM dd, yyyy • hh:mm a',
+                ).format(interview.scheduledAt),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(
+                Icons.location_on_rounded,
+                color: Colors.white.withOpacity(0.8),
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  interview.location,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (interview.notes != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                interview.notes!,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class ApplicationCard extends StatelessWidget {
+  final Application application;
+
+  const ApplicationCard({super.key, required this.application});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: _getStatusColor(application.status).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _getStatusIcon(application.status),
+                  color: _getStatusColor(application.status),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      application.posting.postingTitle,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF2D3748),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      application.posting.employer,
+                      style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+                    ),
+                  ],
+                ),
+              ),
+              _buildStatusBadge(application.status),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text(
+                'Applied ${_formatDate(application.appliedAt)}',
+                style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+              ),
+              Spacer(),
+              if (_canWithdraw(application.status))
+                TextButton(
+                  onPressed: () => _withdrawApplication(context, application),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    minimumSize: Size.zero,
+                  ),
+                  child: Text(
+                    'Withdraw',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(ApplicationStatus status) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: _getStatusColor(status).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        _getStatusText(status),
+        style: TextStyle(
+          fontSize: 12,
+          color: _getStatusColor(status),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Color _getStatusColor(ApplicationStatus status) {
+    switch (status) {
+      case ApplicationStatus.applied:
+        return Color(0xFF4F7DF9);
+      case ApplicationStatus.underReview:
+        return Color(0xFFF59E0B);
+      case ApplicationStatus.interviewScheduled:
+      case ApplicationStatus.interviewRescheduled:
+        return Color(0xFF10B981);
+      case ApplicationStatus.interviewPassed:
+      case ApplicationStatus.accepted:
+        return Color(0xFF059669);
+      case ApplicationStatus.interviewFailed:
+      case ApplicationStatus.rejected:
+      case ApplicationStatus.withdrawn:
+        return Color(0xFFEF4444);
+      default:
+        return Color(0xFF6B7280);
+    }
+  }
+
+  IconData _getStatusIcon(ApplicationStatus status) {
+    switch (status) {
+      case ApplicationStatus.applied:
+        return Icons.send_rounded;
+      case ApplicationStatus.underReview:
+        return Icons.visibility_rounded;
+      case ApplicationStatus.interviewScheduled:
+      case ApplicationStatus.interviewRescheduled:
+        return Icons.event_rounded;
+      case ApplicationStatus.interviewPassed:
+      case ApplicationStatus.accepted:
+        return Icons.check_circle_rounded;
+      case ApplicationStatus.interviewFailed:
+      case ApplicationStatus.rejected:
+      case ApplicationStatus.withdrawn:
+        return Icons.cancel_rounded;
+      default:
+        return Icons.help_rounded;
+    }
+  }
+
+  String _getStatusText(ApplicationStatus status) {
+    switch (status) {
+      case ApplicationStatus.applied:
+        return 'Applied';
+      case ApplicationStatus.underReview:
+        return 'Under Review';
+      case ApplicationStatus.interviewScheduled:
+        return 'Interview Scheduled';
+      case ApplicationStatus.interviewRescheduled:
+        return 'Interview Rescheduled';
+      case ApplicationStatus.interviewPassed:
+        return 'Interview Passed';
+      case ApplicationStatus.interviewFailed:
+        return 'Interview Failed';
+      case ApplicationStatus.withdrawn:
+        return 'Withdrawn';
+      case ApplicationStatus.rejected:
+        return 'Rejected';
+      case ApplicationStatus.accepted:
+        return 'Accepted';
+    }
+  }
+
+  bool _canWithdraw(ApplicationStatus status) {
+    return status == ApplicationStatus.applied ||
+        status == ApplicationStatus.underReview ||
+        status == ApplicationStatus.interviewScheduled ||
+        status == ApplicationStatus.interviewRescheduled;
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date).inDays;
+
+    if (difference == 0) return 'today';
+    if (difference == 1) return '1 day ago';
+    if (difference < 7) return '$difference days ago';
+    if (difference < 30) return '${(difference / 7).floor()} weeks ago';
+    return DateFormat.yMMMd().format(date);
+  }
+
+  void _withdrawApplication(BuildContext context, Application application) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Withdraw Application',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2D3748),
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to withdraw your application for ${application.posting.postingTitle}?',
+          style: TextStyle(fontSize: 14, color: Color(0xFF4B5563)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Application withdrawn successfully'),
+                  backgroundColor: Colors.orange,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              );
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.red.withOpacity(0.1),
+            ),
+            child: Text(
+              'Withdraw',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// MAIN APP
 class HomePageVariant1 extends StatelessWidget {
   const HomePageVariant1({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page V1'),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Welcome to Variant 1!',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Get Started'),
-            ),
-          ],
+    // No ChangeNotifierProvider here, as it's defined globally for Riverpod
+    return MaterialApp(
+      title: 'Job Dashboard',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'SF Pro Display',
+        scaffoldBackgroundColor: Color(0xFFF8FAFC),
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          iconTheme: IconThemeData(color: Color(0xFF2D3748)),
+          titleTextStyle: TextStyle(
+            color: Color(0xFF2D3748),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.info),
+      home: JobDashboardScreen(),
+    );
+  }
+}
+
+class JobDashboardScreen extends ConsumerWidget {
+  const JobDashboardScreen({super.key});
+  // Changed to ConsumerWidget
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Added WidgetRef ref
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            DashboardHeader(),
+            PreferencesSection(),
+            RecommendedJobsSection(),
+            ApplicationsSection(),
+            SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
