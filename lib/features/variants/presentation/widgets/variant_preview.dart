@@ -7,7 +7,7 @@ class VariantPreview extends StatelessWidget {
 
   const VariantPreview({super.key, required this.variant});
 
-  static const double _mobileWidth = 540.0;
+  static const double _mobileWidth = 428.0;
   static const double _mobileHeight = 1170.0;
 
   @override

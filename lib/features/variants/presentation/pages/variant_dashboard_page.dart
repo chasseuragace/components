@@ -5,9 +5,14 @@ import 'package:variant_dashboard/features/variants/presentation/variants/pages/
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen3.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_1.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_2.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_1.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_2.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_3.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_1.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_2.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_2.dart';
 import 'package:variant_dashboard/home_page_variant_4/presentation/home_page_variant4.dart';
 
 import '../../domain/entities/variant_group.dart';
@@ -15,8 +20,6 @@ import '../../domain/entities/variant_item.dart';
 import '../variants/pages/home/home_page_variant1.dart';
 import '../variants/pages/home/home_page_variant2.dart';
 import '../variants/pages/home/home_page_variant3.dart';
-import '../variants/pages/settings/user_settings_variant1.dart';
-import '../variants/pages/settings/user_settings_variant2.dart';
 import '../widgets/variant_preview.dart';
 
 const job = {
@@ -110,15 +113,32 @@ class VariantDashboardPage extends StatelessWidget {
       ],
     ),
     VariantGroup(
+      title: 'Profile Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Profile V1',
+          builder: (BuildContext context) => const ProfileScreen1(),
+        ),
+        VariantItem(
+          name: 'Profile V2',
+          builder: (BuildContext context) => const ProfileScreen2(),
+        ),
+        VariantItem(
+          name: 'Profile V3',
+          builder: (BuildContext context) => const ProfileScreen3(),
+        ),
+      ],
+    ),
+    VariantGroup(
       title: 'User Settings Variants',
       variants: <VariantItem>[
         VariantItem(
-          name: 'Settings V1 - Switches',
-          builder: (BuildContext context) => const UserSettingsVariant1(),
+          name: 'Settings V1',
+          builder: (BuildContext context) => const SettingsScreen1(),
         ),
         VariantItem(
-          name: 'Settings V2 - Form Inputs',
-          builder: (BuildContext context) => const UserSettingsVariant2(),
+          name: 'Settings V2',
+          builder: (BuildContext context) => const SettingsScreen2(),
         ),
       ],
     ),
