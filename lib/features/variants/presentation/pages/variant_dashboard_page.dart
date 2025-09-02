@@ -3,6 +3,11 @@ import 'package:variant_dashboard/features/variants/presentation/variants/pages/
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen2.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen3.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_1.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_2.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_1.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_2.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
 import 'package:variant_dashboard/home_page_variant_4/presentation/home_page_variant4.dart';
 
 import '../../domain/entities/variant_group.dart';
@@ -71,6 +76,36 @@ class VariantDashboardPage extends StatelessWidget {
         VariantItem(
           name: 'Job Details V2',
           builder: (BuildContext context) => const JobDetailScreen3(job: job),
+        ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Job Listings Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Job Listings V1',
+          builder: (BuildContext context) => JobListings1(),
+        ),
+        VariantItem(
+          name: 'Job Listings V2',
+          builder: (BuildContext context) => const JobListings2(),
+        ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Set Preference Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Preferences V1',
+          builder: (BuildContext context) => const SetPreferences1(),
+        ),
+        VariantItem(
+          name: 'Preferences V2',
+          builder: (BuildContext context) => const SetPreferences2(),
+        ),
+        VariantItem(
+          name: 'Preferences V3',
+          builder: (BuildContext context) => const SetPreferences3(),
         ),
       ],
     ),
