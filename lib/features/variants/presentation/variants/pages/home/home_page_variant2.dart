@@ -109,7 +109,7 @@ class DashboardHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'John Doe',
+                    'Ram Kharel',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
@@ -367,7 +367,7 @@ class JobPreferencesSection extends StatefulWidget {
 }
 
 class _JobPreferencesSectionState extends State<JobPreferencesSection> {
-  String selectedCountry = 'Nepal';
+  String selectedCountry = 'Qatar';
   String selectedSalary = '50K - 100K';
   String selectedJobType = 'Full Time';
 
@@ -588,56 +588,56 @@ class RecommendedJobsList extends StatelessWidget {
   List<Map<String, dynamic>> _getDummyJobs() {
     return [
       {
-        'title': 'Senior Flutter Developer',
-        'company': 'TechCorp Nepal',
-        'location': 'Kathmandu, Nepal',
-        'salary': 'NPR 80,000 - 120,000',
+        'title': 'Construction Worker',
+        'company': 'Dubai BuildCorp',
+        'location': 'Dubai, UAE',
+        'salary': 'AED 1,600 - 2,200',
         'type': 'Full Time',
-        'experience': '3-5 years',
+        'experience': '1-3 years',
         'posted': '2 days ago',
-        'isRemote': true,
+        'isRemote': false,
         'isFeatured': true,
-        'companyLogo': 'T',
-        'matchPercentage': 95,
+        'companyLogo': 'B',
+        'matchPercentage': 92,
       },
       {
-        'title': 'UI/UX Designer',
-        'company': 'DesignStudio',
-        'location': 'Pokhara, Nepal',
-        'salary': 'NPR 60,000 - 90,000',
-        'type': 'Full Time',
+        'title': 'Electrician',
+        'company': 'Qatar Power Solutions',
+        'location': 'Doha, Qatar',
+        'salary': 'QAR 2,000 - 2,800',
+        'type': 'Contract',
         'experience': '2-4 years',
         'posted': '1 day ago',
         'isRemote': false,
         'isFeatured': false,
-        'companyLogo': 'D',
-        'matchPercentage': 88,
+        'companyLogo': 'Q',
+        'matchPercentage': 85,
       },
       {
-        'title': 'Backend Developer',
-        'company': 'StartupXYZ',
-        'location': 'Remote',
-        'salary': 'NPR 70,000 - 100,000',
-        'type': 'Contract',
-        'experience': '2-3 years',
+        'title': 'Plumber',
+        'company': 'Saudi Housing Services',
+        'location': 'Riyadh, Saudi Arabia',
+        'salary': 'SAR 1,800 - 2,400',
+        'type': 'Full Time',
+        'experience': '1-2 years',
         'posted': '3 days ago',
-        'isRemote': true,
+        'isRemote': false,
         'isFeatured': true,
         'companyLogo': 'S',
-        'matchPercentage': 82,
+        'matchPercentage': 80,
       },
       {
-        'title': 'Product Manager',
-        'company': 'InnovateNP',
-        'location': 'Lalitpur, Nepal',
-        'salary': 'NPR 100,000 - 150,000',
+        'title': 'Waiter',
+        'company': 'Doha Grand Hotel',
+        'location': 'Doha, Qatar',
+        'salary': 'QAR 1,500 - 2,000 + Tips',
         'type': 'Full Time',
-        'experience': '4-6 years',
+        'experience': '6 months - 2 years',
         'posted': '1 week ago',
         'isRemote': false,
         'isFeatured': false,
-        'companyLogo': 'I',
-        'matchPercentage': 76,
+        'companyLogo': 'H',
+        'matchPercentage': 77,
       },
     ];
   }

@@ -16,7 +16,6 @@ class VariantPreview extends StatelessWidget {
 
     return true
         ? MobileFrame(
-            
             child: true
                 ? FittedBox(
                     fit: BoxFit.contain,

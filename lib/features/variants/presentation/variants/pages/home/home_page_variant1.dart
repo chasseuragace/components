@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
 import 'package:intl/intl.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_post_card.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
 // Global Riverpod provider for JobDashboardData
-final jobDashboardDataProvider = ChangeNotifierProvider<JobDashboardData>((
-  ref,
-) {
-  return JobDashboardData();
-});
 
 // ENHANCED DATA MODELS (matching backend)
 class Candidate {
@@ -34,9 +32,9 @@ class Candidate {
 
 class CandidatePreference {
   final String title;
-  final int priority;
+  final int? priority;
 
-  CandidatePreference({required this.title, required this.priority});
+  CandidatePreference({required this.title, this.priority});
 }
 
 class JobProfile {
@@ -67,6 +65,8 @@ class JobPosting {
   final Map<String, dynamic> contractTerms;
   final bool isActive;
   final DateTime postedDate;
+  final String? preferencePriority;
+  final String preferenceText;
 
   JobPosting({
     required this.id,
@@ -80,6 +80,8 @@ class JobPosting {
     required this.contractTerms,
     this.isActive = true,
     required this.postedDate,
+    this.preferencePriority,
+    required this.preferenceText,
   });
 }
 
@@ -211,235 +213,6 @@ class DashboardAnalytics {
   });
 }
 
-// ENHANCED DATA PROVIDER
-class JobDashboardData extends ChangeNotifier {
-  final Candidate _candidate;
-  final List<CandidatePreference> _preferences;
-  final List<JobProfile> _jobProfiles;
-  final List<JobPosting> _recommendedJobs;
-  final List<Application> _applications;
-  final DashboardAnalytics _analytics;
-  JobFilters _currentFilters;
-
-  JobDashboardData()
-    : _candidate = Candidate(
-        id: 'cand_001',
-        fullName: 'Alex Johnson',
-        phone: '+9779812345678',
-        address: {
-          'street': 'Thamel, Kathmandu',
-          'city': 'Kathmandu',
-          'country': 'Nepal',
-          'coordinates': {'lat': 27.7172, 'lng': 85.3240},
-        },
-        skills: ['Flutter', 'React', 'Node.js', 'Python'],
-        education: [
-          {
-            'degree': 'Computer Science',
-            'institution': 'Tribhuvan University',
-            'year': 2020,
-          },
-        ],
-      ),
-      _preferences = [
-        CandidatePreference(title: 'Flutter Developer', priority: 1),
-        CandidatePreference(title: 'Mobile Developer', priority: 2),
-        CandidatePreference(title: 'Frontend Developer', priority: 3),
-      ],
-      _jobProfiles = [
-        JobProfile(
-          id: 'prof_001',
-          candidateId: 'cand_001',
-          profileBlob: {
-            'preferred_titles': ['Flutter Developer', 'Mobile Developer'],
-            'experience_level': 'Mid-level',
-            'remote_preference': true,
-          },
-          label: 'Tech Profile',
-          updatedAt: DateTime.now().subtract(Duration(days: 2)),
-        ),
-      ],
-      _recommendedJobs = [
-        JobPosting(
-          id: 'post_001',
-          postingTitle: 'Mobile Development Team - Multiple Positions',
-          country: 'Nepal',
-          city: 'Kathmandu',
-          agency: 'Tech Recruitment Agency',
-          employer: 'Innovation Tech Solutions',
-          description:
-              'Looking for skilled mobile developers for various projects...',
-          contractTerms: {'duration': '2 years', 'type': 'Full-time'},
-          postedDate: DateTime.now().subtract(Duration(days: 3)),
-          positions: [
-            JobPosition(
-              id: 'pos_001',
-              title: 'Senior Flutter Developer',
-              baseSalary: 'NPR 1,200,000',
-              convertedSalary: '\$9,000',
-              currency: 'USD',
-              requirements: ['Flutter', 'Dart', '3+ years experience'],
-            ),
-            JobPosition(
-              id: 'pos_002',
-              title: 'Mobile App Developer',
-              baseSalary: 'NPR 800,000',
-              convertedSalary: '\$6,000',
-              currency: 'USD',
-              requirements: [
-                'React Native',
-                'JavaScript',
-                '2+ years experience',
-              ],
-            ),
-          ],
-        ),
-        JobPosting(
-          id: 'post_002',
-          postingTitle: 'International Development Program',
-          country: 'Qatar',
-          city: 'Doha',
-          agency: 'Global Talent Solutions',
-          employer: 'Middle East Tech Hub',
-          description: 'Seeking developers for international assignments...',
-          contractTerms: {'duration': '3 years', 'type': 'Contract'},
-          postedDate: DateTime.now().subtract(Duration(days: 1)),
-          positions: [
-            JobPosition(
-              id: 'pos_003',
-              title: 'Full Stack Developer',
-              baseSalary: 'QAR 15,000',
-              convertedSalary: '\$4,100',
-              currency: 'USD',
-              requirements: [
-                'React',
-                'Node.js',
-                'MongoDB',
-                '4+ years experience',
-              ],
-            ),
-          ],
-        ),
-      ],
-      _applications = [
-        Application(
-          id: 'app_001',
-          candidateId: 'cand_001',
-          postingId: 'post_001',
-          posting: JobPosting(
-            id: 'post_003',
-            postingTitle: 'Software Development Team',
-            country: 'Nepal',
-            city: 'Pokhara',
-            agency: 'Local Tech Agency',
-            employer: 'StartupCo',
-            description: 'Early stage startup opportunity...',
-            contractTerms: {'duration': '1 year', 'type': 'Full-time'},
-            postedDate: DateTime.now().subtract(Duration(days: 7)),
-            positions: [],
-          ),
-          status: ApplicationStatus.interviewScheduled,
-          appliedAt: DateTime.now().subtract(Duration(days: 5)),
-          interviewDetail: InterviewDetail(
-            id: 'int_001',
-            scheduledAt: DateTime.now().add(Duration(days: 3)),
-            location: 'Lakeside, Pokhara',
-            contact: 'HR Team - +977-61-123456',
-            notes: 'Technical interview with the founding team',
-          ),
-          history: [
-            ApplicationHistory(
-              id: 'hist_001',
-              status: ApplicationStatus.applied,
-              timestamp: DateTime.now().subtract(Duration(days: 5)),
-            ),
-            ApplicationHistory(
-              id: 'hist_002',
-              status: ApplicationStatus.underReview,
-              timestamp: DateTime.now().subtract(Duration(days: 3)),
-            ),
-            ApplicationHistory(
-              id: 'hist_003',
-              status: ApplicationStatus.interviewScheduled,
-              timestamp: DateTime.now().subtract(Duration(days: 1)),
-            ),
-          ],
-        ),
-      ],
-      _analytics = DashboardAnalytics(
-        recommendedJobsCount: 15,
-        topMatchedTitles: [
-          'Flutter Developer',
-          'Mobile Developer',
-          'Frontend Developer',
-        ],
-        countriesDistribution: {
-          'Nepal': 8,
-          'Qatar': 4,
-          'UAE': 2,
-          'Malaysia': 1,
-        },
-        recentlyAppliedCount: 3,
-        totalApplications: 12,
-        interviewsScheduled: 2,
-      ),
-      _currentFilters = JobFilters();
-
-  // Getters
-  Candidate get candidate => _candidate;
-  List<CandidatePreference> get preferences => _preferences;
-  List<JobProfile> get jobProfiles => _jobProfiles;
-  List<JobPosting> get recommendedJobs => _recommendedJobs;
-  List<Application> get applications => _applications;
-  DashboardAnalytics get analytics => _analytics;
-  JobFilters get currentFilters => _currentFilters;
-
-  // Business Logic Methods
-  void addPreference(String title) {
-    // Remove if exists and add to top
-    _preferences.removeWhere((p) => p.title == title);
-    _preferences.insert(0, CandidatePreference(title: title, priority: 1));
-    _reindexPreferences();
-    notifyListeners();
-  }
-
-  void removePreference(String title) {
-    _preferences.removeWhere((p) => p.title == title);
-    _reindexPreferences();
-    notifyListeners();
-  }
-
-  void _reindexPreferences() {
-    for (int i = 0; i < _preferences.length; i++) {
-      _preferences[i] = CandidatePreference(
-        title: _preferences[i].title,
-        priority: i + 1,
-      );
-    }
-  }
-
-  void updateFilters(JobFilters filters) {
-    _currentFilters = filters;
-    notifyListeners();
-  }
-
-  List<Application> getApplicationsByStatus(ApplicationStatus? status) {
-    if (status == null) return _applications;
-    return _applications.where((app) => app.status == status).toList();
-  }
-
-  List<Application> getUpcomingInterviews() {
-    return _applications
-        .where(
-          (app) =>
-              app.status == ApplicationStatus.interviewScheduled &&
-              app.interviewDetail != null &&
-              app.interviewDetail!.scheduledAt.isAfter(DateTime.now()),
-        )
-        .toList();
-  }
-}
-
 // ENHANCED UI COMPONENTS
 
 class DashboardHeader extends ConsumerWidget {
@@ -533,15 +306,15 @@ class DashboardHeader extends ConsumerWidget {
                   ),
                   const SizedBox(width: 16),
                   _buildQuickStat(
-                    'Interviews',
-                    analytics.interviewsScheduled.toString(),
-                    Icons.event_rounded,
+                    'Shortlists',
+                    analytics.countriesDistribution.length.toString(),
+                    Icons.list_alt,
                   ),
                   const SizedBox(width: 16),
                   _buildQuickStat(
-                    'Countries',
-                    analytics.countriesDistribution.length.toString(),
-                    Icons.public_rounded,
+                    'Interviews',
+                    analytics.interviewsScheduled.toString(),
+                    Icons.event_rounded,
                   ),
                 ],
               ),
@@ -625,7 +398,7 @@ class PreferencesSection extends ConsumerWidget {
               TextButton(
                 onPressed: () => _showPreferencesModal(context),
                 child: Text(
-                  'Edit',
+                  'Add',
                   style: TextStyle(
                     color: Color(0xFF4F7DF9),
                     fontWeight: FontWeight.w600,
@@ -695,46 +468,9 @@ class PreferencesSection extends ConsumerWidget {
   }
 
   Widget _buildPreferenceChip(CandidatePreference pref) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                pref.priority.toString(),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            pref.title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
+    return PreferenceChip(
+      preferencepriority: pref.priority.toString(),
+      preferenceText: pref.title,
     );
   }
 
@@ -761,18 +497,27 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
   // Changed to ConsumerState
   final TextEditingController _controller = TextEditingController();
   final List<String> _availableTitles = [
-    'Flutter Developer',
-    'Mobile Developer',
-    'Frontend Developer',
-    'Backend Developer',
-    'Full Stack Developer',
-    'React Developer',
-    'Node.js Developer',
-    'Python Developer',
-    'DevOps Engineer',
-    'UI/UX Designer',
-    'Project Manager',
-    'Data Scientist',
+    'Construction Worker',
+    'Electrician',
+    'Plumber',
+    'Welder',
+    'Driver',
+    'Heavy Vehicle Operator',
+    'Mason',
+    'Carpenter',
+    'Painter',
+    'Cleaner',
+    'Cook',
+    'Waiter',
+    'Security Guard',
+    'Gardener',
+    'Helper / General Labor',
+    'Housekeeping Staff',
+    'Mechanic',
+    'AC Technician',
+    'Factory Worker',
+    'Store Keeper',
+    'Delivery Boy',
   ];
 
   @override
@@ -971,314 +716,314 @@ class RecommendedJobsSection extends ConsumerWidget {
   }
 }
 
-class JobPostingCard extends StatelessWidget {
-  final JobPosting posting;
+// class JobPostingCard extends StatelessWidget {
+//   final JobPosting posting;
 
-  const JobPostingCard({super.key, required this.posting});
+//   const JobPostingCard({super.key, required this.posting});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.business_center_rounded,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        posting.postingTitle,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D3748),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        '${posting.employer} via ${posting.agency}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF718096),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              children: <Widget>[
-                _buildInfoChip(
-                  Icons.location_on_rounded,
-                  '${posting.city}, ${posting.country}',
-                ),
-                const SizedBox(width: 12.0),
-                _buildInfoChip(
-                  Icons.work_history_rounded,
-                  posting.contractTerms['type'] ?? 'Contract',
-                ),
-              ],
-            ),
-            const SizedBox(height: 16.0),
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 16),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(16),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.08),
+//             blurRadius: 20,
+//             offset: Offset(0, 4),
+//           ),
+//         ],
+//       ),
+//       child: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Row(
+//               children: [
+//                 Container(
+//                   width: 50,
+//                   height: 50,
+//                   decoration: BoxDecoration(
+//                     gradient: LinearGradient(
+//                       colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+//                     ),
+//                     borderRadius: BorderRadius.circular(12),
+//                   ),
+//                   child: Icon(
+//                     Icons.business_center_rounded,
+//                     color: Colors.white,
+//                     size: 24,
+//                   ),
+//                 ),
+//                 const SizedBox(width: 16.0),
+//                 Expanded(
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         posting.postingTitle,
+//                         style: TextStyle(
+//                           fontSize: 18,
+//                           fontWeight: FontWeight.bold,
+//                           color: Color(0xFF2D3748),
+//                         ),
+//                         maxLines: 2,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                       const SizedBox(height: 4.0),
+//                       Text(
+//                         '${posting.employer} via ${posting.agency}',
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color: Color(0xFF718096),
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                         maxLines: 1,
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(height: 16.0),
+//             Row(
+//               children: <Widget>[
+//                 _buildInfoChip(
+//                   Icons.location_on_rounded,
+//                   '${posting.city}, ${posting.country}',
+//                 ),
+//                 const SizedBox(width: 12.0),
+//                 _buildInfoChip(
+//                   Icons.work_history_rounded,
+//                   posting.contractTerms['type'] ?? 'Contract',
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(height: 16.0),
 
-            // Positions
-            Text(
-              'Available Positions (${posting.positions.length})',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF2D3748),
-              ),
-            ),
-            const SizedBox(height: 12.0),
+//             // Positions
+//             Text(
+//               'Available Positions (${posting.positions.length})',
+//               style: TextStyle(
+//                 fontSize: 16,
+//                 fontWeight: FontWeight.w600,
+//                 color: Color(0xFF2D3748),
+//               ),
+//             ),
+//             const SizedBox(height: 12.0),
 
-            ...posting.positions
-                .take(2)
-                .map<Widget>((position) => _buildPositionRow(position)),
+//             ...posting.positions
+//                 .take(2)
+//                 .map<Widget>((position) => _buildPositionRow(position)),
 
-            if (posting.positions.length > 2)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  '+ ${posting.positions.length - 2} more positions',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF4F7DF9),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+//             if (posting.positions.length > 2)
+//               Padding(
+//                 padding: const EdgeInsets.only(top: 8.0),
+//                 child: Text(
+//                   '+ ${posting.positions.length - 2} more positions',
+//                   style: TextStyle(
+//                     fontSize: 14,
+//                     color: Color(0xFF4F7DF9),
+//                     fontWeight: FontWeight.w500,
+//                   ),
+//                 ),
+//               ),
 
-            const SizedBox(height: 16.0),
-            Row(
-              children: [
-                Icon(
-                  Icons.schedule_rounded,
-                  size: 16,
-                  color: Color(0xFF718096),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Posted ${_formatDate(posting.postedDate)}',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF718096)),
-                ),
-                Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: posting.isActive
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.grey.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    posting.isActive ? 'Active' : 'Closed',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: posting.isActive ? Colors.green : Colors.grey,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+//             const SizedBox(height: 16.0),
+//             Row(
+//               children: [
+//                 Icon(
+//                   Icons.schedule_rounded,
+//                   size: 16,
+//                   color: Color(0xFF718096),
+//                 ),
+//                 const SizedBox(width: 4),
+//                 Text(
+//                   'Posted ${_formatDate(posting.postedDate)}',
+//                   style: TextStyle(fontSize: 12, color: Color(0xFF718096)),
+//                 ),
+//                 Spacer(),
+//                 Container(
+//                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//                   decoration: BoxDecoration(
+//                     color: posting.isActive
+//                         ? Colors.green.withOpacity(0.1)
+//                         : Colors.grey.withOpacity(0.1),
+//                     borderRadius: BorderRadius.circular(12),
+//                   ),
+//                   child: Text(
+//                     posting.isActive ? 'Active' : 'Closed',
+//                     style: TextStyle(
+//                       fontSize: 12,
+//                       color: posting.isActive ? Colors.green : Colors.grey,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
 
-            const SizedBox(height: 20.0),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFF4F7DF9).withOpacity(0.3),
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: TextButton(
-                      onPressed: () => _showJobDetails(context, posting),
-                      child: Text(
-                        'View Details',
-                        style: TextStyle(
-                          color: Color(0xFF4F7DF9),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12.0),
-                Expanded(
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: TextButton(
-                      onPressed: posting.isActive
-                          ? () => _applyToJob(context, posting)
-                          : null,
-                      child: Text(
-                        'Apply Now',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+//             const SizedBox(height: 20.0),
+//             Row(
+//               children: [
+//                 Expanded(
+//                   child: Container(
+//                     height: 48,
+//                     decoration: BoxDecoration(
+//                       border: Border.all(
+//                         color: Color(0xFF4F7DF9).withOpacity(0.3),
+//                       ),
+//                       borderRadius: BorderRadius.circular(24),
+//                     ),
+//                     child: TextButton(
+//                       onPressed: () => _showJobDetails(context, posting),
+//                       child: Text(
+//                         'View Details',
+//                         style: TextStyle(
+//                           color: Color(0xFF4F7DF9),
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(width: 12.0),
+//                 Expanded(
+//                   child: Container(
+//                     height: 48,
+//                     decoration: BoxDecoration(
+//                       gradient: LinearGradient(
+//                         colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+//                       ),
+//                       borderRadius: BorderRadius.circular(24),
+//                     ),
+//                     child: TextButton(
+//                       onPressed: posting.isActive
+//                           ? () => _applyToJob(context, posting)
+//                           : null,
+//                       child: Text(
+//                         'Apply Now',
+//                         style: TextStyle(
+//                           color: Colors.white,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-  Widget _buildInfoChip(IconData icon, String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Color(0xFFF7FAFC),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: Color(0xFF718096)),
-          const SizedBox(width: 6.0),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              color: Color(0xFF718096),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+//   Widget _buildInfoChip(IconData icon, String text) {
+//     return Container(
+//       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+//       decoration: BoxDecoration(
+//         color: Color(0xFFF7FAFC),
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           Icon(icon, size: 14, color: Color(0xFF718096)),
+//           const SizedBox(width: 6.0),
+//           Text(
+//             text,
+//             style: TextStyle(
+//               fontSize: 12,
+//               color: Color(0xFF718096),
+//               fontWeight: FontWeight.w500,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  Widget _buildPositionRow(JobPosition position) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 8),
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  position.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF2D3748),
-                  ),
-                ),
-                if (position.convertedSalary != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    '${position.convertedSalary} (${position.baseSalary})',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF4F7DF9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 16,
-            color: Color(0xFF9CA3AF),
-          ),
-        ],
-      ),
-    );
-  }
+//   Widget _buildPositionRow(JobPosition position) {
+//     return Container(
+//       margin: EdgeInsets.only(bottom: 8),
+//       padding: EdgeInsets.all(12),
+//       decoration: BoxDecoration(
+//         color: Color(0xFFF8FAFC),
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: Color(0xFFE2E8F0)),
+//       ),
+//       child: Row(
+//         children: [
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   position.title,
+//                   style: TextStyle(
+//                     fontSize: 14,
+//                     fontWeight: FontWeight.w600,
+//                     color: Color(0xFF2D3748),
+//                   ),
+//                 ),
+//                 if (position.convertedSalary != null) ...[
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     '${position.convertedSalary} (${position.baseSalary})',
+//                     style: TextStyle(
+//                       fontSize: 13,
+//                       color: Color(0xFF4F7DF9),
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                 ],
+//               ],
+//             ),
+//           ),
+//           Icon(
+//             Icons.arrow_forward_ios_rounded,
+//             size: 16,
+//             color: Color(0xFF9CA3AF),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date).inDays;
+//   String _formatDate(DateTime date) {
+//     final now = DateTime.now();
+//     final difference = now.difference(date).inDays;
 
-    if (difference == 0) return 'today';
-    if (difference == 1) return '1 day ago';
-    if (difference < 7) return '$difference days ago';
-    if (difference < 30) return '${(difference / 7).floor()} weeks ago';
-    return DateFormat.yMMMd().format(date);
-  }
+//     if (difference == 0) return 'today';
+//     if (difference == 1) return '1 day ago';
+//     if (difference < 7) return '$difference days ago';
+//     if (difference < 30) return '${(difference / 7).floor()} weeks ago';
+//     return DateFormat.yMMMd().format(date);
+//   }
 
-  void _showJobDetails(BuildContext context, JobPosting posting) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => JobDetailsModal(posting: posting),
-    );
-  }
+//   void _showJobDetails(BuildContext context, JobPosting posting) {
+//     showModalBottomSheet(
+//       context: context,
+//       isScrollControlled: true,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//       ),
+//       builder: (context) => JobDetailsModal(posting: posting),
+//     );
+//   }
 
-  void _applyToJob(BuildContext context, JobPosting posting) {
-    showDialog(
-      context: context,
-      builder: (context) => ApplyJobDialog(posting: posting),
-    );
-  }
-}
+//   void _applyToJob(BuildContext context, JobPosting posting) {
+//     showDialog(
+//       context: context,
+//       builder: (context) => ApplyJobDialog(posting: posting),
+//     );
+//   }
+// }
 
 class JobDetailsModal extends StatelessWidget {
   final JobPosting posting;

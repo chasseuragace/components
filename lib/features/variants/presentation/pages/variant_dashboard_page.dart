@@ -8,6 +8,9 @@ import 'package:variant_dashboard/features/variants/presentation/variants/pages/
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/agency_listings/agency_listing_screen_2.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/agency_listings/agency_listing_screen_3.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant_5.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/interview_schedule/interview_schedule_screen1.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/interview_schedule/interview_schedule_screen2.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/interview_schedule/interview_schedule_screen3.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen2.dart';
 import 'package:variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen3.dart';
@@ -49,6 +52,45 @@ class VariantDashboardPage extends StatelessWidget {
   VariantDashboardPage({super.key});
 
   final List<VariantGroup> _variantGroups = <VariantGroup>[
+    VariantGroup(
+      title: 'Home Page Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Home V1 - Bassic',
+          builder: (BuildContext context) => const HomePageVariant1(),
+        ),
+        VariantItem(
+          name: 'Home V2 - List View',
+          builder: (BuildContext context) => const HomePageVariant2(),
+        ),
+
+        VariantItem(
+          name: 'Home V3 - View',
+          builder: (BuildContext context) => const HomePageVariant4(),
+        ),
+        VariantItem(
+          name: 'Home V4 - View',
+          builder: (BuildContext context) => const HomePageVariant5(),
+        ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Interview Schedule Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Interview Schedule V1',
+          builder: (BuildContext context) => const InterviewScheduleScreen1(),
+        ),
+        VariantItem(
+          name: 'Interview Schedule V1',
+          builder: (BuildContext context) => const InterviewScheduleScreen2(),
+        ),
+        VariantItem(
+          name: 'Interview Schedule V1',
+          builder: (BuildContext context) => const InterviewScheduleScreen3(),
+        ),
+      ],
+    ),
     VariantGroup(
       title: 'Agency Detail Variants',
       variants: <VariantItem>[
@@ -113,28 +155,6 @@ class VariantDashboardPage extends StatelessWidget {
       ],
     ),
 
-    VariantGroup(
-      title: 'Home Page Variants',
-      variants: <VariantItem>[
-        VariantItem(
-          name: 'Home V1 - Bassic',
-          builder: (BuildContext context) => const HomePageVariant1(),
-        ),
-        VariantItem(
-          name: 'Home V2 - List View',
-          builder: (BuildContext context) => const HomePageVariant2(),
-        ),
-
-        VariantItem(
-          name: 'Home V3 - View',
-          builder: (BuildContext context) => const HomePageVariant4(),
-        ),
-        VariantItem(
-          name: 'Home V4 - View',
-          builder: (BuildContext context) => const HomePageVariant5(),
-        ),
-      ],
-    ),
     VariantGroup(
       title: 'Job Details Variants',
       variants: <VariantItem>[
