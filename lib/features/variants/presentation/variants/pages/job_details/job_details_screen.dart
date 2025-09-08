@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
 class JobDetailScreen extends StatefulWidget {
-  final Map<String, dynamic> job;
+  final JobPosting job;
 
   const JobDetailScreen({super.key, required this.job});
 
@@ -53,8 +54,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           ),
                           child: Center(
                             child: Text(
-                              job['companyLogo'] ??
-                                  job['company']?.substring(0, 1) ??
+                              job.companyLogo ??
+                                  job.employer.substring(0, 1) ??
                                   'C',
                               style: const TextStyle(
                                 fontSize: 24,
@@ -71,7 +72,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                job['title'] ?? 'Job Title',
+                                job.postingTitle ?? 'Job Title',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -82,7 +83,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                job['company'] ?? 'Company Name',
+                                job.employer ?? 'Company Name',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -130,23 +131,27 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   // Contract & Employment Details
                   _buildContractDetailsSection(job),
                   const SizedBox(height: 24),
+                  _buildFacilitiesSection(job),
+                  const SizedBox(height: 24),
 
                   // Salary Information
                   _buildSalarySection(job),
                   const SizedBox(height: 24),
-
+                  _buildRequirementSection(job),
                   // Requirements
-                  _buildRequirementsSection(job),
+                  // _buildRequirementsSection(job),
+                  const SizedBox(height: 24),
+                  _buildJobImageSection(job),
+                  const SizedBox(height: 24),
+                  _buildCompanyPolicySection(job),
                   const SizedBox(height: 24),
 
                   // Other Positions
-                  if (job['otherPositions'] != null &&
-                      (job['otherPositions'] as List).isNotEmpty)
-                    _buildOtherPositionsSection(job),
-
-                  const SizedBox(height: 32),
-
-                  // Action Buttons
+                  // if (job['otherPositions'] != null &&
+                  //     (job['otherPositions'] as List).isNotEmpty)
+                  //   _buildOtherPositionsSection(job),
+                  _buildAgencySection(job),
+                  const SizedBox(height: 24), // Action Buttons
                   _buildActionButtons(),
                   const SizedBox(height: 20),
                 ],
@@ -159,14 +164,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   }
 
   // Quick Info Section with cards
-  Widget _buildQuickInfoSection(Map<String, dynamic> job) {
+  Widget _buildQuickInfoSection(JobPosting job) {
     return Row(
       children: [
         Expanded(
           child: _buildInfoCard(
             icon: Icons.location_on_outlined,
             title: 'Location',
-            value: job['location'] ?? 'Not specified',
+            value: job.location ?? 'Not specified',
             color: const Color(0xFF059669),
           ),
         ),
@@ -175,7 +180,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           child: _buildInfoCard(
             icon: Icons.schedule_outlined,
             title: 'Posted',
-            value: job['posted'] ?? 'Recently',
+            value: job.postedDate.toString() ?? 'Recently',
             color: const Color(0xFF0891B2),
           ),
         ),
@@ -184,8 +189,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           child: _buildInfoCard(
             icon: Icons.trending_up_outlined,
             title: 'Match',
-            value: '${job['matchPercentage'] ?? 0}%',
-            color: _getMatchColor(job['matchPercentage'] ?? 0),
+            value: '${job.matchPercentage ?? 0}%',
+            color: _getMatchColor(
+              int.tryParse(job.matchPercentage ?? '0') ?? 0,
+            ),
           ),
         ),
       ],
@@ -244,8 +251,47 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     );
   }
 
+  Widget _buildSectionContainer({
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
   // Job Overview Section
-  Widget _buildJobOverviewSection(Map<String, dynamic> job) {
+  Widget _buildJobOverviewSection(JobPosting job) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -288,19 +334,19 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          _buildOverviewRow('Position', job['title'] ?? 'Not specified'),
+          _buildOverviewRow('Position', job.postingTitle ?? 'Not specified'),
           _buildOverviewRow(
             'Experience Level',
-            job['experience'] ?? 'Not specified',
+            job.experience ?? 'Not specified',
           ),
-          _buildOverviewRow('Employment Type', job['type'] ?? 'Not specified'),
-          if (job['isRemote'] == true)
+          _buildOverviewRow('Employment Type', job.type ?? 'Not specified'),
+          if (job.isRemote == true)
             _buildOverviewRow(
               'Work Mode',
               'Remote Available',
               isHighlight: true,
             ),
-          if (job['isFeatured'] == true)
+          if (job.isFeatured == true)
             _buildOverviewRow('Status', 'Featured Position', isHighlight: true),
         ],
       ),
@@ -357,7 +403,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   }
 
   // Contract & Employment Details
-  Widget _buildContractDetailsSection(Map<String, dynamic> job) {
+  Widget _buildContractDetailsSection(JobPosting job) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -402,23 +448,196 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           const SizedBox(height: 16),
           _buildDetailRow(
             'Agency',
-            job['agency'] ?? 'Direct Hire',
+            job.agency ?? 'Direct Hire',
             Icons.apartment,
           ),
-          _buildDetailRow(
-            'Employer',
-            job['employer'] ?? job['company'] ?? 'Not specified',
-            Icons.domain,
-          ),
+          _buildDetailRow('Employer', job.employer, Icons.domain),
           _buildDetailRow(
             'Contract Type',
-            job['type'] ?? 'Not specified',
+            job.type ?? 'Not specified',
             Icons.description_outlined,
           ),
-          _buildDetailRow(
-            'Department',
-            job['department'] ?? 'Not specified',
-            Icons.group_outlined,
+          //TODO
+          // _buildDetailRow(
+          //   'Department',
+          //   job.de ?? 'Not specified',
+          //   Icons.group_outlined,
+          // ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _buildFacilitiesSection(JobPosting job) {
+  //   final facilities =
+  //       // job.facilities?.isNotEmpty == true
+  //       //     ? job.facilities
+  //       //     :
+  //       [
+  //         'Free accommodation',
+  //         'Transportation provided',
+  //         'Health insurance',
+  //         'Annual leave',
+  //         'Training programs',
+  //         'Career development',
+  //       ];
+
+  //   return Container(
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(20),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black.withOpacity(0.04),
+  //           blurRadius: 12,
+  //           offset: const Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         // Header Row (similar to Contract & Employment)
+  //         Row(
+  //           children: [
+  //             Container(
+  //               padding: const EdgeInsets.all(8),
+  //               decoration: BoxDecoration(
+  //                 color: const Color(0xFF10B981).withOpacity(0.1),
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: const Icon(
+  //                 Icons.apartment, // Facility-related icon
+  //                 color: Color(0xFF10B981),
+  //                 size: 20,
+  //               ),
+  //             ),
+  //             const SizedBox(width: 12),
+  //             const Text(
+  //               'Company Facilities',
+  //               style: TextStyle(
+  //                 fontSize: 18,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Color(0xFF1E293B),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 16),
+
+  //         // Facilities List (mapped like details but styled)
+  //         Wrap(
+  //           spacing: 8,
+  //           runSpacing: 8,
+  //           children: facilities
+  //               .map(
+  //                 (facility) => Container(
+  //                   padding: const EdgeInsets.symmetric(
+  //                     horizontal: 12,
+  //                     vertical: 8,
+  //                   ),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.grey.shade50,
+  //                     borderRadius: BorderRadius.circular(20),
+  //                     border: Border.all(color: Colors.grey.shade200),
+  //                   ),
+  //                   child: Row(
+  //                     mainAxisSize: MainAxisSize.min,
+  //                     children: [
+  //                       const Icon(
+  //                         Icons.check_circle,
+  //                         color: Color(0xFF10B981),
+  //                         size: 16,
+  //                       ),
+  //                       const SizedBox(width: 6),
+  //                       Text(
+  //                         facility.toString(),
+  //                         style: const TextStyle(
+  //                           fontSize: 12,
+  //                           fontWeight: FontWeight.w500,
+  //                           color: Color(0xFF374151),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               )
+  //               .toList(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  Widget _buildFacilitiesSection(JobPosting job) {
+    final facilities =
+        //  job.facilities?.isNotEmpty == true
+        //     ? job.facilities
+        //     :
+        [
+          'Free accommodation',
+          'Transportation provided',
+          'Health insurance',
+          'Annual leave',
+          'Training programs',
+          'Career development',
+        ];
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row (same as Contract & Employment)
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.business_outlined,
+                  color: Color(0xFF10B981),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Company Facilities',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Facilities in "detail row" layout
+          Column(
+            children: facilities
+                .map(
+                  (facility) => _buildDetailRow2(
+                    facility.toString(),
+                    "Yes", // or leave blank if you just want facility names
+                    Icons.check_circle,
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -426,7 +645,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   }
 
   // Salary Section
-  Widget _buildSalarySection(Map<String, dynamic> job) {
+  Widget _buildSalarySection(JobPosting job) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -494,7 +713,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       ),
                     ),
                     Text(
-                      job['salary'] ?? 'Negotiable',
+                      job.salary ?? 'Negotiable',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -503,7 +722,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                     ),
                   ],
                 ),
-                if (job['convertedSalary'] != null) ...[
+                if (job.convertedSalary != null) ...[
                   const SizedBox(height: 12),
                   const Divider(color: Color(0xFFE2E8F0)),
                   const SizedBox(height: 12),
@@ -519,7 +738,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         ),
                       ),
                       Text(
-                        job['convertedSalary'],
+                        job.convertedSalary ?? 'Not specified',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -529,49 +748,50 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                     ],
                   ),
                 ],
-                if (job['benefits'] != null) ...[
-                  const SizedBox(height: 12),
-                  const Divider(color: Color(0xFFE2E8F0)),
-                  const SizedBox(height: 12),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Benefits',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: (job['benefits'] as List<dynamic>? ?? [])
-                        .map(
-                          (benefit) => Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF059669).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              benefit.toString(),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF059669),
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ],
+                // TODO
+                // if (job['benefits'] != null) ...[
+                //   const SizedBox(height: 12),
+                //   const Divider(color: Color(0xFFE2E8F0)),
+                //   const SizedBox(height: 12),
+                //   const Align(
+                //     alignment: Alignment.centerLeft,
+                //     child: Text(
+                //       'Benefits',
+                //       style: TextStyle(
+                //         fontSize: 14,
+                //         fontWeight: FontWeight.w500,
+                //         color: Color(0xFF64748B),
+                //       ),
+                //     ),
+                //   ),
+                //   const SizedBox(height: 8),
+                //   Wrap(
+                //     spacing: 8,
+                //     runSpacing: 8,
+                //     children: (job['benefits'] as List<dynamic>? ?? [])
+                //         .map(
+                //           (benefit) => Container(
+                //             padding: const EdgeInsets.symmetric(
+                //               horizontal: 8,
+                //               vertical: 4,
+                //             ),
+                //             decoration: BoxDecoration(
+                //               color: const Color(0xFF059669).withOpacity(0.1),
+                //               borderRadius: BorderRadius.circular(6),
+                //             ),
+                //             child: Text(
+                //               benefit.toString(),
+                //               style: const TextStyle(
+                //                 fontSize: 12,
+                //                 fontWeight: FontWeight.w500,
+                //                 color: Color(0xFF059669),
+                //               ),
+                //             ),
+                //           ),
+                //         )
+                //         .toList(),
+                //   ),
+                // ],
               ],
             ),
           ),
@@ -580,20 +800,29 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     );
   }
 
-  // Requirements Section
-  Widget _buildRequirementsSection(Map<String, dynamic> job) {
-    final requirements = job['requirements'] as List<dynamic>? ?? [];
-
+  Widget _buildRequirementSection(JobPosting job) {
+    final requirements =
+        job.positions as List<dynamic>? ??
+        [
+          'Bachelor\'s degree in relevant field',
+          'Minimum 2 years of experience',
+          'Strong communication skills',
+          'Proficiency in English',
+          'Valid passport',
+        ];
+    final allRequirements = job.positions
+        .expand((p) => p.requirements)
+        .toList();
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -625,52 +854,154 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          ...requirements.map(
-            (req) => Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
-              ),
+          const SizedBox(height: 20),
+          ...allRequirements.asMap().entries.map((entry) {
+            final index = entry.key;
+            final requirement = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 2),
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF3B82F6),
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF3498DB), Color(0xFF2980B9)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       shape: BoxShape.circle,
                     ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
-                    child: Text(
-                      req.toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF374151),
-                        height: 1.4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        requirement.toString(),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF374151),
+                          height: 1.5,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
   }
 
+  // Requirements Section
+  // Widget _buildRequirementsSection(JobPosting job) {
+  //   final allRequirements = job.positions
+  //       .expand((p) => p.requirements)
+  //       .toList();
+
+  //   return Container(
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(20),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black.withOpacity(0.04),
+  //           blurRadius: 12,
+  //           offset: const Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             Container(
+  //               padding: const EdgeInsets.all(8),
+  //               decoration: BoxDecoration(
+  //                 color: const Color(0xFFF59E0B).withOpacity(0.1),
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: const Icon(
+  //                 Icons.checklist_outlined,
+  //                 color: Color(0xFFF59E0B),
+  //                 size: 20,
+  //               ),
+  //             ),
+  //             const SizedBox(width: 12),
+  //             const Text(
+  //               'Requirements',
+  //               style: TextStyle(
+  //                 fontSize: 18,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Color(0xFF1E293B),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 16),
+  //         ...allRequirements.map(
+  //           (req) => Container(
+  //             margin: const EdgeInsets.only(bottom: 12),
+  //             padding: const EdgeInsets.all(12),
+  //             decoration: BoxDecoration(
+  //               color: const Color(0xFFF8FAFC),
+  //               borderRadius: BorderRadius.circular(12),
+  //               border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+  //             ),
+  //             child: Row(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   margin: const EdgeInsets.only(top: 2),
+  //                   width: 6,
+  //                   height: 6,
+  //                   decoration: const BoxDecoration(
+  //                     color: Color(0xFF3B82F6),
+  //                     shape: BoxShape.circle,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 12),
+  //                 Expanded(
+  //                   child: Text(
+  //                     req.toString(),
+  //                     style: const TextStyle(
+  //                       fontSize: 14,
+  //                       fontWeight: FontWeight.w500,
+  //                       color: Color(0xFF374151),
+  //                       height: 1.4,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   // Other Positions Section
-  Widget _buildOtherPositionsSection(Map<String, dynamic> job) {
-    final otherPositions = job['otherPositions'] as List<dynamic>? ?? [];
+  Widget _buildOtherPositionsSection(JobPosting job) {
+    //TODO
+    final otherPositions = job.positions;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -795,6 +1126,223 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF1E293B),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow2(String label, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: const Color(0xFF64748B)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF64748B),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJobImageSection(JobPosting job) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Job Advertisement',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1A1A1A),
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFAFAFA),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image_outlined,
+                    size: 48,
+                    color: Color(0xFF9CA3AF),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Job Advertisement Image',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF6B7280),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Newspaper or online posting',
+                    style: TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Section 9: Company Policy - Clean Typography
+  Widget _buildCompanyPolicySection(JobPosting job) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Company Policy',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1A1A1A),
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            job.policy ??
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF6B7280),
+              height: 1.7,
+              letterSpacing: 0.1,
+            ),
+            textAlign: TextAlign.justify,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAgencySection(JobPosting job) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Agency Information',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1A1A1A),
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildAgencyInfoRow('Agency Name', job.agency ?? 'Direct Hire'),
+          _buildAgencyInfoRow('Salary Range', job.salary ?? 'Negotiable'),
+          _buildAgencyInfoRow(
+            'Experience Required',
+            job.experience ?? '2-3 years',
+          ),
+          _buildAgencyInfoRow(
+            'Applications',
+            '${job.applications ?? 45} candidates',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAgencyInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF6B7280),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

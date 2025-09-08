@@ -46,6 +46,63 @@ const job = {
   'companyLogo': 'T',
   'matchPercentage': 95,
 };
+
+JobPosting blueCollarJobQatar = JobPosting(
+  id: 'post_2001',
+  postingTitle: 'Hospitality & Maintenance Staff - Multiple Openings',
+  country: 'Qatar',
+  city: 'Doha',
+  agency: 'Gulf Manpower Agency',
+  employer: 'Qatar Hospitality Services',
+  positions: [
+    JobPosition(
+      id: 'pos_2001',
+      title: 'Waiter',
+      baseSalary: 'QAR 1,500',
+      convertedSalary: '\$410',
+      currency: 'USD',
+      requirements: [
+        'Good communication skills',
+        'Experience in restaurant/hotel service',
+      ],
+    ),
+    JobPosition(
+      id: 'pos_2002',
+      title: 'Cleaner',
+      baseSalary: 'QAR 1,200',
+      convertedSalary: '\$330',
+      currency: 'USD',
+      requirements: ['Basic cleaning skills', 'Hardworking and punctual'],
+    ),
+    JobPosition(
+      id: 'pos_2003',
+      title: 'Driver',
+      baseSalary: 'QAR 1,800',
+      convertedSalary: '\$490',
+      currency: 'USD',
+      requirements: [
+        'Valid GCC driving license',
+        '2+ years driving experience',
+      ],
+    ),
+  ],
+  description:
+      'We are hiring hospitality and maintenance staff for hotels and service apartments in Doha. Openings available for waiters, cleaners, and drivers. Food, accommodation, and transportation are provided by the company.',
+  contractTerms: {'duration': '2 years', 'type': 'Full-time'},
+  isActive: true,
+  postedDate: DateTime.now().subtract(Duration(days: 1)),
+  preferencePriority: '1',
+  preferenceText: 'Immediate Joining',
+  location: 'Doha, Qatar',
+  experience: '1-2 years',
+  salary: 'QAR 1,200 - 1,800 + benefits',
+  type: 'Full Time',
+  isRemote: false,
+  isFeatured: true,
+  companyLogo: 'QH',
+  matchPercentage: '90',
+);
+
 final scaleprovider = StateProvider<double>((ref) => 1.0);
 
 class VariantDashboardPage extends StatelessWidget {
@@ -71,6 +128,24 @@ class VariantDashboardPage extends StatelessWidget {
         VariantItem(
           name: 'Home V4 - View',
           builder: (BuildContext context) => const HomePageVariant5(),
+        ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Job Details Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Job Details V1',
+          builder: (BuildContext context) =>
+              JobDetailScreen(job: blueCollarJobQatar),
+        ),
+        VariantItem(
+          name: 'Job Details V2',
+          builder: (BuildContext context) => const JobDetailScreen2(job: job),
+        ),
+        VariantItem(
+          name: 'Job Details V2',
+          builder: (BuildContext context) => const JobDetailScreen3(job: job),
         ),
       ],
     ),
@@ -155,23 +230,6 @@ class VariantDashboardPage extends StatelessWidget {
       ],
     ),
 
-    VariantGroup(
-      title: 'Job Details Variants',
-      variants: <VariantItem>[
-        VariantItem(
-          name: 'Job Details V1',
-          builder: (BuildContext context) => JobDetailScreen(job: job),
-        ),
-        VariantItem(
-          name: 'Job Details V2',
-          builder: (BuildContext context) => const JobDetailScreen2(job: job),
-        ),
-        VariantItem(
-          name: 'Job Details V2',
-          builder: (BuildContext context) => const JobDetailScreen3(job: job),
-        ),
-      ],
-    ),
     VariantGroup(
       title: 'Job Listings Variants',
       variants: <VariantItem>[

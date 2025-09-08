@@ -67,7 +67,17 @@ class JobPosting {
   final DateTime postedDate;
   final String? preferencePriority;
   final String preferenceText;
-
+  final String? location;
+  final String? experience;
+  final String? salary;
+  final String? type;
+  final bool? isRemote;
+  final bool? isFeatured;
+  final String? companyLogo;
+  final String? matchPercentage;
+  final String? convertedSalary;
+  final int? applications;
+  final String? policy;
   JobPosting({
     required this.id,
     required this.postingTitle,
@@ -82,6 +92,17 @@ class JobPosting {
     required this.postedDate,
     this.preferencePriority,
     required this.preferenceText,
+    this.location,
+    this.experience,
+    this.salary,
+    this.type,
+    this.isRemote,
+    this.isFeatured,
+    this.companyLogo,
+    this.matchPercentage,
+    this.convertedSalary,
+    this.applications,
+    this.policy,
   });
 }
 
