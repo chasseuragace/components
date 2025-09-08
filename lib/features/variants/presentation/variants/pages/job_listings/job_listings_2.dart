@@ -110,16 +110,23 @@ class _JobListings2State extends State<JobListings2> {
   void _applySorting() {
     switch (_sortBy) {
       case 'newest':
-        _filteredJobs.sort((a, b) => _getPostedDays(a['posted'])
-            .compareTo(_getPostedDays(b['posted'])));
+        _filteredJobs.sort(
+          (a, b) => _getPostedDays(
+            a['posted'],
+          ).compareTo(_getPostedDays(b['posted'])),
+        );
         break;
       case 'salary':
-        _filteredJobs.sort((a, b) => _getSalaryValue(b['salary'])
-            .compareTo(_getSalaryValue(a['salary'])));
+        _filteredJobs.sort(
+          (a, b) => _getSalaryValue(
+            b['salary'],
+          ).compareTo(_getSalaryValue(a['salary'])),
+        );
         break;
       case 'match':
-        _filteredJobs.sort((a, b) =>
-            b['matchPercentage'].compareTo(a['matchPercentage']));
+        _filteredJobs.sort(
+          (a, b) => b['matchPercentage'].compareTo(a['matchPercentage']),
+        );
         break;
       default:
         _filteredJobs.sort((a, b) {
@@ -132,13 +139,18 @@ class _JobListings2State extends State<JobListings2> {
 
   int _getPostedDays(String posted) {
     if (posted.contains('day')) return int.tryParse(posted.split(' ')[0]) ?? 0;
-    if (posted.contains('week')) return (int.tryParse(posted.split(' ')[0]) ?? 0) * 7;
+    if (posted.contains('week'))
+      return (int.tryParse(posted.split(' ')[0]) ?? 0) * 7;
     return 0;
   }
 
   int _getSalaryValue(String salary) {
-    final numbers = RegExp(r'\d+').allMatches(salary).map((m) => int.parse(m.group(0)!)).toList();
-    return numbers.isNotEmpty ? numbers.reduce((a, b) => a + b) ~/ numbers.length : 0;
+    final numbers = RegExp(
+      r'\d+',
+    ).allMatches(salary).map((m) => int.parse(m.group(0)!)).toList();
+    return numbers.isNotEmpty
+        ? numbers.reduce((a, b) => a + b) ~/ numbers.length
+        : 0;
   }
 
   void _showFilterModal() {
@@ -233,7 +245,8 @@ class _JobListings2State extends State<JobListings2> {
                 Row(
                   children: [
                     Expanded(
-                      child: _activeFilters.isNotEmpty || _searchQuery.isNotEmpty
+                      child:
+                          _activeFilters.isNotEmpty || _searchQuery.isNotEmpty
                           ? ActiveFiltersWidgetV2(
                               activeFilters: _activeFilters,
                               searchQuery: _searchQuery,
@@ -359,7 +372,8 @@ class _JobListings2State extends State<JobListings2> {
                 : ListView.separated(
                     padding: const EdgeInsets.all(20),
                     itemCount: _filteredJobs.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 16),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 16),
                     itemBuilder: (context, index) {
                       return JobCardWidget(job: _filteredJobs[index]);
                     },
@@ -386,88 +400,88 @@ class _JobListings2State extends State<JobListings2> {
   List<Map<String, dynamic>> _getDummyJobs() {
     return [
       {
-        'title': 'Senior Flutter Developer',
-        'company': 'TechCorp Nepal',
-        'location': 'Kathmandu, Nepal',
-        'salary': 'NPR 80,000 - 120,000',
+        'title': 'Electrician',
+        'company': 'Qatar Power Services',
+        'location': 'Doha, Qatar',
+        'salary': 'QAR 1,800 - 2,200',
         'type': 'Full Time',
-        'experience': '3-5 years',
+        'experience': '2-3 years',
         'posted': '2 days ago',
-        'isRemote': true,
+        'isRemote': false,
         'isFeatured': true,
-        'companyLogo': 'T',
-        'matchPercentage': 95,
-        'gender': 'Any',
+        'companyLogo': 'Q',
+        'matchPercentage': 92,
+        'gender': 'Male',
       },
       {
-        'title': 'UI/UX Designer',
-        'company': 'DesignStudio',
-        'location': 'Pokhara, Nepal',
-        'salary': 'NPR 60,000 - 90,000',
+        'title': 'Plumber',
+        'company': 'Dubai Facility Management',
+        'location': 'Dubai, UAE',
+        'salary': 'AED 1,500 - 2,000',
         'type': 'Full Time',
-        'experience': '2-4 years',
+        'experience': '1-2 years',
         'posted': '1 day ago',
         'isRemote': false,
         'isFeatured': false,
         'companyLogo': 'D',
-        'matchPercentage': 88,
-        'gender': 'Any',
-      },
-      {
-        'title': 'Backend Developer',
-        'company': 'DevSolutions',
-        'location': 'Lalitpur, Nepal',
-        'salary': 'NPR 70,000 - 100,000',
-        'type': 'Full Time',
-        'experience': '2-3 years',
-        'posted': '3 days ago',
-        'isRemote': true,
-        'isFeatured': false,
-        'companyLogo': 'D',
-        'matchPercentage': 82,
+        'matchPercentage': 85,
         'gender': 'Male',
       },
       {
-        'title': 'Project Manager',
-        'company': 'ManageCorp',
-        'location': 'Kathmandu, Nepal',
-        'salary': 'NPR 90,000 - 130,000',
+        'title': 'Construction Worker',
+        'company': 'Saudi Build Co.',
+        'location': 'Riyadh, Saudi Arabia',
+        'salary': 'SAR 1,200 - 1,800',
+        'type': 'Contract',
+        'experience': 'No prior experience required',
+        'posted': '3 days ago',
+        'isRemote': false,
+        'isFeatured': true,
+        'companyLogo': 'S',
+        'matchPercentage': 80,
+        'gender': 'Male',
+      },
+      {
+        'title': 'Driver',
+        'company': 'Al Jazeera Transport',
+        'location': 'Doha, Qatar',
+        'salary': 'QAR 2,000 - 2,500',
         'type': 'Full Time',
-        'experience': '5+ years',
+        'experience': '2+ years with GCC License',
         'posted': '1 week ago',
         'isRemote': false,
         'isFeatured': true,
-        'companyLogo': 'M',
-        'matchPercentage': 75,
+        'companyLogo': 'A',
+        'matchPercentage': 88,
+        'gender': 'Male',
+      },
+      {
+        'title': 'Housekeeper',
+        'company': 'Dubai Hospitality Group',
+        'location': 'Dubai, UAE',
+        'salary': 'AED 1,200 - 1,800',
+        'type': 'Full Time',
+        'experience': '1-2 years in hotels/residences',
+        'posted': '4 days ago',
+        'isRemote': false,
+        'isFeatured': false,
+        'companyLogo': 'H',
+        'matchPercentage': 76,
         'gender': 'Female',
       },
       {
-        'title': 'Data Scientist',
-        'company': 'DataTech',
-        'location': 'Bhaktapur, Nepal',
-        'salary': 'NPR 85,000 - 115,000',
-        'type': 'Part Time',
-        'experience': '3-4 years',
-        'posted': '4 days ago',
-        'isRemote': true,
-        'isFeatured': false,
-        'companyLogo': 'D',
-        'matchPercentage': 90,
-        'gender': 'Any',
-      },
-      {
-        'title': 'Marketing Specialist',
-        'company': 'MarketPro',
-        'location': 'Chitwan, Nepal',
-        'salary': 'NPR 50,000 - 75,000',
-        'type': 'Contract',
-        'experience': '1-2 years',
+        'title': 'Cook',
+        'company': 'Saudi Catering Services',
+        'location': 'Jeddah, Saudi Arabia',
+        'salary': 'SAR 1,800 - 2,200',
+        'type': 'Full Time',
+        'experience': '2-4 years in restaurant kitchen',
         'posted': '5 days ago',
         'isRemote': false,
         'isFeatured': false,
-        'companyLogo': 'M',
-        'matchPercentage': 68,
-        'gender': 'Female',
+        'companyLogo': 'C',
+        'matchPercentage': 83,
+        'gender': 'Any',
       },
     ];
   }
@@ -583,7 +597,11 @@ class ActiveFiltersWidgetV2 extends StatelessWidget {
                   const SizedBox(width: 4),
                   GestureDetector(
                     onTap: () {},
-                    child: const Icon(Icons.close, size: 14, color: Color(0xFF6B7280)),
+                    child: const Icon(
+                      Icons.close,
+                      size: 14,
+                      color: Color(0xFF6B7280),
+                    ),
                   ),
                 ],
               ),
@@ -611,7 +629,11 @@ class ActiveFiltersWidgetV2 extends StatelessWidget {
                   const SizedBox(width: 4),
                   GestureDetector(
                     onTap: () => onRemoveFilter(entry.key),
-                    child: const Icon(Icons.close, size: 14, color: Color(0xFF6B7280)),
+                    child: const Icon(
+                      Icons.close,
+                      size: 14,
+                      color: Color(0xFF6B7280),
+                    ),
                   ),
                 ],
               ),
@@ -704,10 +726,7 @@ class EmptyStateWidgetV2 extends StatelessWidget {
               hasActiveFilters
                   ? 'Try adjusting your filters to see more results'
                   : 'New opportunities will appear here soon',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF6B7280),
-              ),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
               textAlign: TextAlign.center,
             ),
             if (hasActiveFilters) ...[
@@ -749,10 +768,22 @@ class SortBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sortOptions = [
-      {'key': 'relevance', 'title': 'Relevance', 'subtitle': 'Best match for you'},
-      {'key': 'newest', 'title': 'Date Posted', 'subtitle': 'Most recent first'},
+      {
+        'key': 'relevance',
+        'title': 'Relevance',
+        'subtitle': 'Best match for you',
+      },
+      {
+        'key': 'newest',
+        'title': 'Date Posted',
+        'subtitle': 'Most recent first',
+      },
       {'key': 'salary', 'title': 'Salary', 'subtitle': 'Highest salary first'},
-      {'key': 'match', 'title': 'Match Score', 'subtitle': 'Best match percentage'},
+      {
+        'key': 'match',
+        'title': 'Match Score',
+        'subtitle': 'Best match percentage',
+      },
     ];
 
     return Container(
@@ -925,16 +956,30 @@ class _FilterBottomSheetV2State extends State<FilterBottomSheetV2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildFilterSectionV2('Location', 'country', [
-                    'Nepal', 'India', 'USA', 'Canada', 'Australia'
+                    'Nepal',
+                    'India',
+                    'USA',
+                    'Canada',
+                    'Australia',
                   ]),
                   _buildFilterSectionV2('Job Role', 'position', [
-                    'Developer', 'Designer', 'Manager', 'Analyst', 'Specialist'
+                    'Developer',
+                    'Designer',
+                    'Manager',
+                    'Analyst',
+                    'Specialist',
                   ]),
                   _buildFilterSectionV2('Job Type', 'jobType', [
-                    'Full Time', 'Part Time', 'Contract', 'Freelance'
+                    'Full Time',
+                    'Part Time',
+                    'Contract',
+                    'Freelance',
                   ]),
                   _buildFilterSectionV2('Experience', 'experience', [
-                    '1-2', '2-3', '3-5', '5+'
+                    '1-2',
+                    '2-3',
+                    '3-5',
+                    '5+',
                   ]),
                   _buildBooleanFilterSectionV2('Remote Work', 'isRemote'),
                   _buildBooleanFilterSectionV2('Featured Jobs', 'isFeatured'),
@@ -1031,7 +1076,10 @@ class _FilterBottomSheetV2State extends State<FilterBottomSheetV2> {
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? const Color(0xFF1F2937)

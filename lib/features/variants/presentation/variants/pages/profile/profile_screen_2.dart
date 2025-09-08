@@ -182,8 +182,8 @@ class JobCandidateProfilePage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 32),
-
+            // const SizedBox(height: 32),
+            _buildActivityChart(),
             // Profile Menu Items
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -293,6 +293,101 @@ class JobCandidateProfilePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildActivityChart() {
+    return Container(
+      margin: EdgeInsets.all(24),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Job Applications',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1C1C1E),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Weekly Activity',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF8E8E93)),
+                  ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFD60A).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Active',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFFF8500),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 20),
+
+          // Simple Bar Chart
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _buildBarItem('Mon', 25),
+              _buildBarItem('Tue', 40),
+              _buildBarItem('Wed', 30),
+              _buildBarItem('Thu', 35),
+              _buildBarItem('Fri', 45),
+              _buildBarItem('Sat', 20),
+              _buildBarItem('Sun', 15),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBarItem(String day, double height) {
+    return Column(
+      children: [
+        Container(
+          width: 20,
+          height: height,
+          decoration: BoxDecoration(
+            color: day == 'Fri' ? Color(0xFFFF6B35) : Color(0xFFFFD60A),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(day, style: TextStyle(fontSize: 10, color: Color(0xFF8E8E93))),
+      ],
     );
   }
 }
