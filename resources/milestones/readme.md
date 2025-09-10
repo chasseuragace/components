@@ -160,3 +160,14 @@ read the acknowledgement
     - he edit hte source of truth if required 
     - restriction is just on hte ui to make things simpler.
     - rojan canadd as he progresses 
+
+
+
+- clean archite cture boilerplate code that i can generate 
+    - consistently 
+        - usign template 
+        - what does the template give s
+    - just generated hte boilerplates using /Users/ajaydahal/code/variant_dashboard/simpler_generator_folders.yaml and its extensikon simple flutter generator
+        - created script to rename unwanted capital in import[this is a required step]
+        - important note on core 
+    - i need to put hte reference to the jobs dto next 
