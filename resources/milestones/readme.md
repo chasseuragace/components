@@ -122,3 +122,24 @@ read the acknowledgement
         - providers 
             yes 
         - 
+- what i did 
+    - created /Users/ajaydahal/code/variant_dashboard/lib/app/udaan_saarathi/pm_board.dart
+    - hooked up 
+        provider required at 
+        /Users/ajaydahal/code/variant_dashboard/lib/app/provider.dart
+        to be used here 
+        /Users/ajaydahal/code/variant_dashboard/lib/app/provider.dart
+
+- create tabs in the 
+    -/Users/ajaydahal/code/variant_dashboard/lib/app/provider.dart
+    - render fake content 
+        - create module 
+            - data-domain-providers 
+                - for docs and todos as json 
+    - api call for todos
+        - toggel status  
+        - add comment (todoId , commenttext, parentId)
+
+- Rojans Scope of work 
+    - restructure things inside the udaan_saarathi
+        - 
