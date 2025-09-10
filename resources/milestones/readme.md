@@ -143,3 +143,20 @@ read the acknowledgement
 - Rojans Scope of work 
     - restructure things inside the udaan_saarathi
         - 
+- what i need to do 
+    - have asignee 
+    - identfy current git user 
+    - have assigned to  in hte todos 
+        - for todos by user id to work 
+    - separate source to truth files 
+    - have server to manipulate files 
+    - setup mcp for ides 
+-  enable rojan such :  he can switch between pm and us , by toing a triple tap 
+
+- rojan 's access is read only here , in my architecture ':
+    - mark complete 
+    - add comment / reply 
+    - read docs 
+    - he edit hte source of truth if required 
+    - restriction is just on hte ui to make things simpler.
+    - rojan canadd as he progresses 

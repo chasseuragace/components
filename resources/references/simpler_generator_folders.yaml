@@ -1,0 +1,800 @@
+# * ArchitectureGenerator - Flutter Clean Architecture with Riverpod
+# **************************************************************************
+
+#? --> For Info
+# NAME will be replaced with the feature name (e.g., "item", "user", etc.)
+# funcCase will be used for method names
+# LOWER_CASE will be used for file names
+
+# ----Clean Architecture with Riverpod----------------------------> start
+generate:
+
+# ---Domain----------------------------------------------------
+  - category: domain
+    contents:
+      - file: base_entity.dart
+        code: |
+          abstract class BaseEntity {
+            Map rawJson;
+            BaseEntity({
+              required this.rawJson,
+            });
+          }
+
+
+      - folder: entities
+        contents:
+          - folder: NAME
+            contents:
+              - file: entity.dart
+                code: |
+                  
+                  import '../../base_entity.dart';
+
+                  abstract class NAMEEntity extends BaseEntity {
+                    final String id;
+                    NAMEEntity({
+                          // TODO : NAME : Define params
+                          required super.rawJson,
+                          required this.id,
+                          });
+                  }
+
+
+      - folder: repositories
+        contents:
+          - folder: NAME
+            contents:
+              - file: repository.dart
+                code: |
+                  import 'package:dartz/dartz.dart';
+                  import '../../entities/NAME/entity.dart';
+                  import '../../../core/errors/failures.dart';
+
+                  abstract class NAMERepository {
+                    Future<Either<Failure, List<NAMEEntity>>> getAllItems();
+                    Future<Either<Failure, NAMEEntity?>> getItemById(String id);
+                    Future<Either<Failure, Unit>> addItem(NAMEEntity entity);
+                    Future<Either<Failure, Unit>> updateItem(NAMEEntity entity);
+                    Future<Either<Failure, Unit>> deleteItem(String id);
+                  }
+      - folder: usecases
+        contents:
+          - folder: NAME
+            contents:
+              - file: get_all.dart
+                code: |
+                  import 'package:dartz/dartz.dart';
+                  import '../../entities/NAME/entity.dart';
+                  import '../../repositories/NAME/repository.dart';
+                  import '../../../core/errors/failures.dart';
+                  import '../../../core/usecases/usecase.dart';
+
+                  class GetAllNAMEUseCase implements UseCase<List<NAMEEntity>, NoParm> {
+                    final NAMERepository repository;
+
+                    GetAllNAMEUseCase (this.repository);
+
+                    @override
+                    Future<Either<Failure, List<NAMEEntity>>> call(NoParm params) async {
+                      return  repository.getAllItems();
+                    }
+                  }
+              - file: get_by_id.dart
+                code: |
+                  import 'package:dartz/dartz.dart';
+                  import '../../entities/NAME/entity.dart';
+                  import '../../repositories/NAME/repository.dart';
+                  import '../../../core/errors/failures.dart';
+                  import '../../../core/usecases/usecase.dart';
+
+                  class GetNAMEByIdUseCase implements UseCase<NAMEEntity?, String> {
+                    final NAMERepository repository;
+
+                    GetNAMEByIdUseCase(this.repository);
+
+                    @override
+                    Future<Either<Failure, NAMEEntity?>> call(String id) async {
+                      return  repository.getItemById(id);
+                    }
+                  }
+              - file: add.dart
+                code: |
+                  import 'package:dartz/dartz.dart';
+                  import '../../entities/NAME/entity.dart';
+                  import '../../repositories/NAME/repository.dart';
+                  import '../../../core/errors/failures.dart';
+                  import '../../../core/usecases/usecase.dart';
+
+                  class AddNAMEUseCase implements UseCase<Unit, NAMEEntity> {
+                    final NAMERepository repository;
+
+                    AddNAMEUseCase(this.repository);
+
+                    @override
+                    Future<Either<Failure, Unit>> call(NAMEEntity entity) async {
+                      return  repository.addItem(entity);
+                    }
+                  }
+              - file: update.dart
+                code: |
+                  import 'package:dartz/dartz.dart';
+                  import '../../entities/NAME/entity.dart';
+                  import '../../repositories/NAME/repository.dart';
+                  import '../../../core/errors/failures.dart';
+                  import '../../../core/usecases/usecase.dart';
+
+                  class UpdateNAMEUseCase implements UseCase<Unit, NAMEEntity> {
+                    final NAMERepository repository;
+
+                    UpdateNAMEUseCase(this.repository);
+
+                    @override
+                    Future<Either<Failure, Unit>> call(NAMEEntity entity) async {
+                      return  repository.updateItem(entity);
+                    }
+                  }
+              - file: delete.dart
+                code: |
+                  import 'package:dartz/dartz.dart';
+                  import '../../repositories/NAME/repository.dart';
+                  import '../../../core/errors/failures.dart';
+                  import '../../../core/usecases/usecase.dart';
+
+                  class DeleteNAMEUseCase implements UseCase<Unit, String> {
+                    final NAMERepository repository;
+
+                    DeleteNAMEUseCase(this.repository);
+
+                    @override
+                    Future<Either<Failure, Unit>> call(String id) async {
+                      return  repository.deleteItem(id);
+                    }
+                  }
+
+# ---Data------------------------------------------------------
+  - category: data
+    contents:
+      - folder: models
+        contents:
+          - folder : NAME
+            contents:
+              - file: model.dart
+                code: |
+                        import '../../../domain/entities/NAME/entity.dart';
+
+                        class NAMEModel extends NAMEEntity {
+                          NAMEModel({required super.id, this.name, required super.rawJson});
+
+                          factory NAMEModel.fromJson(Map<String, dynamic> json) {
+                            return NAMEModel(
+                              id: json['id'] as String,
+                                name: json['name'] as String?,
+                                rawJson: json, // Pass the entire JSON object
+                              );
+                          }
+                          
+                          final String? name;
+
+                          Map<String, dynamic> toJson() {
+                            return {
+                              'id': id,
+                              'name': name,
+                            };
+                          }
+                        }
+
+      - folder: datasources/NAME
+        contents:
+          - file: local_data_source.dart
+            code: |
+              import '../../models/NAME/model.dart';
+
+              abstract class NAMELocalDataSource {
+                Future<List<NAMEModel>> getAllItems();
+                Future<NAMEModel?> getItemById(String id);
+                Future<void> addItem(NAMEModel model);
+                Future<void> updateItem(NAMEModel model);
+                Future<void> deleteItem(String id);
+              }
+
+              class NAMELocalDataSourceImpl implements NAMELocalDataSource {
+                @override
+                Future<List<NAMEModel>> getAllItems() async {
+                 throw UnimplementedError();
+                }
+
+                @override
+                Future<NAMEModel?> getItemById(String id) async {
+                  throw UnimplementedError();
+                }
+
+                @override
+                Future<void> addItem(NAMEModel model) async {
+                  throw UnimplementedError();
+                }
+
+                @override
+                Future<void> updateItem(NAMEModel model) async {
+                  throw UnimplementedError();
+                }
+
+                @override
+                Future<void> deleteItem(String id) async {
+                  throw UnimplementedError();
+                }
+              }
+          - file: remote_data_source.dart
+            code: |
+              import '../../models/NAME/model.dart';
+
+              abstract class NAMERemoteDataSource {
+                Future<List<NAMEModel>> getAllItems();
+                Future<NAMEModel?> getItemById(String id);
+                Future<void> addItem(NAMEModel model);
+                Future<void> updateItem(NAMEModel model);
+                Future<void> deleteItem(String id);
+              }
+
+              class NAMERemoteDataSourceImpl implements NAMERemoteDataSource {
+                @override
+                Future<List<NAMEModel>> getAllItems() async {
+                 throw UnimplementedError();
+                }
+
+                @override
+                Future<NAMEModel?> getItemById(String id) async {
+                 throw UnimplementedError();
+                }
+
+                @override
+                Future<void> addItem(NAMEModel model) async {
+                 throw UnimplementedError();
+                }
+
+                @override
+                Future<void> updateItem(NAMEModel model) async {
+                 throw UnimplementedError();
+                }
+
+                @override
+                Future<void> deleteItem(String id) async {
+                 throw UnimplementedError();
+                }
+              }
+
+      - folder: repositories/NAME
+        contents:
+          - file: repository_impl.dart
+            code: |
+              import 'package:dartz/dartz.dart';
+              import '../../../core/errors/failures.dart';
+              import '../../../domain/entities/NAME/entity.dart';
+              import '../../../domain/repositories/NAME/repository.dart';
+              import '../../datasources/NAME/local_data_source.dart';
+              import '../../datasources/NAME/remote_data_source.dart';
+              import '../../models/NAME/model.dart';
+              class NAMERepositoryImpl implements NAMERepository {
+                final NAMELocalDataSource localDataSource;
+                final NAMERemoteDataSource remoteDataSource;
+
+                NAMERepositoryImpl({
+                  required this.localDataSource,
+                  required this.remoteDataSource,
+                });
+
+                @override
+                Future<Either<Failure, List<NAMEEntity>>> getAllItems() async {
+                  try {
+                    final remoteItems = await remoteDataSource.getAllItems();
+                    return right(remoteItems);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, NAMEEntity?>> getItemById(String id) async {
+                  try {
+                    final remoteItem = await remoteDataSource.getItemById(id);
+                    return right(remoteItem);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, Unit>> addItem(NAMEEntity entity) async {
+                  try {
+                    await remoteDataSource.addItem((entity as NAMEModel));
+                    return right(unit);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, Unit>> updateItem(NAMEEntity entity) async {
+                  try {
+                    await remoteDataSource.updateItem((entity as NAMEModel));
+                    return right(unit);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, Unit>> deleteItem(String id) async {
+                  try {
+                    await remoteDataSource.deleteItem(id);
+                    return right(unit);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+              }
+              extension model on NAMEEntity {
+                NAMEModel toModel() {
+                  throw UnimplementedError();
+                }
+              }
+          - file: repository_impl_fake.dart
+            code: |
+              import 'package:dartz/dartz.dart';
+              import '../../../core/errors/failures.dart';
+              import '../../../domain/entities/NAME/entity.dart';
+              import '../../../domain/repositories/NAME/repository.dart';
+              import '../../datasources/NAME/local_data_source.dart';
+              import '../../datasources/NAME/remote_data_source.dart';
+              import '../../models/NAME/model.dart';
+              // Fake data for NAMEs
+                    final remoteItems = [
+                      NAMEModel(
+
+                          rawJson: {},
+                        id: '1',
+                        name: 'Admin',
+                      ),
+                      NAMEModel(
+                      rawJson: {},
+                        id: '2',
+                        name: 'User',
+                      ),
+                      NAMEModel(
+                      rawJson: {},
+                        id: '3',
+                        name: 'Guest',
+                      ),
+                    ];
+              class NAMERepositoryFake implements NAMERepository {
+                final NAMELocalDataSource localDataSource;
+                final NAMERemoteDataSource remoteDataSource;
+
+                NAMERepositoryFake({
+                  required this.localDataSource,
+                  required this.remoteDataSource,
+                });
+
+                @override
+                Future<Either<Failure, List<NAMEEntity>>> getAllItems() async {
+                  try {
+                  
+
+                    // Simulate delay
+                    await Future.delayed(Duration(milliseconds: 300));
+
+                    return right(remoteItems.map((model) => model).toList());
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, NAMEEntity?>> getItemById(String id) async {
+                  try {
+                  
+                    // Simulate delay
+                    await Future.delayed(Duration(milliseconds: 300));
+
+                    final remoteItem = remoteItems.firstWhere((item) => item.id == id,
+                        orElse: () => throw "Not found");
+                    return right(remoteItem);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, Unit>> addItem(NAMEEntity entity) async {
+                  try {
+                    // Simulate delay
+                    await Future.delayed(Duration(milliseconds: 300));
+
+                    // No actual data operation in fake implementation
+                    return right(unit);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, Unit>> updateItem(NAMEEntity entity) async {
+                  try {
+                    // Simulate delay
+                    await Future.delayed(Duration(milliseconds: 300));
+
+                    // No actual data operation in fake implementation
+                    return right(unit);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+
+                @override
+                Future<Either<Failure, Unit>> deleteItem(String id) async {
+                  try {
+                    // Simulate delay
+                    await Future.delayed(Duration(milliseconds: 300));
+
+                    // No actual data operation in fake implementation
+                    return right(unit);
+                  } catch (error) {
+                    return left(ServerFailure());
+                  }
+                }
+              }
+
+
+# ---Presentation----------------------------------------------
+  - category: presentation
+    contents:
+      - folder: NAME 
+        contents:
+          - folder: providers
+            contents:
+              - file: di.dart
+                code: |
+                  import '../../../data/datasources/NAME/local_data_source.dart';
+                  import '../../../data/datasources/NAME/remote_data_source.dart';
+                  import '../../../data/repositories/NAME/repository_impl.dart';
+                  import '../../../data/repositories/NAME/repository_impl_fake.dart';
+                  import '../../../domain/usecases/NAME/get_all.dart';
+                  import '../../../domain/usecases/NAME/get_by_id.dart';
+                  import '../../../domain/usecases/NAME/add.dart';
+                  import '../../../domain/usecases/NAME/update.dart';
+                  import '../../../domain/usecases/NAME/delete.dart';
+                  import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+                  final getAllNAMEUseCaseProvider = Provider<GetAllNAMEUseCase>((ref) {
+                    return GetAllNAMEUseCase(ref.watch(rNAMERepositoryProvider));
+                  });
+
+                  final getNAMEByIdUseCaseProvider = Provider<GetNAMEByIdUseCase>((ref) {
+                    return GetNAMEByIdUseCase(ref.watch(rNAMERepositoryProvider));
+                  });
+
+                  final addNAMEUseCaseProvider = Provider<AddNAMEUseCase>((ref) {
+                    return AddNAMEUseCase(ref.watch(rNAMERepositoryProvider));
+                  });
+
+                  final updateNAMEUseCaseProvider = Provider<UpdateNAMEUseCase>((ref) {
+                    return UpdateNAMEUseCase(ref.watch(rNAMERepositoryProvider));
+                  });
+
+                  final deleteNAMEUseCaseProvider = Provider<DeleteNAMEUseCase>((ref) {
+                    return DeleteNAMEUseCase(ref.watch(rNAMERepositoryProvider));
+                  });
+
+                  final rNAMERepositoryProvider = Provider((ref) {
+                    final local = ref.read(localDataNAMESourceProvider);
+                    final remote = ref.read(remoteDataNAMESourceProvider);
+                    return NAMERepositoryFake(localDataSource: local, remoteDataSource: remote);
+                  });
+
+                  final localDataNAMESourceProvider = Provider<NAMELocalDataSource>((ref) {
+                    return NAMELocalDataSourceImpl();
+                  });
+
+                  final remoteDataNAMESourceProvider = Provider<NAMERemoteDataSource>((ref) {
+                    return NAMERemoteDataSourceImpl();
+                  });
+                  
+              - file: providers.dart
+                code: |
+                  import 'package:flutter_riverpod/flutter_riverpod.dart';
+                  import '../../../core/errors/failures.dart';
+                  import '../../../domain/entities/NAME/entity.dart';
+                  
+                  import '../../../core/usecases/usecase.dart';
+                  import './di.dart';
+
+                  class GetAllNAMENotifier extends AsyncNotifier<List<NAMEEntity>> {
+                    @override
+                    Future<List<NAMEEntity>> build() async {
+                      final result = await ref.read(getAllNAMEUseCaseProvider)(NoParm());
+                      return result.fold(
+                        (failure) => throw _mapFailureToException(failure),
+                        (items) => items,
+                      );
+                    }
+                  }
+
+                  class GetNAMEByIdNotifier extends AsyncNotifier<NAMEEntity?> {
+                    @override
+                    Future<NAMEEntity?> build() async {
+                      return null; // Initially null
+                    }
+
+                    Future<void> getNAMEById(String id) async {
+                      state = const AsyncValue.loading();
+                      final result = await ref.read(getNAMEByIdUseCaseProvider)(id);
+                      state =  result.fold(
+                        (failure) => AsyncValue.error(failure,StackTrace.current),
+                        (item) => AsyncValue.data(null),
+                      );
+                    }
+                  }
+
+                  class AddNAMENotifier extends AsyncNotifier {
+                    @override
+                    Future<void> build() async {
+                      return;
+                    }
+
+                    Future<void> addNAME(NAMEEntity item) async {
+                      state = const AsyncValue.loading();
+                      final result = await ref.read(addNAMEUseCaseProvider)(item);
+                      state = result.fold(
+                        (failure) => AsyncValue.error(failure,StackTrace.current),
+                        (_) => AsyncValue.data(null),
+                     );
+                      ref.invalidate(getAllNAMEProvider);
+                    }
+                  }
+
+                  class UpdateNAMENotifier extends AsyncNotifier {
+                    @override
+                    Future<void> build() async {
+                      return;
+                    }
+
+                    Future<void> updateNAME(NAMEEntity item) async {
+                      state = const AsyncValue.loading();
+                      final result = await ref.read(updateNAMEUseCaseProvider)(item);
+                      state = result.fold(
+                        (failure) => AsyncValue.error(failure,StackTrace.current),
+                        (_) => AsyncValue.data(null),
+                     );
+                      ref.invalidate(getAllNAMEProvider);
+                    }
+                  }
+
+                  class DeleteNAMENotifier extends AsyncNotifier {
+                    @override
+                    build()  {
+                  
+                    }
+
+                    Future<void> delete(String id) async {
+                      state = const AsyncValue.loading();
+                      final result = await ref.read(deleteNAMEUseCaseProvider)(id);
+                      state = result.fold(
+                        (failure) => AsyncValue.error(failure,StackTrace.current),
+                        (_) => AsyncValue.data(null),
+                    );
+                      ref.invalidate(getAllNAMEProvider);
+                    }
+                  }
+
+                  Exception _mapFailureToException(Failure failure) {
+                    if (failure is ServerFailure) {
+                      return Exception('Server failure');
+                    } else if (failure is CacheFailure) {
+                      return Exception('Cache failure');
+                    } else {
+                      return Exception('Unexpected error');
+                    }
+                  }
+
+                  final getAllNAMEProvider = AsyncNotifierProvider<GetAllNAMENotifier, List<NAMEEntity>>(() {
+                    return GetAllNAMENotifier();
+                  });
+
+                  final getNAMEByIdProvider = AsyncNotifierProvider<GetNAMEByIdNotifier, NAMEEntity?>(() {
+                    return GetNAMEByIdNotifier();
+                  });
+
+                  final addNAMEProvider = AsyncNotifierProvider<AddNAMENotifier, void>(() {
+                    return AddNAMENotifier();
+                  });
+
+                  final updateNAMEProvider = AsyncNotifierProvider<UpdateNAMENotifier, void>(() {
+                    return UpdateNAMENotifier();
+                  });
+
+                  final deleteNAMEProvider = AsyncNotifierProvider<DeleteNAMENotifier, void>(() {
+                    return DeleteNAMENotifier();
+                  });
+
+          - folder: page
+            contents:
+              - file: list.dart
+                code: |
+                  // lib/features/NAME/presentation/pages/list.dart
+                  import 'package:flutter/material.dart';
+                  import 'package:flutter_riverpod/flutter_riverpod.dart';
+                  import '../../../domain/entities/NAME/entity.dart';
+                  import '../providers/providers.dart';
+
+                  class NAMEListPage extends ConsumerStatefulWidget {
+                    @override
+                    _NAMEListPageState createState() => _NAMEListPageState();
+                  }
+
+                  class _NAMEListPageState extends ConsumerState<NAMEListPage> {
+                    BuildContext? barrierContext;
+
+                 
+
+                    @override
+                    Widget build(BuildContext context) {
+                      final NAMEState = ref.watch(getAllNAMEProvider);
+                        listenToDeleteNAMEAction(context);
+                        // TODO: Set up listeners for other actions
+                        // listenToAddNAMEAction(context);
+                        // listenToUpdateNAMEAction(context);
+                      return Scaffold(
+                        appBar: AppBar(
+                          title: Text('NAME List'),
+                        ),
+                        body: NAMEState.when(
+                          data: (items) => items.isEmpty
+                              ? Center(child: Text('No items available'))
+                              : ListView.builder(
+                                  itemCount: items.length,
+                                  itemBuilder: (context, index) {
+                                    final item = items[index];
+                                    return ListTile(
+                                      title: Text(item.runtimeType.toString()), // Adjust this based on your entity properties
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.edit),
+                                            onPressed: () {
+                                              _showEditDialog(context, ref, item);
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.delete),
+                                            onPressed: () {
+                                              _showDeleteConfirmation(context, ref, item.id);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        // Handle item tap, e.g., navigate to detail page
+                                      },
+                                    );
+                                  },
+                                ),
+                          loading: () => Center(child: CircularProgressIndicator()),
+                          error: (error, stackTrace) => Center(child: Text(error.toString())),
+                        ),
+                        floatingActionButton: FloatingActionButton(
+                          onPressed: () {
+                            _showAddDialog(context, ref);
+                          },
+                          child: Icon(Icons.add),
+                        ),
+                      );
+                    }
+
+                    void listenToDeleteNAMEAction(BuildContext context) {
+                      ref.listen<AsyncValue>(deleteNAMEProvider, (previous, next) {
+                        if (next.isLoading) {
+                          showGeneralDialog(
+                            context: context,
+                            pageBuilder: (context, animation, secondaryAnimation) {
+                              barrierContext = context;
+                              return Container(
+                                color: Colors.black38,
+                                child: Center(child: CircularProgressIndicator()),
+                              );
+                            },
+                          );
+                        } else if (previous?.isLoading == true && next.hasError) {
+                          Navigator.of(barrierContext!).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Failed to delete: ${next.error}")),
+                          );
+                          Future.delayed(Duration(seconds: 5), () {
+                            ref.refresh(deleteNAMEProvider);
+                          });
+                        } else if (previous?.isLoading == true && next.hasValue) {
+                          Navigator.of(barrierContext!).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Successfully deleted")),
+                          );
+                          // Refresh the list after successful deletion
+                          ref.refresh(getAllNAMEProvider);
+                        }
+                      });
+                    }
+
+                    // TODO: Implement listeners for other actions
+                    // void listenToAddNAMEAction(BuildContext context) {
+                    //   ref.listen<AsyncValue>(addNAMEProvider, (previous, next) {
+                    //     // Implementation similar to listenToDeleteNAMEAction
+                    //   });
+                    // }
+
+                    // void listenToUpdateNAMEAction(BuildContext context) {
+                    //   ref.listen<AsyncValue>(updateNAMEProvider, (previous, next) {
+                    //     // Implementation similar to listenToDeleteNAMEAction
+                    //   });
+                    // }
+
+                    void _showAddDialog(BuildContext context, WidgetRef ref) {
+                      // Implementation remains the same
+                    }
+
+                    void _showEditDialog(BuildContext context, WidgetRef ref, NAMEEntity item) {
+                      // Implementation remains the same
+                    }
+
+                    void _showDeleteConfirmation(BuildContext context, WidgetRef ref, String itemId)async  {
+                    final result = await   showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Confirm Deletion'),
+                          content: Text('Are you sure you want to delete this item?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                
+                                Navigator.of(context).pop(true);
+                              },
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if(result==true){
+                      ref.read(deleteNAMEProvider.notifier).delete(itemId);
+                      }
+                    }
+                  }
+
+# ---Core------------------------------------------------------
+  - category: core
+    contents:
+      - folder: errors
+        contents:
+          - file: failures.dart
+            code: |
+              abstract class Failure {}
+
+              class ServerFailure extends Failure {}
+
+              class CacheFailure extends Failure {}
+
+              class UnexpectedFailure extends Failure {}
+
+      - folder: usecases
+        contents:
+          - file: usecase.dart
+            code: |
+              import 'package:dartz/dartz.dart';
+              import '../errors/failures.dart';
+
+              abstract class UseCase<Type, Params> {
+                Future<Either<Failure, Type>> call(Params params);
+              }
+              class NoParm {}
+              abstract class BaseRepository {}
