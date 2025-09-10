@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:variant_dashboard/app/pm_board/pm_board_app.dart';
 import 'package:variant_dashboard/app/variant_dashboard/core/theme/app_theme.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/splash_screen/splash_screen.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/page/splash_screen.dart';
 
 import '../variant_dashboard/features/variants/domain/entities/variant_item.dart';
 import '../variant_dashboard/features/variants/presentation/widgets/variant_preview.dart'

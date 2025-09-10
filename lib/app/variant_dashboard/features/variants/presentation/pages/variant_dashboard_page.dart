@@ -16,7 +16,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen3.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_2.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/onboarding/onboarding_screen_1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/page/onboarding_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_2.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_3.dart';
