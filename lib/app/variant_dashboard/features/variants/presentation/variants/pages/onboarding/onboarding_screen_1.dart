@@ -57,32 +57,32 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
           child: Column(
             children: [
               // Skip button
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(width: 60),
-                    Text(
-                      "udaan sarathi",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: _onboardingData[_currentIndex].primaryColor,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Handle skip action
-                      },
-                      child: const Text(
-                        "Skip",
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(20.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       const SizedBox(width: 60),
+              //       Text(
+              //         "udaan sarathi",
+              //         style: TextStyle(
+              //           fontSize: 20,
+              //           fontWeight: FontWeight.bold,
+              //           color: _onboardingData[_currentIndex].primaryColor,
+              //         ),
+              //       ),
+              //       TextButton(
+              //         onPressed: () {
+              //           // Handle skip action
+              //         },
+              //         child: const Text(
+              //           "Skip",
+              //           style: TextStyle(fontSize: 16, color: Colors.grey),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               // PageView
               Expanded(
