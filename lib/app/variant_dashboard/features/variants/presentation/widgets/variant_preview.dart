@@ -5,9 +5,15 @@ import '../../domain/entities/variant_item.dart';
 
 class VariantPreview extends StatelessWidget {
   final VariantItem variant;
-
-  const VariantPreview({super.key, required this.variant});
-  double get multiplier => .4;
+  final bool isExpanded;
+  final double multiplier;
+  const VariantPreview({
+    super.key,
+    required this.variant,
+    this.multiplier = 0.4,
+    this.isExpanded = false,
+  });
+  // double get multiplier => .4;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +22,8 @@ class VariantPreview extends StatelessWidget {
 
     return true
         ? MobileFrame(
+            frameWidth: isExpanded ? mobileWidth : 400,
+            frameHeight: isExpanded ? mobileHeight : 800,
             child: true
                 ? FittedBox(
                     fit: BoxFit.contain,

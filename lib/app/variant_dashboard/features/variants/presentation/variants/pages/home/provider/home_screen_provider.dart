@@ -38,7 +38,7 @@ class HomeScreenProvider extends ChangeNotifier {
         ],
       ),
       _preferences = [
-        CandidatePreference(title: 'Plumber', priority: 1),
+        CandidatePreference(title: 'Hospitality', priority: 1),
         CandidatePreference(title: 'Construction Worker', priority: 2),
         CandidatePreference(title: 'Electrician', priority: 3),
       ],
@@ -101,7 +101,7 @@ class HomeScreenProvider extends ChangeNotifier {
               'Looking for experienced workers for large-scale construction projects.',
           contractTerms: {'duration': '3 years', 'type': 'Contract'},
           postedDate: DateTime.now().subtract(const Duration(days: 1)),
-          preferenceText: 'Hospitality',
+          preferenceText: 'Construction Worker',
 
           positions: [
             JobPosition(
@@ -112,18 +112,18 @@ class HomeScreenProvider extends ChangeNotifier {
               currency: 'USD',
               requirements: ['Physical fitness', 'Site safety awareness'],
             ),
-            JobPosition(
-              id: 'pos_004',
-              title: 'Electrician',
-              baseSalary: 'AED 2,200',
-              convertedSalary: '\$600',
-              currency: 'USD',
-              requirements: [
-                'Wiring experience',
-                'Electric safety training',
-                '2+ years experience',
-              ],
-            ),
+            // JobPosition(
+            //   id: 'pos_004',
+            //   title: 'Electrician',
+            //   baseSalary: 'AED 2,200',
+            //   convertedSalary: '\$600',
+            //   currency: 'USD',
+            //   requirements: [
+            //     'Wiring experience',
+            //     'Electric safety training',
+            //     '2+ years experience',
+            //   ],
+            // ),
           ],
         ),
       ],

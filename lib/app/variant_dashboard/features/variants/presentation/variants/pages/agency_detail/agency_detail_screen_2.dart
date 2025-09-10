@@ -152,6 +152,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
             Row(
               children: [
                 Hero(
+                  key: ValueKey(widget.agency.id),
                   tag: 'agency_avatar_${widget.agency.id}',
                   child: Container(
                     width: 80,

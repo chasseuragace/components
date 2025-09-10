@@ -105,9 +105,270 @@ JobPosting blueCollarJobQatar = JobPosting(
 
 final scaleprovider = StateProvider<double>((ref) => 1.0);
 
-class VariantDashboardPage extends StatelessWidget {
-  VariantDashboardPage({super.key});
+// class VariantDashboardPage extends StatelessWidget {
+//   VariantDashboardPage({super.key});
 
+//   final List<VariantGroup> _variantGroups = <VariantGroup>[
+//     VariantGroup(
+//       title: 'Home Page Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Home V1 - Bassic',
+//           builder: (BuildContext context) => const HomePageVariant1(),
+//         ),
+//         VariantItem(
+//           name: 'Home V2 - List View',
+//           builder: (BuildContext context) => const HomePageVariant2(),
+//         ),
+
+//         VariantItem(
+//           name: 'Home V3 - View',
+//           builder: (BuildContext context) => const HomePageVariant4(),
+//         ),
+//         VariantItem(
+//           name: 'Home V4 - View',
+//           builder: (BuildContext context) => const HomePageVariant5(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Job Details Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Job Details V1',
+//           builder: (BuildContext context) =>
+//               JobDetailScreen(job: blueCollarJobQatar),
+//         ),
+//         VariantItem(
+//           name: 'Job Details V2',
+//           builder: (BuildContext context) => const JobDetailScreen2(job: job),
+//         ),
+//         VariantItem(
+//           name: 'Job Details V2',
+//           builder: (BuildContext context) => const JobDetailScreen3(job: job),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Interview Schedule Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Interview Schedule V1',
+//           builder: (BuildContext context) => const InterviewScheduleScreen1(),
+//         ),
+//         VariantItem(
+//           name: 'Interview Schedule V1',
+//           builder: (BuildContext context) => const InterviewScheduleScreen2(),
+//         ),
+//         VariantItem(
+//           name: 'Interview Schedule V1',
+//           builder: (BuildContext context) => const InterviewScheduleScreen3(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Agency Detail Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Agency Detail V1 ',
+//           builder: (BuildContext context) =>
+//               AgencyDetailScreen1(agency: sampleAgencies.first),
+//         ),
+//         VariantItem(
+//           name: 'Agency Detail V2 ',
+//           builder: (BuildContext context) =>
+//               AgencyDetailScreen2(agency: sampleAgencies.first),
+//         ),
+//         VariantItem(
+//           name: 'Agency Detail V3 ',
+//           builder: (BuildContext context) =>
+//               AgencyDetailScreen3(agency: sampleAgencies.first),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Onboarding Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Onboarding V1',
+//           builder: (BuildContext context) => const OnboardingScreen1(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Agency Listing Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Agency Listing V1',
+//           builder: (BuildContext context) => const AgencyListingScreen1(),
+//         ),
+//         VariantItem(
+//           name: 'Agency Listing V2',
+//           builder: (BuildContext context) => const AgencyListingScreen2(),
+//         ),
+//         VariantItem(
+//           name: 'Agency Listing V3',
+//           builder: (BuildContext context) => const AgencyListingScreen3(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Agency Listing Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Agency Listing V1',
+//           builder: (BuildContext context) => const AgencyListingScreen1(),
+//         ),
+//         VariantItem(
+//           name: 'Agency Listing V2',
+//           builder: (BuildContext context) => const AgencyListingScreen2(),
+//         ),
+//         VariantItem(
+//           name: 'Agency Listing V3',
+//           builder: (BuildContext context) => const AgencyListingScreen3(),
+//         ),
+//       ],
+//     ),
+
+//     VariantGroup(
+//       title: 'Job Listings Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Job Listings V1',
+//           builder: (BuildContext context) => JobListings1(),
+//         ),
+//         VariantItem(
+//           name: 'Job Listings V2',
+//           builder: (BuildContext context) => const JobListings2(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Set Preference Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Preferences V1',
+//           builder: (BuildContext context) => const SetPreferences1(),
+//         ),
+//         VariantItem(
+//           name: 'Preferences V2',
+//           builder: (BuildContext context) => const SetPreferences2(),
+//         ),
+//         VariantItem(
+//           name: 'Preferences V3',
+//           builder: (BuildContext context) => const SetPreferences3(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'Profile Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Profile V1',
+//           builder: (BuildContext context) => const ProfileScreen1(),
+//         ),
+//         VariantItem(
+//           name: 'Profile V2',
+//           builder: (BuildContext context) => const ProfileScreen2(),
+//         ),
+//         VariantItem(
+//           name: 'Profile V3',
+//           builder: (BuildContext context) => const ProfileScreen3(),
+//         ),
+//       ],
+//     ),
+//     VariantGroup(
+//       title: 'User Settings Variants',
+//       variants: <VariantItem>[
+//         VariantItem(
+//           name: 'Settings V1',
+//           builder: (BuildContext context) => const SettingsScreen1(),
+//         ),
+//         VariantItem(
+//           name: 'Settings V2',
+//           builder: (BuildContext context) => const SettingsScreen2(),
+//         ),
+//       ],
+//     ),
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer(
+//       builder: (context, ref, child) {
+//         final scale = ref.watch(scaleprovider);
+//         return Scaffold(
+//           appBar: AppBar(
+//             actions: [
+//               Slider(
+//                 value: scale,
+//                 min: 1,
+//                 max: 10,
+//                 divisions: 10,
+//                 label: '1',
+//                 onChanged: (double value) {
+//                   ref.read(scaleprovider.notifier).state = value;
+//                 },
+//               ),
+//             ],
+//             title: const Text('UI Variants Dashboard'),
+//             centerTitle: true,
+//             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+//           ),
+//           body: Transform.scale(
+//             scale: ref.watch(scaleprovider),
+//             child: ListView.builder(
+//               padding: const EdgeInsets.symmetric(vertical: 20.0),
+//               itemCount: _variantGroups.length,
+//               itemBuilder: (BuildContext context, int groupIndex) {
+//                 final VariantGroup group = _variantGroups[groupIndex];
+//                 return Padding(
+//                   padding: const EdgeInsets.only(bottom: 24.0),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: <Widget>[
+//                       Padding(
+//                         padding: const EdgeInsets.symmetric(
+//                           horizontal: 16.0,
+//                           vertical: 8.0,
+//                         ),
+//                         child: Text(
+//                           group.title,
+//                           style: Theme.of(context).textTheme.headlineMedium,
+//                         ),
+//                       ),
+//                       Wrap(
+//                         spacing: 24.0,
+//                         runSpacing: 24.0,
+//                         alignment: WrapAlignment.center,
+//                         children: group.variants
+//                             .map<Widget>(
+//                               (VariantItem variant) =>
+//                                   VariantPreview(variant: variant),
+//                             )
+//                             .toList(),
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
+class VariantDashboardPage extends StatefulWidget {
+  const VariantDashboardPage({super.key});
+
+  @override
+  State<VariantDashboardPage> createState() => _VariantDashboardPageState();
+}
+
+class _VariantDashboardPageState extends State<VariantDashboardPage> {
+  VariantItem? selectedVariant;
   final List<VariantGroup> _variantGroups = <VariantGroup>[
     VariantGroup(
       title: 'Home Page Variants',
@@ -291,12 +552,12 @@ class VariantDashboardPage extends StatelessWidget {
       ],
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
         final scale = ref.watch(scaleprovider);
+
         return Scaffold(
           appBar: AppBar(
             actions: [
@@ -305,7 +566,7 @@ class VariantDashboardPage extends StatelessWidget {
                 min: 1,
                 max: 10,
                 divisions: 10,
-                label: '1',
+                label: scale.toStringAsFixed(1),
                 onChanged: (double value) {
                   ref.read(scaleprovider.notifier).state = value;
                 },
@@ -315,44 +576,85 @@ class VariantDashboardPage extends StatelessWidget {
             centerTitle: true,
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           ),
-          body: Transform.scale(
-            scale: ref.watch(scaleprovider),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              itemCount: _variantGroups.length,
-              itemBuilder: (BuildContext context, int groupIndex) {
-                final VariantGroup group = _variantGroups[groupIndex];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0,
-                        ),
-                        child: Text(
-                          group.title,
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
+          body: Row(
+            children: [
+              // LEFT SIDE → list of previews
+              Expanded(
+                flex: 3,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  itemCount: _variantGroups.length,
+                  itemBuilder: (BuildContext context, int groupIndex) {
+                    final VariantGroup group = _variantGroups[groupIndex];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 8.0,
+                            ),
+                            child: Text(
+                              group.title,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ),
+                          Wrap(
+                            spacing: 24.0,
+                            runSpacing: 24.0,
+                            alignment: WrapAlignment.start,
+                            children: group.variants.map<Widget>((variant) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() => selectedVariant = variant);
+                                },
+                                child: Hero(
+                                  tag: variant.name,
+                                  child: Transform.scale(
+                                    scale: 0.8,
+                                    child: VariantPreview(variant: variant),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
-                      Wrap(
-                        spacing: 24.0,
-                        runSpacing: 24.0,
-                        alignment: WrapAlignment.center,
-                        children: group.variants
-                            .map<Widget>(
-                              (VariantItem variant) =>
-                                  VariantPreview(variant: variant),
-                            )
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
+              ),
+
+              // RIGHT SIDE → zoomed detail preview
+              Expanded(
+                flex: 1,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  child: selectedVariant != null
+                      ? Hero(
+                          tag: selectedVariant!.name,
+                          child: Center(
+                            child: Transform.scale(
+                              scale: scale, // use slider scale here
+                              child: VariantPreview(
+                                variant: selectedVariant!,
+                                multiplier: .32,
+                                isExpanded: true,
+                              ),
+                            ),
+                          ),
+                        )
+                      : const Center(
+                          child: Text(
+                            "Select a variant from the left panel",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                ),
+              ),
+            ],
           ),
         );
       },
