@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_3.dart';
 
 class OnboardingScreen1 extends ConsumerStatefulWidget {
   const OnboardingScreen1({super.key});
@@ -179,9 +179,12 @@ class _OnboardingScreen1State extends ConsumerState<OnboardingScreen1> {
                                   .read(onboardingControllerProvider.notifier)
                                   .markCompleted();
                               if (!context.mounted) return;
+                              // Navigator.pushReplacementNamed(
+                              //     context, RouteConstants.kSetPreferences);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                  builder: (context) => const AppHomeNavigationPage(),
+                                  builder: (context) =>
+                                      const SetPreferenceScreen(),
                                 ),
                               );
                             }

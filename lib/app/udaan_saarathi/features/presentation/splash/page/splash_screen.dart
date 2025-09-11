@@ -43,7 +43,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       final shouldShowOnboarding =
           await ref.read(onboardingControllerProvider.future);
       if (!mounted) return;
-      if (shouldShowOnboarding) {
+      if (!shouldShowOnboarding) {
+        // Navigator.pushReplacementNamed(context, RouteConstants.kOnboarding);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const OnboardingScreen1()),
         );
