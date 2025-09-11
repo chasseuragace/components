@@ -9,10 +9,11 @@ const Duration _kOnboardingRepeatAfter = Duration(days: 7);
 final onboardingControllerProvider = AsyncNotifierProvider<OnboardingController, bool>(
   OnboardingController.new,
 );
-
+// todo write test cases for this controller 
 class OnboardingController extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
+   
     final prefs = await SharedPreferences.getInstance();
     final iso = prefs.getString(_kLastOnboardingKey);
     if (iso == null || iso.isEmpty) {

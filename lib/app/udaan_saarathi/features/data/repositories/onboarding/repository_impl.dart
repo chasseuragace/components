@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../../../domain/entities/Onboarding/entity.dart';
-import '../../../domain/repositories/Onboarding/repository.dart';
-import '../../datasources/Onboarding/local_data_source.dart';
-import '../../datasources/Onboarding/remote_data_source.dart';
-import '../../models/Onboarding/model.dart';
+import '../../../domain/entities/onboarding/entity.dart';
+import '../../../domain/repositories/onboarding/repository.dart';
+import '../../datasources/onboarding/local_data_source.dart';
+import '../../datasources/onboarding/remote_data_source.dart';
+import '../../models/onboarding/model.dart';
 class OnboardingRepositoryImpl implements OnboardingRepository {
   final OnboardingLocalDataSource localDataSource;
   final OnboardingRemoteDataSource remoteDataSource;

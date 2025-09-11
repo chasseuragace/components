@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/onboarding_screen_1.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
 
@@ -46,7 +47,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       if (!shouldShowOnboarding) {
         // Navigator.pushReplacementNamed(context, RouteConstants.kOnboarding);
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const OnboardingScreen1()),
+          MaterialPageRoute(builder: (context) =>  OnboardingListPage()),
         );
       } else {
         Navigator.of(context).pushReplacement(

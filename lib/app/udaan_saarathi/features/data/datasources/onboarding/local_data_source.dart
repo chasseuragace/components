@@ -1,4 +1,4 @@
-import '../../models/Onboarding/model.dart';
+import '../../models/onboarding/model.dart';
 
 abstract class OnboardingLocalDataSource {
   Future<List<OnboardingModel>> getAllItems();
