@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
 
-class OnboardingScreen1 extends StatefulWidget {
+class OnboardingScreen1 extends ConsumerStatefulWidget {
   const OnboardingScreen1({super.key});
 
   @override
-  State<OnboardingScreen1> createState() => _OnboardingScreen1State();
+  ConsumerState<OnboardingScreen1> createState() => _OnboardingScreen1State();
 }
 
-class _OnboardingScreen1State extends State<OnboardingScreen1> {
+class _OnboardingScreen1State extends ConsumerState<OnboardingScreen1> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -164,15 +167,23 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
 
                         // Next/Get Started button
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_currentIndex < _onboardingData.length - 1) {
                               _pageController.nextPage(
                                 duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeInOut,
                               );
                             } else {
-                              // Handle get started action
-                              print("Get Started pressed");
+                              // Mark onboarding complete and go to home
+                              await ref
+                                  .read(onboardingControllerProvider.notifier)
+                                  .markCompleted();
+                              if (!context.mounted) return;
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const AppHomeNavigationPage(),
+                                ),
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(

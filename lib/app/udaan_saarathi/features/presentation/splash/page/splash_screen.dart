@@ -1,16 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/page/onboarding_screen_1.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/onboarding_screen_1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -34,11 +37,20 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _animationController.forward();
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        // Navigator.of(context).pushReplacementNamed('/onboarding');
+    Timer(const Duration(seconds: 3), () async {
+      if (!mounted) return;
+      // Decide destination using Riverpod onboarding controller
+      final shouldShowOnboarding =
+          await ref.read(onboardingControllerProvider.future);
+      if (!mounted) return;
+      if (shouldShowOnboarding) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => OnboardingScreen1()),
+          MaterialPageRoute(builder: (context) => const OnboardingScreen1()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (context) => const AppHomeNavigationPage()),
         );
       }
     });
@@ -66,7 +78,6 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const SizedBox(height: 80),
-
                     Expanded(
                       child: Center(
                         child: Column(
@@ -162,7 +173,6 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.only(bottom: 40),
                       child: Column(

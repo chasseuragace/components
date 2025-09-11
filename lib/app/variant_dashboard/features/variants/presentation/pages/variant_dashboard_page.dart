@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/onboarding_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/agency_detail/agency_detail_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/agency_detail/agency_detail_screen_2.dart';
@@ -16,7 +17,6 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/job_details/job_details_screen3.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/job_listings/job_listings_2.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/page/onboarding_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_2.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_3.dart';
@@ -381,7 +381,6 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
           name: 'Home V2 - List View',
           builder: (BuildContext context) => const HomePageVariant2(),
         ),
-
         VariantItem(
           name: 'Home V3 - View',
           builder: (BuildContext context) => const HomePageVariant4(),
@@ -490,7 +489,6 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
         ),
       ],
     ),
-
     VariantGroup(
       title: 'Job Listings Variants',
       variants: <VariantItem>[
