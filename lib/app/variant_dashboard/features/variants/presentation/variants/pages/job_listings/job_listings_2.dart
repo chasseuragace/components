@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/widgets/job_card.dart';
 
 class JobListings2 extends StatefulWidget {
   const JobListings2({super.key});
@@ -60,8 +59,8 @@ class _JobListings2State extends State<JobListings2> {
       if (_activeFilters['country'] != null &&
           _activeFilters['country'].isNotEmpty) {
         if (!job['location'].toLowerCase().contains(
-          _activeFilters['country'].toLowerCase(),
-        )) {
+              _activeFilters['country'].toLowerCase(),
+            )) {
           return false;
         }
       }
@@ -69,8 +68,8 @@ class _JobListings2State extends State<JobListings2> {
       if (_activeFilters['position'] != null &&
           _activeFilters['position'].isNotEmpty) {
         if (!job['title'].toLowerCase().contains(
-          _activeFilters['position'].toLowerCase(),
-        )) {
+              _activeFilters['position'].toLowerCase(),
+            )) {
           return false;
         }
       }
@@ -247,18 +246,18 @@ class _JobListings2State extends State<JobListings2> {
                     Expanded(
                       child:
                           _activeFilters.isNotEmpty || _searchQuery.isNotEmpty
-                          ? ActiveFiltersWidgetV2(
-                              activeFilters: _activeFilters,
-                              searchQuery: _searchQuery,
-                              onClearAll: _clearAllFilters,
-                              onRemoveFilter: (key) {
-                                setState(() {
-                                  _activeFilters.remove(key);
-                                  _applyFilters();
-                                });
-                              },
-                            )
-                          : const SizedBox.shrink(),
+                              ? ActiveFiltersWidgetV2(
+                                  activeFilters: _activeFilters,
+                                  searchQuery: _searchQuery,
+                                  onClearAll: _clearAllFilters,
+                                  onRemoveFilter: (key) {
+                                    setState(() {
+                                      _activeFilters.remove(key);
+                                      _applyFilters();
+                                    });
+                                  },
+                                )
+                              : const SizedBox.shrink(),
                     ),
                     GestureDetector(
                       onTap: _showSortModal,
@@ -375,7 +374,7 @@ class _JobListings2State extends State<JobListings2> {
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 16),
                     itemBuilder: (context, index) {
-                      return JobCardWidget(job: _filteredJobs[index]);
+                      return Container();
                     },
                   ),
           ),

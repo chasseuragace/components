@@ -1,7 +1,7 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/widgets/job_card.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/widgets/job_card_widget.dart';
 
 class HomePageVariant2 extends StatelessWidget {
   const HomePageVariant2({super.key});

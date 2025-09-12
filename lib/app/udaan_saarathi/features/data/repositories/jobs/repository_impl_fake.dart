@@ -1,29 +1,261 @@
 import 'package:dartz/dartz.dart';
+
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
 import '../../../domain/repositories/jobs/repository.dart';
 import '../../datasources/jobs/local_data_source.dart';
 import '../../datasources/jobs/remote_data_source.dart';
-import '../../models/jobs/model.dart';
-// Fake data for Jobss
-      final remoteItems = [
-        JobsModel(
 
-            rawJson: {},
-          id: '1',
-          name: 'Admin',
+// Fake data for Jobss
+// final remoteItems = [
+//   JobsModel(
+//     rawJson: {},
+//     id: '1',
+//     name: 'Admin',
+//   ),
+//   JobsModel(
+//     rawJson: {},
+//     id: '2',
+//     name: 'User',
+//   ),
+//   JobsModel(
+//     rawJson: {},
+//     id: '3',
+//     name: 'Guest',
+//   ),
+// ];
+
+final List<JobsEntity> jobPostings = [
+  JobsEntity(
+    isFeatured: true,
+    id: "job_001",
+    postingTitle: "UAE-Welder-High",
+    country: "UAE",
+    city: "Dubai",
+    announcementType: "full_ad",
+    postingDateAd: DateTime.parse("2025-09-11"),
+    notes: "Looking for experienced welders for a large construction project.",
+    agency: Agency(
+      name: "A",
+      licenseNumber: "LIC-AF-1",
+    ),
+    employer: Employer(
+        companyName: "UAE Co 1",
+        country: "UAE",
+        city: "Dubai",
+        companyLogo: ''),
+    contract: Contract(
+      periodYears: 2,
+      renewable: true,
+      hoursPerDay: 8,
+      daysPerWeek: 6,
+      overtimePolicy: "paid",
+      weeklyOffDays: 1,
+      food: "free",
+      accommodation: "free",
+      transport: "paid",
+      annualLeaveDays: 14,
+    ),
+    positions: [
+      Position(
+        title: "Welder",
+        vacancies: Vacancies(male: 5, female: 0, total: 5),
+        salary: Salary(
+          monthlyAmount: 1500,
+          currency: "AED",
+          converted: [
+            ConvertedSalary(amount: 410, currency: "USD"),
+            ConvertedSalary(amount: 55000, currency: "NPR"),
+          ],
         ),
-        JobsModel(
-        rawJson: {},
-          id: '2',
-          name: 'User',
+        overrides: Overrides(),
+      ),
+    ],
+    skills: ["industrial-welding", "arc-welding"],
+    educationRequirements: ["technical-diploma"],
+    experienceRequirements: ExperienceRequirements(minYears: 2),
+    canonicalTitles: ["Welder"],
+    expenses: Expenses(
+      medical: [
+        MedicalExpense(
+          domestic: ExpenseDetail(
+            whoPays: "worker",
+            isFree: false,
+            amount: 2000,
+            currency: "NPR",
+          ),
+          foreign: ExpenseDetail(
+            whoPays: "company",
+            isFree: true,
+          ),
         ),
-        JobsModel(
-        rawJson: {},
-          id: '3',
-          name: 'Guest',
+      ],
+      insurance: [GenericExpense(whoPays: "company", isFree: true)],
+      travel: [
+        TravelExpense(
+          whoProvides: "company",
+          ticketType: "round_trip",
+          isFree: false,
+          amount: 800,
+          currency: "AED",
         ),
-      ];
+      ],
+      visaPermit: [GenericExpense(whoPays: "company", isFree: true)],
+      training: [
+        TrainingExpense(
+          whoPays: "worker",
+          isFree: false,
+          amount: 50,
+          currency: "AED",
+          durationDays: 2,
+        ),
+      ],
+      welfareService: [
+        WelfareExpense(
+          welfareWhoPays: "worker",
+          welfareIsFree: false,
+          welfareAmount: 100,
+          welfareCurrency: "AED",
+        ),
+      ],
+    ),
+    interview: true,
+    cutoutUrl: "/public/LIC-AF-1/job_001/cutout.svg",
+    fitnessScore: 67,
+  ),
+  JobsEntity(
+    id: "job_002",
+    postingTitle: "Qatar-Electrician",
+    country: "Qatar",
+    city: "Doha",
+    announcementType: "full_ad",
+    postingDateAd: DateTime.parse("2025-08-30"),
+    notes: "Electricians needed for commercial wiring projects.",
+    agency: Agency(name: "Bright Recruitment", licenseNumber: "LIC-QT-22"),
+    isFeatured: false,
+    employer: Employer(
+      companyLogo: '',
+      companyName: "Qatar Power Solutions",
+      country: "Qatar",
+      city: "Doha",
+    ),
+    contract: Contract(
+      periodYears: 3,
+      renewable: true,
+      hoursPerDay: 9,
+      daysPerWeek: 6,
+      overtimePolicy: "paid",
+      weeklyOffDays: 1,
+      food: "free",
+      accommodation: "provided",
+      transport: "paid",
+      annualLeaveDays: 21,
+    ),
+    positions: [
+      Position(
+        title: "Electrician",
+        vacancies: Vacancies(male: 10, female: 0, total: 10),
+        salary: Salary(
+          monthlyAmount: 1800,
+          currency: "QAR",
+          converted: [
+            ConvertedSalary(amount: 495, currency: "USD"),
+            ConvertedSalary(amount: 67000, currency: "NPR"),
+          ],
+        ),
+        overrides: Overrides(),
+      ),
+    ],
+    skills: ["electrical-systems", "safety-procedures"],
+    educationRequirements: ["technical-diploma"],
+    experienceRequirements: ExperienceRequirements(minYears: 3),
+    canonicalTitles: ["Electrician"],
+    expenses: Expenses(
+      medical: [],
+      insurance: [GenericExpense(whoPays: "company", isFree: true)],
+      travel: [
+        TravelExpense(
+          whoProvides: "company",
+          ticketType: "one_way",
+          isFree: true,
+        ),
+      ],
+      visaPermit: [GenericExpense(whoPays: "company", isFree: true)],
+      training: [],
+      welfareService: [],
+    ),
+    interview: false,
+    cutoutUrl: "/public/LIC-QT-22/job_002/cutout.svg",
+    fitnessScore: 72,
+  ),
+  JobsEntity(
+    id: "job_003",
+    postingTitle: "Saudi-Heavy Driver",
+    country: "Saudi Arabia",
+    city: "Riyadh",
+    announcementType: "short_ad",
+    postingDateAd: DateTime.parse("2025-09-05"),
+    notes:
+        "Urgent requirement for heavy vehicle drivers with valid GCC license.",
+    agency: Agency(name: "TransHire", licenseNumber: "LIC-SA-12"),
+    isFeatured: true,
+    employer: Employer(
+      companyLogo: '',
+      companyName: "Riyadh Transport Co.",
+      country: "Saudi Arabia",
+      city: "Riyadh",
+    ),
+    contract: Contract(
+      periodYears: 2,
+      renewable: false,
+      hoursPerDay: 10,
+      daysPerWeek: 6,
+      overtimePolicy: "paid",
+      weeklyOffDays: 1,
+      food: "allowance",
+      accommodation: "free",
+      transport: "company-provided",
+      annualLeaveDays: 30,
+    ),
+    positions: [
+      Position(
+        title: "Heavy Driver",
+        vacancies: Vacancies(male: 8, female: 0, total: 8),
+        salary: Salary(
+          monthlyAmount: 2200,
+          currency: "SAR",
+          converted: [
+            ConvertedSalary(amount: 586, currency: "USD"),
+            ConvertedSalary(amount: 79000, currency: "NPR"),
+          ],
+        ),
+        overrides: Overrides(),
+      ),
+    ],
+    skills: ["truck-driving", "road-safety"],
+    educationRequirements: ["high-school"],
+    experienceRequirements: ExperienceRequirements(minYears: 4),
+    canonicalTitles: ["Driver"],
+    expenses: Expenses(
+      medical: [],
+      insurance: [GenericExpense(whoPays: "company", isFree: true)],
+      travel: [
+        TravelExpense(
+          whoProvides: "company",
+          ticketType: "one_way",
+          isFree: true,
+        ),
+      ],
+      visaPermit: [GenericExpense(whoPays: "company", isFree: true)],
+      training: [],
+      welfareService: [],
+    ),
+    interview: true,
+    cutoutUrl: "/public/LIC-SA-12/job_003/cutout.svg",
+    fitnessScore: 75,
+  ),
+];
+
 class JobsRepositoryFake implements JobsRepository {
   final JobsLocalDataSource localDataSource;
   final JobsRemoteDataSource remoteDataSource;
@@ -36,12 +268,10 @@ class JobsRepositoryFake implements JobsRepository {
   @override
   Future<Either<Failure, List<JobsEntity>>> getAllItems() async {
     try {
-    
-
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-      return right(remoteItems.map((model) => model).toList());
+      return right(jobPostings.map((model) => model).toList());
     } catch (error) {
       return left(ServerFailure());
     }
@@ -50,11 +280,10 @@ class JobsRepositoryFake implements JobsRepository {
   @override
   Future<Either<Failure, JobsEntity?>> getItemById(String id) async {
     try {
-    
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-      final remoteItem = remoteItems.firstWhere((item) => item.id == id,
+      final remoteItem = jobPostings.firstWhere((item) => item.id == id,
           orElse: () => throw "Not found");
       return right(remoteItem);
     } catch (error) {

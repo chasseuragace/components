@@ -45,14 +45,16 @@
   "experience_requirements": { "min_years": 2 },
   "canonical_titles": ["Welder"],
   "expenses": {
-    "medical": [],
-    "insurance": [],
-    "travel": [],
-    "visa_permit": [],
-    "training": [],
-    "welfare_service": []
+    "medical": [
+      { "domestic": { "who_pays": "worker", "is_free": false, "amount": 2000, "currency": "NPR" }, "foreign": { "who_pays": "company", "is_free": true } }
+    ],
+    "insurance": [ { "who_pays": "company", "is_free": true } ],
+    "travel": [ { "who_provides": "company", "ticket_type": "round_trip", "is_free": false, "amount": 800, "currency": "AED" } ],
+    "visa_permit": [ { "who_pays": "company", "is_free": true, "refundable": false } ],
+    "training": [ { "who_pays": "worker", "is_free": false, "amount": 50, "currency": "AED", "duration_days": 2 } ],
+    "welfare_service": [ { "welfare_who_pays": "worker", "welfare_is_free": false, "welfare_amount": 100, "welfare_currency": "AED" } ]
   },
-  "interview": null,
+  "interview": true,
   "cutout_url": "/public/LIC-AF-1/<jobId>/cutout.svg",
   "fitness_score": 67
 }

@@ -85,7 +85,6 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
                   ),
                 ),
               ),
-
               SliverToBoxAdapter(
                 child: Column(
                   children: [
@@ -101,7 +100,6 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
               ),
             ],
           ),
-
           if (_showReviewModal) _buildReviewModal(),
         ],
       ),
@@ -1114,23 +1112,23 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
                     child: ElevatedButton(
                       onPressed:
                           _userRating > 0 && _reviewController.text.isNotEmpty
-                          ? () {
-                              // Submit review logic here
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Review submitted successfully!',
-                                  ),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                              setState(() {
-                                _showReviewModal = false;
-                                _userRating = 0.0;
-                                _reviewController.clear();
-                              });
-                            }
-                          : null,
+                              ? () {
+                                  // Submit review logic here
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Review submitted successfully!',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  setState(() {
+                                    _showReviewModal = false;
+                                    _userRating = 0.0;
+                                    _reviewController.clear();
+                                  });
+                                }
+                              : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue[600],
                         foregroundColor: Colors.white,
