@@ -1,3 +1,4 @@
+import '../../../data/models/job_title/model.dart';
 import '../../../presentation/preferences/models/job_title_models.dart';
 import '../../base_entity.dart';
 

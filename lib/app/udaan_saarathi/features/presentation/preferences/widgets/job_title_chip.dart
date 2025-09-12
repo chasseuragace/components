@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
+
+import '../../../data/models/job_title/model.dart';
 
 class JobTitleChip extends StatelessWidget {
   const JobTitleChip({

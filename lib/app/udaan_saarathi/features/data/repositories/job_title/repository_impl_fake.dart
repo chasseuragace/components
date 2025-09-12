@@ -8,22 +8,7 @@ import '../../datasources/job_title/remote_data_source.dart';
 import '../../models/job_title/model.dart';
 // Fake data for JobTitles
       final remoteItems = [
-        JobTitleModel(
-
-            rawJson: {},
-          id: '1',
-          title: 'Admin',
-        ),
-        JobTitleModel(
-        rawJson: {},
-          id: '2',
-          title: 'User',
-        ),
-        JobTitleModel(
-        rawJson: {},
-          id: '3',
-          title: 'Guest',
-        ),
+       
       ];
 class JobTitleRepositoryFake implements JobTitleRepository {
   final JobTitleLocalDataSource localDataSource;
@@ -44,7 +29,7 @@ final aip = Openapi(basePathOverride: "http://localhost:3000").getJobTitlesApi()
 
       final rawList = response.data?.data ?? [];
       final items = rawList
-          .map((model) => JobTitleModel.fromJson(model.toJson()))
+          .map((model) => JobTitle.fromJson(model.toJson()))
           .toList();
       return right(items);
     } catch (error) {

@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_title/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/job_title_chip.dart';
 
-class JobTitlesByCategory extends StatelessWidget {
+import '../../../data/models/job_title/model.dart';
+
+class JobTitlesByCategory extends ConsumerWidget {
   const JobTitlesByCategory({
     super.key,
-    required this.availableJobTitles,
+    this.availableJobTitles,
     required this.selectedJobTitles,
     required this.onAdd,
   });
 
-  final List<JobTitle> availableJobTitles;
+  final List<JobTitle>? availableJobTitles;
   final List<JobTitleWithPriority> selectedJobTitles;
   final void Function(JobTitle) onAdd;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final jobTitleState = ref.watch(getAllJobTitleProvider);
+    if(availableJobTitles!=null) return body(availableJobTitles);
+    return jobTitleState.when(
+      data: (items) => items.isEmpty
+          ? Center(child: Text('No items available'))
+          : body(items),
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text(error.toString())),
+    );
+  }
+
+  Column body(availableJobTitles) {
     final Map<String, List<JobTitle>> categorizedJobs = {};
 
     for (final job in availableJobTitles) {
@@ -64,7 +80,8 @@ class JobTitlesByCategory extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: jobs
-                        .map((job) => JobTitleChip(job: job, onTap: () => onAdd(job)))
+                        .map((job) =>
+                            JobTitleChip(job: job, onTap: () => onAdd(job)))
                         .toList(),
                   ),
                 ],

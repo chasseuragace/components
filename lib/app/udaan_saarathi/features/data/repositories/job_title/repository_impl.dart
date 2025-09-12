@@ -37,7 +37,7 @@ class JobTitleRepositoryImpl implements JobTitleRepository {
   @override
   Future<Either<Failure, Unit>> addItem(JobTitleEntity entity) async {
     try {
-      await remoteDataSource.addItem((entity as JobTitleModel));
+      await remoteDataSource.addItem((entity as JobTitle));
       return right(unit);
     } catch (error) {
       return left(ServerFailure());
@@ -47,7 +47,7 @@ class JobTitleRepositoryImpl implements JobTitleRepository {
   @override
   Future<Either<Failure, Unit>> updateItem(JobTitleEntity entity) async {
     try {
-      await remoteDataSource.updateItem((entity as JobTitleModel));
+      await remoteDataSource.updateItem((entity as JobTitle));
       return right(unit);
     } catch (error) {
       return left(ServerFailure());
@@ -65,7 +65,7 @@ class JobTitleRepositoryImpl implements JobTitleRepository {
   }
 }
 extension model on JobTitleEntity {
-  JobTitleModel toModel() {
+  JobTitle toModel() {
     throw UnimplementedError();
   }
 }

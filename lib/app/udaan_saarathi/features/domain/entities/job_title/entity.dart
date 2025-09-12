@@ -16,9 +16,9 @@ abstract class JobTitleEntity extends BaseEntity {
   final String id;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final String? title;
+  final String title;
   final int? rank;
-  final bool? isActive;
+  final bool isActive;
   final String? difficulty;
   final String? skillsSummary;
   final String? description;
@@ -27,9 +27,9 @@ abstract class JobTitleEntity extends BaseEntity {
     required this.id,
     this.createdAt,
     this.updatedAt,
-    this.title,
+   required this.title,
     this.rank,
-    this.isActive,
+   required  this.isActive,
     this.difficulty,
     this.skillsSummary,
     this.description,

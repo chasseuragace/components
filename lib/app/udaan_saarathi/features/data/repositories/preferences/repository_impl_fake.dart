@@ -3,9 +3,10 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/preferences/entity.dart';
 import '../../../domain/repositories/preferences/repository.dart';
-import '../../../presentation/preferences/models/job_title_models.dart';
+
 import '../../datasources/preferences/local_data_source.dart';
 import '../../datasources/preferences/remote_data_source.dart';
+import '../../models/job_title/model.dart';
 import '../../models/preferences/model.dart';
 
 // Fake data for Preferencess
@@ -170,6 +171,7 @@ final remoteItems = [
     name: 'Guest',
   ),
 ];
+
 final List<String> gulfCountries = [
   'Qatar',
   'UAE (Dubai)',
@@ -266,76 +268,76 @@ final List<String> contractDurations = [
 ];
 final List<JobTitle>  availableJobTitles = [
   JobTitle(
-    id: 1,
+    id: '',
     title: 'Waiter/Waitress',
     category: 'Hospitality',
     isActive: true,
   ),
-  JobTitle(id: 2, title: 'Chef', category: 'Hospitality', isActive: true),
-  JobTitle(id: 3, title: 'Cook', category: 'Hospitality', isActive: true),
+  JobTitle(id: "2", title: 'Chef', category: 'Hospitality', isActive: true),
+  JobTitle(id: "3", title: 'Cook', category: 'Hospitality', isActive: true),
   JobTitle(
-    id: 4,
+    id: "4",
     title: 'Kitchen Helper',
     category: 'Hospitality',
     isActive: true,
   ),
-  JobTitle(id: 5, title: 'Barista', category: 'Hospitality', isActive: true),
-  JobTitle(id: 6, title: 'Plumber', category: 'Construction', isActive: true),
+  JobTitle(id: "5", title: 'Barista', category: 'Hospitality', isActive: true),
+  JobTitle(id: "6", title: 'Plumber', category: 'Construction', isActive: true),
   JobTitle(
-    id: 7,
+    id: "7",
     title: 'Electrician',
     category: 'Construction',
     isActive: true,
   ),
   JobTitle(
-    id: 8,
+    id: "8",
     title: 'Construction Worker',
     category: 'Construction',
     isActive: true,
   ),
-  JobTitle(id: 9, title: 'Painter', category: 'Construction', isActive: true),
+  JobTitle(id: "9", title: 'Painter', category: 'Construction', isActive: true),
   JobTitle(
-    id: 10,
+    id: "10",
     title: 'Driver',
     category: 'Transportation',
     isActive: true,
   ),
   JobTitle(
-    id: 11,
+    id: "11",
     title: 'Delivery Driver',
     category: 'Transportation',
     isActive: true,
   ),
   JobTitle(
-    id: 12,
+    id: "12",
     title: 'Taxi Driver',
     category: 'Transportation',
     isActive: true,
   ),
   JobTitle(
-    id: 13,
+    id: "13",
     title: 'Gardener',
     category: 'Maintenance',
     isActive: true,
   ),
-  JobTitle(id: 14, title: 'Cleaner', category: 'Maintenance', isActive: true),
+  JobTitle(id: "14", title: 'Cleaner', category: 'Maintenance', isActive: true),
   JobTitle(
-    id: 15,
+    id: "15",
     title: 'Security Guard',
     category: 'Security',
     isActive: true,
   ),
   JobTitle(
-    id: 16,
+    id: "16",
     title: 'Housekeeping',
     category: 'Hospitality',
     isActive: true,
   ),
-  JobTitle(id: 17, title: 'Mechanic', category: 'Automotive', isActive: true),
-  JobTitle(id: 18, title: 'Welder', category: 'Construction', isActive: true),
-  JobTitle(id: 19, title: 'Salesperson', category: 'Retail', isActive: true),
+  JobTitle(id: "17", title: 'Mechanic', category: 'Automotive', isActive: true),
+  JobTitle(id: "18", title: 'Welder', category: 'Construction', isActive: true),
+  JobTitle(id: "19", title: 'Salesperson', category: 'Retail', isActive: true),
   JobTitle(
-    id: 20,
+    id: "20",
     title: 'Office Assistant',
     category: 'Administration',
     isActive: true,

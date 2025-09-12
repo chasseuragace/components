@@ -1,17 +1,19 @@
 import '../../../domain/entities/job_title/entity.dart';
 
-class JobTitleModel extends JobTitleEntity {
-  JobTitleModel({
+class JobTitle extends JobTitleEntity {
+  final String category;
+
+  JobTitle( {
     required String id,
     Map rawJson = const {},
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? title,
+   required String title,
     int? rank,
-    bool? isActive,
+   required bool isActive,
     String? difficulty,
     String? skillsSummary,
-    String? description,
+    String? description,  this. category= 'All Categories',
   }) : super(
           id: id,
           rawJson: rawJson,
@@ -25,17 +27,17 @@ class JobTitleModel extends JobTitleEntity {
           description: description,
         );
 
-  factory JobTitleModel.fromJson(Map<String, dynamic> json) {
-    return JobTitleModel(
+  factory JobTitle.fromJson(Map<String, dynamic> json) {
+    return JobTitle(
       id: json['id'] as String,
       rawJson: json,
       createdAt: _parseDateTime(json['created_at']),
       updatedAt: _parseDateTime(json['updated_at']),
-      title: json['title'] as String?,
+      title: json['title'] as String,
       rank: json['rank'] is int
           ? json['rank'] as int
           : (json['rank'] is num ? (json['rank'] as num).toInt() : null),
-      isActive: json['is_active'] as bool?,
+      isActive: json['is_active'] as bool,
       difficulty: json['difficulty'] as String?,
       skillsSummary: json['skills_summary'] as String?,
       description: json['description'] as String?,

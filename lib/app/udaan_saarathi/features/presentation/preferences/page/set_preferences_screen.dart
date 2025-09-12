@@ -9,6 +9,8 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/prefe
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 
+import '../../../data/models/job_title/model.dart';
+
 // Removed conflicting import that defines JobTitle and JobTitleWithPriority
 // import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
 
@@ -453,21 +455,25 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
                   ),
                 ],
               ),
-              child: ReorderableListView(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                onReorder: _reorderJobTitles,
-                children: selectedJobTitles.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  JobTitleWithPriority jobTitle = entry.value;
-
-                  return SelectedJobTitleCard(
-                    key: ValueKey(jobTitle.jobTitle.id),
-                    item: jobTitle,
-                    index: index,
-                    onRemove: () => _removeJobTitle(jobTitle),
-                  );
-                }).toList(),
+              child: AnimatedSize(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeOutBack,
+                child: ReorderableListView(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  onReorder: _reorderJobTitles,
+                  children: selectedJobTitles.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    JobTitleWithPriority jobTitle = entry.value;
+                
+                    return SelectedJobTitleCard(
+                      key: ValueKey(jobTitle.jobTitle.id),
+                      item: jobTitle,
+                      index: index,
+                      onRemove: () => _removeJobTitle(jobTitle),
+                    );
+                  }).toList(),
+                ),
               ),
             ),
             SizedBox(height: 24),
