@@ -1,7 +1,8 @@
-// lib/features/Onboarding/presentation/pages/list.dart
+// lib/features/onboarding/presentation/pages/list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../domain/entities/Onboarding/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/onboarding_screen_1.dart';
+import '../../../domain/entities/onboarding/entity.dart';
 import '../providers/providers.dart';
 
 class OnboardingListPage extends ConsumerStatefulWidget {
@@ -16,56 +17,26 @@ class _OnboardingListPageState extends ConsumerState<OnboardingListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final OnboardingState = ref.watch(getAllOnboardingProvider);
+    final onboardingState = ref.watch(getAllOnboardingProvider);
       listenToDeleteOnboardingAction(context);
       // TODO: Set up listeners for other actions
       // listenToAddOnboardingAction(context);
       // listenToUpdateOnboardingAction(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Onboarding List'),
-      ),
-      body: OnboardingState.when(
+      
+      body: onboardingState.when(
         data: (items) => items.isEmpty
             ? Center(child: Text('No items available'))
-            : ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return ListTile(
-                    title: Text(item.runtimeType.toString()), // Adjust this based on your entity properties
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            _showEditDialog(context, ref, item);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            _showDeleteConfirmation(context, ref, item.id);
-                          },
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      // Handle item tap, e.g., navigate to detail page
-                    },
-                  );
-                },
-              ),
+            : OnboardingScreen1(onboardingData: items,),
         loading: () => Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(child: Text(error.toString())),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddDialog(context, ref);
-        },
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     _showAddDialog(context, ref);
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
     );
   }
 

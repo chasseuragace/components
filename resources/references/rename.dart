@@ -14,8 +14,15 @@ void main(List<String> args) async {
 Future<void> processDirectory(Directory directory) async {
   try {
     await for (final entity in directory.list(recursive: true)) {
+     
       if (entity is File && entity.path.endsWith('.dart')) {
         await processFile(entity);
+      }
+      else if(entity is Directory){
+        await  processDirectory(entity);
+      }
+      else {
+        print("skipping");
       }
     }
   } catch (e) {
@@ -36,6 +43,7 @@ Future<void> processFile(File file) async {
         final originalLine = line;
         // Convert the path part to lowercase
         final pattern = RegExp("'([^']+)'|\"([^\"]+)\"");
+        
         line = line.replaceAllMapped(pattern, (match) {
           final path = match.group(1) ?? match.group(2) ?? '';
           if (path.contains(RegExp('[A-Z]'))) {

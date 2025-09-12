@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
-import '../../entities/Onboarding/entity.dart';
+
 import '../../../../core/errors/failures.dart';
+import '../../entities/onboarding/entity.dart';
 
 abstract class OnboardingRepository {
   Future<Either<Failure, List<OnboardingEntity>>> getAllItems();
