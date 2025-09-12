@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
 
 class SetPreferences3 extends StatelessWidget {
   const SetPreferences3({super.key});
@@ -1658,23 +1659,3 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
 }
 
 // Data Models
-class JobTitle {
-  final int id;
-  final String title;
-  final String category;
-  final bool isActive;
-
-  JobTitle({
-    required this.id,
-    required this.title,
-    required this.category,
-    required this.isActive,
-  });
-}
-
-class JobTitleWithPriority {
-  final JobTitle jobTitle;
-  int priority;
-
-  JobTitleWithPriority({required this.jobTitle, required this.priority});
-}
