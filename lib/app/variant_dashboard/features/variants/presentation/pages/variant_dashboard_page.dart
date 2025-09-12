@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/onboarding_screen_1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/agency_detail/agency_detail_screen_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/agency_detail/agency_detail_screen_2.dart';
@@ -22,7 +23,6 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/profile/profile_screen_3.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_2.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_2.dart';
 import 'package:variant_dashboard/app/variant_dashboard/home_page_variant_4/presentation/home_page_variant4.dart';
@@ -515,7 +515,7 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
         ),
         VariantItem(
           name: 'Preferences V3',
-          builder: (BuildContext context) => const SetPreferences3(),
+          builder: (BuildContext context) => const SetPreferenceScreen(),
         ),
       ],
     ),

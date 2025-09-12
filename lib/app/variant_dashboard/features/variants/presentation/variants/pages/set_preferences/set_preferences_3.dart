@@ -301,8 +301,8 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
                     color: isCompleted
                         ? Color(0xFF10B981)
                         : isActive
-                        ? Color(0xFF1E88E5)
-                        : Color(0xFFE2E8F0),
+                            ? Color(0xFF1E88E5)
+                            : Color(0xFFE2E8F0),
                   ),
                 ),
               );
@@ -600,9 +600,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             Icons.public,
             Color(0xFF059669),
           ),
-
           SizedBox(height: 24),
-
           _buildMultiSelectSection(
             'Gulf Countries',
             gulfCountries,
@@ -610,9 +608,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             (country) => _toggleSelection(selectedCountries, country),
             Color(0xFF059669),
           ),
-
           SizedBox(height: 24),
-
           _buildMultiSelectSection(
             'Preferred Work Locations',
             workLocations,
@@ -689,9 +685,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             Icons.business,
             Color(0xFF7C2D12),
           ),
-
           SizedBox(height: 24),
-
           _buildSingleSelectSection(
             'Company Size',
             companySizes,
@@ -699,9 +693,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             (size) => setState(() => selectedCompanySize = size),
             Color(0xFF7C2D12),
           ),
-
           SizedBox(height: 24),
-
           _buildMultiSelectSection(
             'Work Culture',
             workCulture,
@@ -709,9 +701,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             (culture) => _toggleSelection(selectedWorkCulture, culture),
             Color(0xFF059669),
           ),
-
           SizedBox(height: 24),
-
           _buildMultiSelectSection(
             'Preferred Agencies/Employers',
             agencies,
@@ -719,9 +709,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             (agency) => _toggleSelection(selectedAgencies, agency),
             Color(0xFF0891B2),
           ),
-
           SizedBox(height: 24),
-
           _buildTrainingSupportSection(),
         ],
       ),
@@ -740,9 +728,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             Icons.description,
             Color(0xFF7C3AED),
           ),
-
           SizedBox(height: 24),
-
           _buildSingleSelectSection(
             'Contract Duration',
             contractDurations,
@@ -750,9 +736,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             (duration) => setState(() => contractDuration = duration),
             Color(0xFF7C3AED),
           ),
-
           SizedBox(height: 24),
-
           _buildMultiSelectSection(
             'Desired Work Benefits',
             workBenefits,
@@ -802,9 +786,12 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             ),
 
           // Salary Summary
-          _buildReviewSection('Salary Range', [
-            'USD ${salaryRange['min']!.round()} - ${salaryRange['max']!.round()} per month',
-          ], Color(0xFFDC2626)),
+          _buildReviewSection(
+              'Salary Range',
+              [
+                'USD ${salaryRange['min']!.round()} - ${salaryRange['max']!.round()} per month',
+              ],
+              Color(0xFFDC2626)),
 
           // Other preferences summaries...
           if (selectedIndustries.isNotEmpty)
@@ -815,9 +802,12 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             ),
 
           if (selectedExperienceLevel.isNotEmpty)
-            _buildReviewSection('Experience Level', [
-              selectedExperienceLevel,
-            ], Color(0xFFEA580C)),
+            _buildReviewSection(
+                'Experience Level',
+                [
+                  selectedExperienceLevel,
+                ],
+                Color(0xFFEA580C)),
         ],
       ),
     );
@@ -965,9 +955,8 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
                       style: TextStyle(
                         color: isSelected ? color : Color(0xFF475569),
                         fontSize: 14,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
                   ),
@@ -1283,7 +1272,6 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
             ],
           ),
           SizedBox(height: 16),
-
           GestureDetector(
             onTap: () {
               setState(() {
@@ -1298,9 +1286,8 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
                     : Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: trainingSupport
-                      ? Color(0xFF059669)
-                      : Color(0xFFE2E8F0),
+                  color:
+                      trainingSupport ? Color(0xFF059669) : Color(0xFFE2E8F0),
                   width: trainingSupport ? 2 : 1,
                 ),
               ),
@@ -1477,9 +1464,7 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
                 ),
               ),
             ),
-
           if (currentStep > 0) SizedBox(width: 16),
-
           Expanded(
             flex: currentStep == 0 ? 1 : 2,
             child: ElevatedButton(
@@ -1623,9 +1608,8 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
 
   void _savePreferences() {
     // Validate job titles against active JobTitles
-    List<JobTitleWithPriority> validatedTitles = selectedJobTitles
-        .where((jt) => jt.jobTitle.isActive)
-        .toList();
+    List<JobTitleWithPriority> validatedTitles =
+        selectedJobTitles.where((jt) => jt.jobTitle.isActive).toList();
 
     // Simulate API call to save preferences
     Map<String, dynamic> preferences = {

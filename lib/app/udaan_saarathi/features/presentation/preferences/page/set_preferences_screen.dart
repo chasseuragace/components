@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/list.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart';
+
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
+
+final currentStepProvider = StateProvider((ref) => 0);
 
 class SetPreferenceScreen extends StatefulWidget {
   const SetPreferenceScreen({super.key});
@@ -108,116 +115,6 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       category: 'Administration',
       isActive: true,
     ),
-  ];
-
-  final List<String> gulfCountries = [
-    'Qatar',
-    'UAE (Dubai)',
-    'UAE (Abu Dhabi)',
-    'UAE (Sharjah)',
-    'Saudi Arabia (Riyadh)',
-    'Saudi Arabia (Jeddah)',
-    'Saudi Arabia (Dammam)',
-    'Kuwait',
-    'Bahrain',
-    'Oman',
-  ];
-
-  final List<String> industries = [
-    'Hospitality & Tourism',
-    'Construction & Infrastructure',
-    'Transportation & Logistics',
-    'Healthcare',
-    'Retail & Sales',
-    'Manufacturing',
-    'Oil & Gas',
-    'Real Estate',
-    'Information Technology',
-    'Banking & Finance',
-    'Education',
-    'Agriculture',
-  ];
-
-  final List<String> workLocations = [
-    'City Center',
-    'Industrial Area',
-    'Residential Area',
-    'Airport Area',
-    'Free Zone',
-    'Downtown',
-    'Suburbs',
-    'Port Area',
-    'Tourist Area',
-    'Business District',
-  ];
-
-  final List<String> workCulture = [
-    'International Team',
-    'Local Team',
-    'Mixed Culture',
-    'English Speaking',
-    'Arabic Speaking',
-    'Flexible Environment',
-    'Formal Environment',
-    'Family-Friendly',
-  ];
-
-  final List<String> agencies = [
-    'Government Approved Agency',
-    'Private Recruitment Agency',
-    'Direct Company Hiring',
-    'Online Job Portal',
-    'Reference/Network',
-    'Walk-in Interview',
-  ];
-
-  final List<String> companySizes = [
-    'Small (1-50 employees)',
-    'Medium (51-200 employees)',
-    'Large (201-1000 employees)',
-    'Very Large (1000+ employees)',
-  ];
-
-  final List<String> shiftPreferences = [
-    'Day Shift (6 AM - 6 PM)',
-    'Night Shift (6 PM - 6 AM)',
-    'Split Shift',
-    'Rotating Shifts',
-    'Weekend Shifts',
-    'Flexible Hours',
-  ];
-
-  final List<String> experienceLevels = [
-    'Entry Level (0-1 years)',
-    'Beginner (1-2 years)',
-    'Intermediate (2-5 years)',
-    'Experienced (5-10 years)',
-    'Expert (10+ years)',
-  ];
-
-  final List<String> contractDurations = [
-    '1 Year',
-    '2 Years',
-    '3 Years',
-    '4 Years',
-    '5 Years',
-    'Permanent',
-    'Project Based',
-  ];
-
-  final List<String> workBenefits = [
-    'Health Insurance',
-    'Paid Annual Leave',
-    'Accommodation Provided',
-    'Transportation Allowance',
-    'Food Allowance',
-    'Overtime Pay',
-    'End of Service Gratuity',
-    'Flight Ticket (Annual)',
-    'Family Visa',
-    'Training & Development',
-    'Performance Bonus',
-    'Mobile Allowance',
   ];
 
   @override
@@ -349,11 +246,12 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepHeader(
-            'Choose Your Preferred Job Titles',
-            'Select and prioritize job titles. Your top choice appears first.',
-            Icons.work_outline,
-            Color(0xFF3B82F6),
+          StepHeader(
+            title: 'Choose Your Preferred Job Titles',
+            subtitle:
+                'Select and prioritize job titles. Your top choice appears first.',
+            icon: Icons.work_outline,
+            color: Color(0xFF3B82F6),
           ),
 
           SizedBox(height: 24),
@@ -577,27 +475,28 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepHeader(
-            'Choose Your Target Countries',
-            'Select Gulf countries where you want to work.',
-            Icons.public,
-            Color(0xFF059669),
+          StepHeader(
+            title: 'Choose Your Target Countries',
+            subtitle: 'Select Gulf countries where you want to work.',
+            icon: Icons.public,
+            color: Color(0xFF059669),
           ),
           SizedBox(height: 24),
-          _buildMultiSelectSection(
-            'Gulf Countries',
-            gulfCountries,
-            selectedCountries,
-            (country) => _toggleSelection(selectedCountries, country),
-            Color(0xFF059669),
+          MultiSelectSection(
+            title: 'Gulf Countries',
+            options: gulfCountries,
+            selected: selectedCountries,
+            onToggle: (country) => _toggleSelection(selectedCountries, country),
+            color: Color(0xFF059669),
           ),
           SizedBox(height: 24),
-          _buildMultiSelectSection(
-            'Preferred Work Locations',
-            workLocations,
-            selectedWorkLocations,
-            (location) => _toggleSelection(selectedWorkLocations, location),
-            Color(0xFF0891B2),
+          MultiSelectSection(
+            title: 'Preferred Work Locations',
+            options: workLocations,
+            selected: selectedWorkLocations,
+            onToggle: (location) =>
+                _toggleSelection(selectedWorkLocations, location),
+            color: Color(0xFF0891B2),
           ),
         ],
       ),
@@ -610,11 +509,11 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepHeader(
-            'Salary & Work Preferences',
-            'Set your salary expectations and work preferences.',
-            Icons.attach_money,
-            Color(0xFFDC2626),
+          StepHeader(
+            title: 'Salary & Work Preferences',
+            subtitle: 'Set your salary expectations and work preferences.',
+            icon: Icons.attach_money,
+            color: Color(0xFFDC2626),
           ),
 
           SizedBox(height: 24),
@@ -624,32 +523,35 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
           SizedBox(height: 24),
 
-          _buildMultiSelectSection(
-            'Industries',
-            industries,
-            selectedIndustries,
-            (industry) => _toggleSelection(selectedIndustries, industry),
-            Color(0xFF7C3AED),
+          MultiSelectSection(
+            title: 'Industries',
+            options: industries,
+            selected: selectedIndustries,
+            onToggle: (industry) =>
+                _toggleSelection(selectedIndustries, industry),
+            color: Color(0xFF7C3AED),
           ),
 
           SizedBox(height: 24),
 
-          _buildSingleSelectSection(
-            'Experience Level',
-            experienceLevels,
-            selectedExperienceLevel,
-            (level) => setState(() => selectedExperienceLevel = level),
-            Color(0xFFEA580C),
+          SingleSelectSection(
+            title: 'Experience Level',
+            options: experienceLevels,
+            selected: selectedExperienceLevel,
+            onSelect: (level) =>
+                setState(() => selectedExperienceLevel = level),
+            color: Color(0xFFEA580C),
           ),
 
           SizedBox(height: 24),
 
-          _buildMultiSelectSection(
-            'Shift Preferences',
-            shiftPreferences,
-            selectedShiftPreferences,
-            (shift) => _toggleSelection(selectedShiftPreferences, shift),
-            Color(0xFF0891B2),
+          MultiSelectSection(
+            title: 'Shift Preferences',
+            options: shiftPreferences,
+            selected: selectedShiftPreferences,
+            onToggle: (shift) =>
+                _toggleSelection(selectedShiftPreferences, shift),
+            color: Color(0xFF0891B2),
           ),
         ],
       ),
@@ -662,35 +564,37 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepHeader(
-            'Company & Culture Preferences',
-            'Choose your preferred work environment and company type.',
-            Icons.business,
-            Color(0xFF7C2D12),
+          StepHeader(
+            title: 'Company & Culture Preferences',
+            subtitle:
+                'Choose your preferred work environment and company type.',
+            icon: Icons.business,
+            color: Color(0xFF7C2D12),
           ),
           SizedBox(height: 24),
-          _buildSingleSelectSection(
-            'Company Size',
-            companySizes,
-            selectedCompanySize,
-            (size) => setState(() => selectedCompanySize = size),
-            Color(0xFF7C2D12),
+          SingleSelectSection(
+            title: 'Company Size',
+            options: companySizes,
+            selected: selectedCompanySize,
+            onSelect: (size) => setState(() => selectedCompanySize = size),
+            color: Color(0xFF7C2D12),
           ),
           SizedBox(height: 24),
-          _buildMultiSelectSection(
-            'Work Culture',
-            workCulture,
-            selectedWorkCulture,
-            (culture) => _toggleSelection(selectedWorkCulture, culture),
-            Color(0xFF059669),
+          MultiSelectSection(
+            title: 'Work Culture',
+            options: workCulture,
+            selected: selectedWorkCulture,
+            onToggle: (culture) =>
+                _toggleSelection(selectedWorkCulture, culture),
+            color: Color(0xFF059669),
           ),
           SizedBox(height: 24),
-          _buildMultiSelectSection(
-            'Preferred Agencies/Employers',
-            agencies,
-            selectedAgencies,
-            (agency) => _toggleSelection(selectedAgencies, agency),
-            Color(0xFF0891B2),
+          MultiSelectSection(
+            title: 'Preferred Agencies/Employers',
+            options: agencies,
+            selected: selectedAgencies,
+            onToggle: (agency) => _toggleSelection(selectedAgencies, agency),
+            color: Color(0xFF0891B2),
           ),
           SizedBox(height: 24),
           _buildTrainingSupportSection(),
@@ -705,27 +609,27 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepHeader(
-            'Contract & Benefits',
-            'Select your contract duration and desired benefits.',
-            Icons.description,
-            Color(0xFF7C3AED),
+          StepHeader(
+            title: 'Contract & Benefits',
+            subtitle: 'Select your contract duration and desired benefits.',
+            icon: Icons.description,
+            color: Color(0xFF7C3AED),
           ),
           SizedBox(height: 24),
-          _buildSingleSelectSection(
-            'Contract Duration',
-            contractDurations,
-            contractDuration,
-            (duration) => setState(() => contractDuration = duration),
-            Color(0xFF7C3AED),
+          SingleSelectSection(
+            title: 'Contract Duration',
+            options: contractDurations,
+            selected: contractDuration,
+            onSelect: (duration) => setState(() => contractDuration = duration),
+            color: Color(0xFF7C3AED),
           ),
           SizedBox(height: 24),
-          _buildMultiSelectSection(
-            'Desired Work Benefits',
-            workBenefits,
-            selectedBenefits,
-            (benefit) => _toggleSelection(selectedBenefits, benefit),
-            Color(0xFF059669),
+          MultiSelectSection(
+            title: 'Desired Work Benefits',
+            options: workBenefits,
+            selected: selectedBenefits,
+            onToggle: (benefit) => _toggleSelection(selectedBenefits, benefit),
+            color: Color(0xFF059669),
           ),
         ],
       ),
@@ -738,11 +642,11 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepHeader(
-            'Review Your Preferences',
-            'Review and confirm your job preferences before saving.',
-            Icons.check_circle_outline,
-            Color(0xFF059669),
+          StepHeader(
+            title: 'Review Your Preferences',
+            subtitle: 'Review and confirm your job preferences before saving.',
+            icon: Icons.check_circle_outline,
+            color: Color(0xFF059669),
           ),
 
           SizedBox(height: 24),
@@ -791,264 +695,6 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
                   selectedExperienceLevel,
                 ],
                 Color(0xFFEA580C)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStepHeader(
-    String title,
-    String subtitle,
-    IconData icon,
-    Color color,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: Colors.white, size: 24),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMultiSelectSection(
-    String title,
-    List<String> options,
-    List<String> selected,
-    Function(String) onToggle,
-    Color color,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.05),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
-                if (selected.isNotEmpty) ...[
-                  Spacer(),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${selected.length}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: options.map((option) {
-                bool isSelected = selected.contains(option);
-                return GestureDetector(
-                  onTap: () => onToggle(option),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.withOpacity(0.1)
-                          : Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(
-                        color: isSelected ? color : Color(0xFFE2E8F0),
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Text(
-                      option,
-                      style: TextStyle(
-                        color: isSelected ? color : Color(0xFF475569),
-                        fontSize: 14,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSingleSelectSection(
-    String title,
-    List<String> options,
-    String selected,
-    Function(String) onSelect,
-    Color color,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.05),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1E293B),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: options.map((option) {
-                bool isSelected = selected == option;
-                return GestureDetector(
-                  onTap: () => onSelect(option),
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 8),
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.withOpacity(0.1)
-                          : Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected ? color : Color(0xFFE2E8F0),
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected ? color : Color(0xFFCBD5E1),
-                              width: 2,
-                            ),
-                            color: isSelected ? color : Colors.transparent,
-                          ),
-                          child: isSelected
-                              ? Icon(Icons.check, size: 12, color: Colors.white)
-                              : null,
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            option,
-                            style: TextStyle(
-                              color: isSelected ? color : Color(0xFF475569),
-                              fontSize: 14,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
         ],
       ),
     );
@@ -1636,6 +1282,6 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     );
 
     // Navigate back or to next screen
-    Navigator.pop(context, preferences);
+    // Navigator.pop(context, preferences);
   }
 }

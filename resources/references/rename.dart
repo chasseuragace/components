@@ -4,7 +4,7 @@ void main(List<String> args) async {
   // Default directory or use the one provided as argument
   final rootDir = args.isNotEmpty
       ? args[0]
-      : '/Users/ajaydahal/code/variant_dashboard/lib/app/udaan_saarathi/features';
+      : '/Users/ajaydahal/portal/agency_research/code/variant_dashboard/lib/app/udaan_saarathi/features';
 
   print('Starting scan in directory: $rootDir');
   await processDirectory(Directory(rootDir));
