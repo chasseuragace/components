@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_3.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
 
 class OnboardingScreen1 extends ConsumerStatefulWidget {
   const OnboardingScreen1({super.key});
