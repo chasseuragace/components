@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/list.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
 
 class SetPreferenceScreen extends StatefulWidget {
@@ -220,6 +222,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return JobsListPage();
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFC),
       appBar: _buildAppBar(),
