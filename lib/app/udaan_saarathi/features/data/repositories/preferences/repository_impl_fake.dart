@@ -10,7 +10,140 @@ import '../../models/preferences/model.dart';
 // Fake data for Preferencess
 final remoteItems = [
   PreferencesModel(
-    rawJson: {},
+    rawJson: {
+      'steps': [
+        {
+          'type': 'builtin',
+          'key': 'job_titles',
+          'title': 'Job Titles (Priority Order)',
+          'subtitle': 'Select and prioritize job titles. Your top choice appears first.',
+          'icon': 'work_outline',
+          'color': 0xFF3B82F6
+        },
+        {
+          'title': 'Countries & Locations',
+          'subtitle': 'Select Gulf countries and preferred locations.',
+          'icon': 'public',
+          'color': 0xFF059669,
+          'sections': [
+            {
+              'id': 'countries',
+              'type': 'multi_select',
+              'title': 'Gulf Countries',
+              'source': 'gulfCountries',
+              'color': 0xFF059669
+            },
+            {
+              'id': 'work_locations',
+              'type': 'multi_select',
+              'title': 'Preferred Work Locations',
+              'source': 'workLocations',
+              'color': 0xFF0891B2
+            }
+          ]
+        },
+        {
+          'title': 'Salary & Work Preferences',
+          'subtitle': 'Set your salary expectations and work preferences.',
+          'icon': 'attach_money',
+          'color': 0xFFDC2626,
+          'sections': [
+            {
+              'id': 'salary',
+              'type': 'salary_range',
+              'title': 'Expected Monthly Salary (USD)',
+              'color': 0xFFDC2626
+            },
+            {
+              'id': 'industries',
+              'type': 'multi_select',
+              'title': 'Industries',
+              'source': 'industries',
+              'color': 0xFF7C3AED
+            },
+            {
+              'id': 'experience',
+              'type': 'single_select',
+              'title': 'Experience Level',
+              'source': 'experienceLevels',
+              'color': 0xFFEA580C
+            },
+            {
+              'id': 'shifts',
+              'type': 'multi_select',
+              'title': 'Shift Preferences',
+              'source': 'shiftPreferences',
+              'color': 0xFF0891B2
+            }
+          ]
+        },
+        {
+          'title': 'Company & Culture',
+          'subtitle': 'Choose your preferred work environment and company type.',
+          'icon': 'business',
+          'color': 0xFF7C2D12,
+          'sections': [
+            {
+              'id': 'company_size',
+              'type': 'single_select',
+              'title': 'Company Size',
+              'source': 'companySizes',
+              'color': 0xFF7C2D12
+            },
+            {
+              'id': 'work_culture',
+              'type': 'multi_select',
+              'title': 'Work Culture',
+              'source': 'workCulture',
+              'color': 0xFF059669
+            },
+            {
+              'id': 'agencies',
+              'type': 'multi_select',
+              'title': 'Preferred Agencies/Employers',
+              'source': 'agencies',
+              'color': 0xFF0891B2
+            },
+            {
+              'id': 'training',
+              'type': 'toggle',
+              'title': 'Training Support Required',
+              'color': 0xFF059669
+            }
+          ]
+        },
+        {
+          'title': 'Contract & Benefits',
+          'subtitle': 'Select your contract duration and desired benefits.',
+          'icon': 'description',
+          'color': 0xFF7C3AED,
+          'sections': [
+            {
+              'id': 'contract_duration',
+              'type': 'single_select',
+              'title': 'Contract Duration',
+              'source': 'contractDurations',
+              'color': 0xFF7C3AED
+            },
+            {
+              'id': 'benefits',
+              'type': 'multi_select',
+              'title': 'Desired Work Benefits',
+              'source': 'workBenefits',
+              'color': 0xFF059669
+            }
+          ]
+        },
+        {
+          'type': 'builtin',
+          'key': 'review',
+          'title': 'Review & Confirm',
+          'subtitle': 'Review and confirm your job preferences before saving.',
+          'icon': 'check_circle_outline',
+          'color': 0xFF059669
+        }
+      ]
+    },
     id: '1',
     name: 'Admin',
   ),

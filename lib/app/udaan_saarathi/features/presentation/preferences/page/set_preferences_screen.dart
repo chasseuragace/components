@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/list.dart';
+// import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
+// Removed conflicting import that defines JobTitle and JobTitleWithPriority
+// import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
 
 final currentStepProvider = StateProvider((ref) => 0);
 
@@ -117,17 +119,149 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     ),
   ];
 
+  // Steps configuration: loaded from repository fake's rawJson or falls back
+  // to a local default with two built-in steps (job_titles, review) and
+  // the middle steps rendered from config sections.
+  List<Map<String, dynamic>> get _stepsConfig {
+    try {
+      final steps = (remoteItems.first.rawJson['steps'] as List?)
+              ?.cast<Map<String, dynamic>>() ??
+          const [];
+      if (steps.isNotEmpty) return steps;
+    } catch (_) {}
+
+    // Fallback default
+    return [
+      {
+        'type': 'builtin',
+        'key': 'job_titles',
+        'title': 'Job Titles (Priority Order)'
+      },
+      {
+        'title': 'Countries & Locations',
+        'icon': 'public',
+        'color': 0xFF059669,
+        'sections': [
+          {
+            'id': 'countries',
+            'type': 'multi_select',
+            'title': 'Gulf Countries',
+            'source': 'gulfCountries',
+            'color': 0xFF059669
+          },
+          {
+            'id': 'work_locations',
+            'type': 'multi_select',
+            'title': 'Preferred Work Locations',
+            'source': 'workLocations',
+            'color': 0xFF0891B2
+          }
+        ]
+      },
+      {
+        'title': 'Salary & Work Preferences',
+        'icon': 'attach_money',
+        'color': 0xFFDC2626,
+        'sections': [
+          {
+            'id': 'salary',
+            'type': 'salary_range',
+            'title': 'Expected Monthly Salary (USD)',
+            'color': 0xFFDC2626
+          },
+          {
+            'id': 'industries',
+            'type': 'multi_select',
+            'title': 'Industries',
+            'source': 'industries',
+            'color': 0xFF7C3AED
+          },
+          {
+            'id': 'experience',
+            'type': 'single_select',
+            'title': 'Experience Level',
+            'source': 'experienceLevels',
+            'color': 0xFFEA580C
+          },
+          {
+            'id': 'shifts',
+            'type': 'multi_select',
+            'title': 'Shift Preferences',
+            'source': 'shiftPreferences',
+            'color': 0xFF0891B2
+          }
+        ]
+      },
+      {
+        'title': 'Company & Culture',
+        'icon': 'business',
+        'color': 0xFF7C2D12,
+        'sections': [
+          {
+            'id': 'company_size',
+            'type': 'single_select',
+            'title': 'Company Size',
+            'source': 'companySizes',
+            'color': 0xFF7C2D12
+          },
+          {
+            'id': 'work_culture',
+            'type': 'multi_select',
+            'title': 'Work Culture',
+            'source': 'workCulture',
+            'color': 0xFF059669
+          }
+        ]
+      },
+      {
+        'title': 'Contract & Benefits',
+        'icon': 'description',
+        'color': 0xFF7C3AED,
+        'sections': [
+          {
+            'id': 'contract_duration',
+            'type': 'single_select',
+            'title': 'Contract Duration',
+            'source': 'contractDurations',
+            'color': 0xFF7C3AED
+          },
+          {
+            'id': 'benefits',
+            'type': 'multi_select',
+            'title': 'Desired Work Benefits',
+            'source': 'workBenefits',
+            'color': 0xFF059669
+          }
+        ]
+      },
+      {
+        'type': 'builtin',
+        'key': 'review',
+        'title': 'Review & Confirm'
+      },
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return JobsListPage();
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFC),
       appBar: _buildAppBar(),
       body: Column(
         children: [
-          _buildProgressIndicator(),
+          PreferencesProgressIndicator(
+            currentStep: currentStep,
+            totalSteps: _stepsConfig.length,
+            stepTitle: _getStepTitle(currentStep),
+          ),
           Expanded(child: _buildStepContent()),
-          _buildBottomNavigation(),
+          PreferencesBottomNavigation(
+            currentStep: currentStep,
+            totalSteps: _stepsConfig.length,
+            onPrevious: _previousStep,
+            onNext: _nextStep,
+            isStepValid: _isStepValid,
+          ),
         ],
       ),
     );
@@ -161,82 +295,192 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     );
   }
 
-  Widget _buildProgressIndicator() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            children: List.generate(6, (index) {
-              bool isActive = index <= currentStep;
-              bool isCompleted = index < currentStep;
+  // Progress indicator extracted to PreferencesProgressIndicator
 
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 2),
-                  height: 4,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(2),
-                    color: isCompleted
-                        ? Color(0xFF10B981)
-                        : isActive
-                            ? Color(0xFF1E88E5)
-                            : Color(0xFFE2E8F0),
-                  ),
-                ),
-              );
-            }),
+  String _getStepTitle(int step) {
+    if (step < 0 || step >= _stepsConfig.length) return '';
+    final s = _stepsConfig[step] as Map<String, dynamic>;
+    return (s['title'] as String?) ?? '';
+  }
+
+  Widget _buildStepContent() {
+    if (_stepsConfig.isEmpty) return Container();
+    final step = _stepsConfig[currentStep] as Map<String, dynamic>;
+    final type = step['type'] as String?;
+    final key = step['key'] as String?;
+    if (type == 'builtin' && key == 'job_titles') {
+      return _buildJobTitlesStep();
+    }
+    if (type == 'builtin' && key == 'review') {
+      return _buildReviewStep();
+    }
+    return _buildConfigStep(step);
+  }
+
+  Widget _buildConfigStep(Map<String, dynamic> step) {
+    final String title = (step['title'] as String?) ?? '';
+    final String subtitle = (step['subtitle'] as String?) ?? '';
+    final int colorValue = (step['color'] as int?) ?? 0xFF1E88E5;
+    final String? iconName = step['icon'] as String?;
+    final sections = (step['sections'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          StepHeader(
+            title: title,
+            subtitle: subtitle,
+            icon: _iconFromName(iconName),
+            color: Color(colorValue),
           ),
-          SizedBox(height: 12),
-          Text(
-            '${currentStep + 1} of 6 - ${_getStepTitle(currentStep)}',
-            style: TextStyle(
-              color: Color(0xFF64748B),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          SizedBox(height: 24),
+          ...sections.map((section) => _buildSectionFromConfig(section)).toList(),
         ],
       ),
     );
   }
 
-  String _getStepTitle(int step) {
-    switch (step) {
-      case 0:
-        return 'Job Titles (Priority Order)';
-      case 1:
-        return 'Countries & Locations';
-      case 2:
-        return 'Salary & Work Preferences';
-      case 3:
-        return 'Company & Culture';
-      case 4:
-        return 'Contract & Benefits';
-      case 5:
-        return 'Review & Confirm';
+  Widget _buildSectionFromConfig(Map<String, dynamic> section) {
+    final String type = (section['type'] as String?) ?? '';
+    final String title = (section['title'] as String?) ?? '';
+    final int colorValue = (section['color'] as int?) ?? 0xFF1E88E5;
+    final String id = (section['id'] as String?) ?? '';
+
+    switch (type) {
+      case 'multi_select':
+        final options = _resolveOptions(section['source'] as String?);
+        final selected = _selectedListFor(id);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: MultiSelectSection(
+            title: title,
+            options: options,
+            selected: selected,
+            onToggle: (value) => _toggleSelection(selected, value),
+            color: Color(colorValue),
+          ),
+        );
+      case 'single_select':
+        final options = _resolveOptions(section['source'] as String?);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: SingleSelectSection(
+            title: title,
+            options: options,
+            selected: _selectedValueFor(id),
+            onSelect: (value) => setState(() => _setSelectedValue(id, value)),
+            color: Color(colorValue),
+          ),
+        );
+      case 'salary_range':
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: _buildSalaryRangeSection(),
+        );
+      case 'toggle':
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: _buildTrainingSupportSection(),
+        );
+      default:
+        return SizedBox.shrink();
+    }
+  }
+
+  IconData _iconFromName(String? name) {
+    switch (name) {
+      case 'work_outline':
+        return Icons.work_outline;
+      case 'public':
+        return Icons.public;
+      case 'attach_money':
+        return Icons.attach_money;
+      case 'business':
+        return Icons.business;
+      case 'description':
+        return Icons.description;
+      case 'check_circle_outline':
+        return Icons.check_circle_outline;
+      default:
+        return Icons.tune;
+    }
+  }
+
+  List<String> _resolveOptions(String? source) {
+    switch (source) {
+      case 'gulfCountries':
+        return gulfCountries;
+      case 'industries':
+        return industries;
+      case 'workLocations':
+        return workLocations;
+      case 'experienceLevels':
+        return experienceLevels;
+      case 'shiftPreferences':
+        return shiftPreferences;
+      case 'companySizes':
+        return companySizes;
+      case 'workCulture':
+        return workCulture;
+      case 'agencies':
+        return agencies;
+      case 'contractDurations':
+        return contractDurations;
+      case 'workBenefits':
+        return workBenefits;
+      default:
+        return const [];
+    }
+  }
+
+  // Selected state mappers for config-driven sections
+  List<String> _selectedListFor(String id) {
+    switch (id) {
+      case 'countries':
+        return selectedCountries;
+      case 'work_locations':
+        return selectedWorkLocations;
+      case 'industries':
+        return selectedIndustries;
+      case 'work_culture':
+        return selectedWorkCulture;
+      case 'agencies':
+        return selectedAgencies;
+      case 'shifts':
+        return selectedShiftPreferences;
+      case 'benefits':
+        return selectedBenefits;
+      default:
+        return <String>[];
+    }
+  }
+
+  String _selectedValueFor(String id) {
+    switch (id) {
+      case 'company_size':
+        return selectedCompanySize;
+      case 'experience':
+        return selectedExperienceLevel;
+      case 'contract_duration':
+        return contractDuration;
       default:
         return '';
     }
   }
 
-  Widget _buildStepContent() {
-    switch (currentStep) {
-      case 0:
-        return _buildJobTitlesStep();
-      case 1:
-        return _buildCountriesStep();
-      case 2:
-        return _buildSalaryWorkStep();
-      case 3:
-        return _buildCompanyCultureStep();
-      case 4:
-        return _buildContractBenefitsStep();
-      case 5:
-        return _buildReviewStep();
-      default:
-        return Container();
+  void _setSelectedValue(String id, String value) {
+    switch (id) {
+      case 'company_size':
+        selectedCompanySize = value;
+        break;
+      case 'experience':
+        selectedExperienceLevel = value;
+        break;
+      case 'contract_duration':
+        contractDuration = value;
+        break;
     }
   }
 
@@ -287,10 +531,11 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
                   int index = entry.key;
                   JobTitleWithPriority jobTitle = entry.value;
 
-                  return _buildSelectedJobTitleCard(
-                    jobTitle,
-                    index,
+                  return SelectedJobTitleCard(
                     key: ValueKey(jobTitle.jobTitle.id),
+                    item: jobTitle,
+                    index: index,
+                    onRemove: () => _removeJobTitle(jobTitle),
                   );
                 }).toList(),
               ),
@@ -309,332 +554,20 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
           ),
           SizedBox(height: 12),
 
-          ..._buildJobTitlesByCategory(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectedJobTitleCard(
-    JobTitleWithPriority jobTitle,
-    int index, {
-    required Key key,
-  }) {
-    return Container(
-      key: key,
-      margin: EdgeInsets.only(bottom: 1),
-      decoration: BoxDecoration(
-        color: Color(0xFFF1F5F9),
-        border: Border(left: BorderSide(color: Color(0xFF1E88E5), width: 4)),
-      ),
-      child: ListTile(
-        leading: Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: Color(0xFF1E88E5),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-            child: Text(
-              '${index + 1}',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        title: Text(
-          jobTitle.jobTitle.title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
-          ),
-        ),
-        subtitle: Text(
-          jobTitle.jobTitle.category,
-          style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.drag_handle, color: Color(0xFF94A3B8)),
-            SizedBox(width: 8),
-            GestureDetector(
-              onTap: () => _removeJobTitle(jobTitle),
-              child: Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFEF2F2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(Icons.close, size: 16, color: Color(0xFFEF4444)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildJobTitlesByCategory() {
-    Map<String, List<JobTitle>> categorizedJobs = {};
-
-    for (JobTitle job in availableJobTitles) {
-      if (!job.isActive) continue;
-      if (selectedJobTitles.any((selected) => selected.jobTitle.id == job.id))
-        continue;
-
-      if (!categorizedJobs.containsKey(job.category)) {
-        categorizedJobs[job.category] = [];
-      }
-      categorizedJobs[job.category]!.add(job);
-    }
-
-    return categorizedJobs.entries.map((entry) {
-      String category = entry.key;
-      List<JobTitle> jobs = entry.value;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 12),
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  category,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF475569),
-                  ),
-                ),
-                SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: jobs.map((job) => _buildJobTitleChip(job)).toList(),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 16),
-        ],
-      );
-    }).toList();
-  }
-
-  Widget _buildJobTitleChip(JobTitle job) {
-    return GestureDetector(
-      onTap: () => _addJobTitle(job),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.add_circle_outline, size: 16, color: Color(0xFF1E88E5)),
-            SizedBox(width: 6),
-            Text(
-              job.title,
-              style: TextStyle(
-                color: Color(0xFF475569),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCountriesStep() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          StepHeader(
-            title: 'Choose Your Target Countries',
-            subtitle: 'Select Gulf countries where you want to work.',
-            icon: Icons.public,
-            color: Color(0xFF059669),
-          ),
-          SizedBox(height: 24),
-          MultiSelectSection(
-            title: 'Gulf Countries',
-            options: gulfCountries,
-            selected: selectedCountries,
-            onToggle: (country) => _toggleSelection(selectedCountries, country),
-            color: Color(0xFF059669),
-          ),
-          SizedBox(height: 24),
-          MultiSelectSection(
-            title: 'Preferred Work Locations',
-            options: workLocations,
-            selected: selectedWorkLocations,
-            onToggle: (location) =>
-                _toggleSelection(selectedWorkLocations, location),
-            color: Color(0xFF0891B2),
+          JobTitlesByCategory(
+            availableJobTitles: availableJobTitles,
+            selectedJobTitles: selectedJobTitles,
+            onAdd: _addJobTitle,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSalaryWorkStep() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          StepHeader(
-            title: 'Salary & Work Preferences',
-            subtitle: 'Set your salary expectations and work preferences.',
-            icon: Icons.attach_money,
-            color: Color(0xFFDC2626),
-          ),
+  // SelectedJobTitleCard and JobTitlesByCategory extracted to widgets
 
-          SizedBox(height: 24),
+  // JobTitleChip extracted to widgets/job_title_chip.dart
 
-          // Salary Range
-          _buildSalaryRangeSection(),
-
-          SizedBox(height: 24),
-
-          MultiSelectSection(
-            title: 'Industries',
-            options: industries,
-            selected: selectedIndustries,
-            onToggle: (industry) =>
-                _toggleSelection(selectedIndustries, industry),
-            color: Color(0xFF7C3AED),
-          ),
-
-          SizedBox(height: 24),
-
-          SingleSelectSection(
-            title: 'Experience Level',
-            options: experienceLevels,
-            selected: selectedExperienceLevel,
-            onSelect: (level) =>
-                setState(() => selectedExperienceLevel = level),
-            color: Color(0xFFEA580C),
-          ),
-
-          SizedBox(height: 24),
-
-          MultiSelectSection(
-            title: 'Shift Preferences',
-            options: shiftPreferences,
-            selected: selectedShiftPreferences,
-            onToggle: (shift) =>
-                _toggleSelection(selectedShiftPreferences, shift),
-            color: Color(0xFF0891B2),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCompanyCultureStep() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          StepHeader(
-            title: 'Company & Culture Preferences',
-            subtitle:
-                'Choose your preferred work environment and company type.',
-            icon: Icons.business,
-            color: Color(0xFF7C2D12),
-          ),
-          SizedBox(height: 24),
-          SingleSelectSection(
-            title: 'Company Size',
-            options: companySizes,
-            selected: selectedCompanySize,
-            onSelect: (size) => setState(() => selectedCompanySize = size),
-            color: Color(0xFF7C2D12),
-          ),
-          SizedBox(height: 24),
-          MultiSelectSection(
-            title: 'Work Culture',
-            options: workCulture,
-            selected: selectedWorkCulture,
-            onToggle: (culture) =>
-                _toggleSelection(selectedWorkCulture, culture),
-            color: Color(0xFF059669),
-          ),
-          SizedBox(height: 24),
-          MultiSelectSection(
-            title: 'Preferred Agencies/Employers',
-            options: agencies,
-            selected: selectedAgencies,
-            onToggle: (agency) => _toggleSelection(selectedAgencies, agency),
-            color: Color(0xFF0891B2),
-          ),
-          SizedBox(height: 24),
-          _buildTrainingSupportSection(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContractBenefitsStep() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          StepHeader(
-            title: 'Contract & Benefits',
-            subtitle: 'Select your contract duration and desired benefits.',
-            icon: Icons.description,
-            color: Color(0xFF7C3AED),
-          ),
-          SizedBox(height: 24),
-          SingleSelectSection(
-            title: 'Contract Duration',
-            options: contractDurations,
-            selected: contractDuration,
-            onSelect: (duration) => setState(() => contractDuration = duration),
-            color: Color(0xFF7C3AED),
-          ),
-          SizedBox(height: 24),
-          MultiSelectSection(
-            title: 'Desired Work Benefits',
-            options: workBenefits,
-            selected: selectedBenefits,
-            onToggle: (benefit) => _toggleSelection(selectedBenefits, benefit),
-            color: Color(0xFF059669),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildReviewStep() {
     return SingleChildScrollView(
@@ -977,147 +910,14 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   }
 
   Widget _buildReviewSection(String title, List<String> items, Color color) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.05),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 6,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: items
-                  .map(
-                    (item) => Padding(
-                      padding: EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Icon(Icons.check_circle, size: 16, color: color),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF475569),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ],
-      ),
+    return ReviewSection(
+      color: color,
+      items: items,
+      title: title,
     );
   }
 
-  Widget _buildBottomNavigation() {
-    return Container(
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          if (currentStep > 0)
-            Expanded(
-              child: OutlinedButton(
-                onPressed: _previousStep,
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Color(0xFF1E88E5)),
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  'Previous',
-                  style: TextStyle(
-                    color: Color(0xFF1E88E5),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          if (currentStep > 0) SizedBox(width: 16),
-          Expanded(
-            flex: currentStep == 0 ? 1 : 2,
-            child: ElevatedButton(
-              onPressed: _isStepValid() ? _nextStep : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF1E88E5),
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 16),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                disabledBackgroundColor: Color(0xFFE2E8F0),
-              ),
-              child: Text(
-                currentStep == 5 ? 'Save Preferences' : 'Next',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Bottom navigation extracted to PreferencesBottomNavigation widget
 
   // Job Title Management Methods
   void _addJobTitle(JobTitle jobTitle) {
@@ -1192,27 +992,19 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   }
 
   bool _isStepValid() {
-    switch (currentStep) {
-      case 0:
-        return selectedJobTitles.isNotEmpty;
-      case 1:
-        return selectedCountries.isNotEmpty;
-      case 2:
-        return selectedIndustries.isNotEmpty &&
-            selectedExperienceLevel.isNotEmpty;
-      case 3:
-        return selectedCompanySize.isNotEmpty;
-      case 4:
-        return contractDuration.isNotEmpty;
-      case 5:
-        return true;
-      default:
-        return false;
+    if (_stepsConfig.isEmpty) return true;
+    final step = _stepsConfig[currentStep] as Map<String, dynamic>;
+    final type = step['type'] as String?;
+    final key = step['key'] as String?;
+    if (type == 'builtin' && key == 'job_titles') {
+      return selectedJobTitles.isNotEmpty;
     }
+    // For config-driven steps, keep validation permissive for now
+    return true;
   }
 
   void _nextStep() {
-    if (currentStep < 5) {
+    if (currentStep < _stepsConfig.length - 1) {
       setState(() {
         currentStep++;
       });
@@ -1231,7 +1023,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
   void _skipToEnd() {
     setState(() {
-      currentStep = 5;
+      currentStep = _stepsConfig.length - 1;
     });
   }
 
