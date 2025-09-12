@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/usecases/usecase.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/onboarding/entity.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/Onboarding/providers/di.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/di.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
 
