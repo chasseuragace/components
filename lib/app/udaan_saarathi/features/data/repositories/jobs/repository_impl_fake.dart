@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:openapi/openapi.dart';
+
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
 import '../../../domain/repositories/jobs/repository.dart';
@@ -37,7 +37,7 @@ final remoteItems = [
 ];
 
 class JobsRepositoryFake implements JobsRepository {
-  final api = Openapi().getDefaultApi();
+
   final JobsLocalDataSource localDataSource;
   final JobsRemoteDataSource remoteDataSource;
 
@@ -49,9 +49,8 @@ class JobsRepositoryFake implements JobsRepository {
   @override
   Future<Either<Failure, List<JobsEntity>>> getAllItems() async {
     try {
-      final data = await api.jobTitleControllerListAll(
-          isActive: 'true', q: '', limit: '10', offset: '0');
-
+     // Simulate delay
+      await Future.delayed(Duration(milliseconds: 300));
       return right(remoteItems.map((model) => model).toList());
     } catch (error) {
       return left(ServerFailure());

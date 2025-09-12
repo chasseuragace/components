@@ -1,58 +1,60 @@
 import 'package:dartz/dartz.dart';
 import 'package:openapi/openapi.dart';
 import '../../../../core/errors/failures.dart';
-import '../../../domain/entities/candidate/entity.dart';
-import '../../../domain/repositories/candidate/repository.dart';
-import '../../datasources/candidate/local_data_source.dart';
-import '../../datasources/candidate/remote_data_source.dart';
-import '../../models/candidate/model.dart';
-final id = '629fdc79-eeb9-456c-955d-236d2c424b46';
-
-// Fake data for Candidates
+import '../../../domain/entities/job_title/entity.dart';
+import '../../../domain/repositories/job_title/repository.dart';
+import '../../datasources/job_title/local_data_source.dart';
+import '../../datasources/job_title/remote_data_source.dart';
+import '../../models/job_title/model.dart';
+// Fake data for JobTitles
       final remoteItems = [
-        CandidateModel(
+        JobTitleModel(
 
             rawJson: {},
           id: '1',
-          name: 'Admin',
+          title: 'Admin',
         ),
-        CandidateModel(
+        JobTitleModel(
         rawJson: {},
           id: '2',
-          name: 'User',
+          title: 'User',
         ),
-        CandidateModel(
+        JobTitleModel(
         rawJson: {},
           id: '3',
-          name: 'Guest',
+          title: 'Guest',
         ),
       ];
-class CandidateRepositoryFake implements CandidateRepository {
-  final api = Openapi().getCandidatesApi();
-  final CandidateLocalDataSource localDataSource;
-  final CandidateRemoteDataSource remoteDataSource;
-
-  CandidateRepositoryFake({
+class JobTitleRepositoryFake implements JobTitleRepository {
+  final JobTitleLocalDataSource localDataSource;
+  final JobTitleRemoteDataSource remoteDataSource;
+final aip = Openapi(basePathOverride: "http://localhost:3000").getJobTitlesApi();
+  JobTitleRepositoryFake({
     required this.localDataSource,
     required this.remoteDataSource,
   });
 
   @override
-  Future<Either<Failure, List<CandidateEntity>>> getAllItems() async {
+  Future<Either<Failure, List<JobTitleEntity>>> getAllItems() async {
     try {
-    
+      final response = await aip.jobTitleControllerListAll();
 
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-      return right(remoteItems.map((model) => model).toList());
+      final rawList = response.data?.data ?? [];
+      final items = rawList
+          .map((model) => JobTitleModel.fromJson(model.toJson()))
+          .toList();
+      return right(items);
     } catch (error) {
+      print(error);
       return left(ServerFailure());
     }
   }
 
   @override
-  Future<Either<Failure, CandidateEntity?>> getItemById(String id) async {
+  Future<Either<Failure, JobTitleEntity?>> getItemById(String id) async {
     try {
     
       // Simulate delay
@@ -67,10 +69,9 @@ class CandidateRepositoryFake implements CandidateRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> addItem(CandidateEntity entity) async {
+  Future<Either<Failure, Unit>> addItem(JobTitleEntity entity) async {
     try {
       // Simulate delay
-    
       await Future.delayed(Duration(milliseconds: 300));
 
       // No actual data operation in fake implementation
@@ -81,7 +82,7 @@ class CandidateRepositoryFake implements CandidateRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateItem(CandidateEntity entity) async {
+  Future<Either<Failure, Unit>> updateItem(JobTitleEntity entity) async {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
