@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/quick_salary_button.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
@@ -40,84 +41,6 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   String contractDuration = '';
   List<String> selectedBenefits = [];
 
-  // Data sources
-  final List<JobTitle> availableJobTitles = [
-    JobTitle(
-      id: 1,
-      title: 'Waiter/Waitress',
-      category: 'Hospitality',
-      isActive: true,
-    ),
-    JobTitle(id: 2, title: 'Chef', category: 'Hospitality', isActive: true),
-    JobTitle(id: 3, title: 'Cook', category: 'Hospitality', isActive: true),
-    JobTitle(
-      id: 4,
-      title: 'Kitchen Helper',
-      category: 'Hospitality',
-      isActive: true,
-    ),
-    JobTitle(id: 5, title: 'Barista', category: 'Hospitality', isActive: true),
-    JobTitle(id: 6, title: 'Plumber', category: 'Construction', isActive: true),
-    JobTitle(
-      id: 7,
-      title: 'Electrician',
-      category: 'Construction',
-      isActive: true,
-    ),
-    JobTitle(
-      id: 8,
-      title: 'Construction Worker',
-      category: 'Construction',
-      isActive: true,
-    ),
-    JobTitle(id: 9, title: 'Painter', category: 'Construction', isActive: true),
-    JobTitle(
-      id: 10,
-      title: 'Driver',
-      category: 'Transportation',
-      isActive: true,
-    ),
-    JobTitle(
-      id: 11,
-      title: 'Delivery Driver',
-      category: 'Transportation',
-      isActive: true,
-    ),
-    JobTitle(
-      id: 12,
-      title: 'Taxi Driver',
-      category: 'Transportation',
-      isActive: true,
-    ),
-    JobTitle(
-      id: 13,
-      title: 'Gardener',
-      category: 'Maintenance',
-      isActive: true,
-    ),
-    JobTitle(id: 14, title: 'Cleaner', category: 'Maintenance', isActive: true),
-    JobTitle(
-      id: 15,
-      title: 'Security Guard',
-      category: 'Security',
-      isActive: true,
-    ),
-    JobTitle(
-      id: 16,
-      title: 'Housekeeping',
-      category: 'Hospitality',
-      isActive: true,
-    ),
-    JobTitle(id: 17, title: 'Mechanic', category: 'Automotive', isActive: true),
-    JobTitle(id: 18, title: 'Welder', category: 'Construction', isActive: true),
-    JobTitle(id: 19, title: 'Salesperson', category: 'Retail', isActive: true),
-    JobTitle(
-      id: 20,
-      title: 'Office Assistant',
-      category: 'Administration',
-      isActive: true,
-    ),
-  ];
 
   // Steps configuration: loaded from repository fake's rawJson or falls back
   // to a local default with two built-in steps (job_titles, review) and
@@ -234,11 +157,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
           }
         ]
       },
-      {
-        'type': 'builtin',
-        'key': 'review',
-        'title': 'Review & Confirm'
-      },
+      {'type': 'builtin', 'key': 'review', 'title': 'Review & Confirm'},
     ];
   }
 
@@ -299,13 +218,13 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
   String _getStepTitle(int step) {
     if (step < 0 || step >= _stepsConfig.length) return '';
-    final s = _stepsConfig[step] as Map<String, dynamic>;
+    final s = _stepsConfig[step] ;
     return (s['title'] as String?) ?? '';
   }
 
   Widget _buildStepContent() {
     if (_stepsConfig.isEmpty) return Container();
-    final step = _stepsConfig[currentStep] as Map<String, dynamic>;
+    final step = _stepsConfig[currentStep] ;
     final type = step['type'] as String?;
     final key = step['key'] as String?;
     if (type == 'builtin' && key == 'job_titles') {
@@ -322,7 +241,8 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     final String subtitle = (step['subtitle'] as String?) ?? '';
     final int colorValue = (step['color'] as int?) ?? 0xFF1E88E5;
     final String? iconName = step['icon'] as String?;
-    final sections = (step['sections'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
+    final sections =
+        (step['sections'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(24),
@@ -336,7 +256,9 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
             color: Color(colorValue),
           ),
           SizedBox(height: 24),
-          ...sections.map((section) => _buildSectionFromConfig(section)).toList(),
+          ...sections
+              .map((section) => _buildSectionFromConfig(section))
+              .toList(),
         ],
       ),
     );
@@ -377,12 +299,20 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
       case 'salary_range':
         return Padding(
           padding: const EdgeInsets.only(bottom: 24),
-          child: _buildSalaryRangeSection(),
+          child: _buildSalaryRangeSection(
+         
+          ),
         );
       case 'toggle':
         return Padding(
           padding: const EdgeInsets.only(bottom: 24),
-          child: _buildTrainingSupportSection(),
+          child: TrainingSupportSection(
+              trainingSupport: trainingSupport,
+              onToggle: () {
+                setState(() {
+                  trainingSupport = !trainingSupport;
+                });
+              }),
         );
       default:
         return SizedBox.shrink();
@@ -568,7 +498,6 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
   // JobTitleChip extracted to widgets/job_title_chip.dart
 
-
   Widget _buildReviewStep() {
     return SingleChildScrollView(
       padding: EdgeInsets.all(24),
@@ -745,11 +674,50 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
           SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildQuickSalaryButton('Entry Level', 400, 800)),
+              Expanded(
+                  child: QuickSalaryButton(
+                isSelected:
+                    salaryRange['min'] == 400 && salaryRange['max'] == 800,
+                label: 'Entry Level',
+                min: 400,
+                max: 800,
+                onTap: () {
+                  setState(() {
+                    salaryRange['min'] = 400;
+                    salaryRange['max'] = 800;
+                  });
+                },
+              )),
               SizedBox(width: 8),
-              Expanded(child: _buildQuickSalaryButton('Mid Level', 800, 1500)),
+              Expanded(
+                  child: QuickSalaryButton(
+                isSelected:
+                    salaryRange['min'] == 800 && salaryRange['max'] == 1500,
+                label: 'Mid Level',
+                min: 800,
+                max: 1500,
+                onTap: () {
+                  setState(() {
+                    salaryRange['min'] = 800;
+                    salaryRange['max'] = 1500;
+                  });
+                },
+              )),
               SizedBox(width: 8),
-              Expanded(child: _buildQuickSalaryButton('Senior', 1500, 3000)),
+              Expanded(
+                  child: QuickSalaryButton(
+                isSelected:
+                    salaryRange['min'] == 1500 && salaryRange['max'] == 3000,
+                label: 'Senior',
+                min: 1500,
+                max: 3000,
+                onTap: () {
+                  setState(() {
+                    salaryRange['min'] = 1500;
+                    salaryRange['max'] = 3000;
+                  });
+                },
+              )),
             ],
           ),
         ],
@@ -757,157 +725,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     );
   }
 
-  Widget _buildQuickSalaryButton(String label, double min, double max) {
-    bool isSelected = salaryRange['min'] == min && salaryRange['max'] == max;
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          salaryRange['min'] = min;
-          salaryRange['max'] = max;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Color(0xFFDC2626).withOpacity(0.1)
-              : Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? Color(0xFFDC2626) : Color(0xFFE2E8F0),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Color(0xFFDC2626) : Color(0xFF64748B),
-              ),
-            ),
-            Text(
-              '\${min.round()}-${max.round()}',
-              style: TextStyle(
-                fontSize: 10,
-                color: isSelected ? Color(0xFFDC2626) : Color(0xFF94A3B8),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTrainingSupportSection() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.school, color: Color(0xFF059669), size: 24),
-              SizedBox(width: 8),
-              Text(
-                'Training Support Required',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E293B),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                trainingSupport = !trainingSupport;
-              });
-            },
-            child: Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: trainingSupport
-                    ? Color(0xFF059669).withOpacity(0.1)
-                    : Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color:
-                      trainingSupport ? Color(0xFF059669) : Color(0xFFE2E8F0),
-                  width: trainingSupport ? 2 : 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: trainingSupport
-                            ? Color(0xFF059669)
-                            : Color(0xFFCBD5E1),
-                        width: 2,
-                      ),
-                      color: trainingSupport
-                          ? Color(0xFF059669)
-                          : Colors.transparent,
-                    ),
-                    child: trainingSupport
-                        ? Icon(Icons.check, size: 16, color: Colors.white)
-                        : null,
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Yes, I need training support',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: trainingSupport
-                                ? Color(0xFF059669)
-                                : Color(0xFF475569),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'I would like companies that provide job training and skill development',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF64748B),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildReviewSection(String title, List<String> items, Color color) {
     return ReviewSection(
@@ -991,15 +809,51 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     HapticFeedback.selectionClick();
   }
 
+  // Validation helpers
+  bool _isSectionValid(Map<String, dynamic> section) {
+    final String type = (section['type'] as String?) ?? '';
+    final String id = (section['id'] as String?) ?? '';
+    final bool required = (section['required'] as bool?) ?? false;
+
+    if (!required) return true; // only enforce when required
+
+    switch (type) {
+      case 'multi_select':
+        final list = _selectedListFor(id);
+        return list.isNotEmpty;
+      case 'single_select':
+        final value = _selectedValueFor(id);
+        return value.isNotEmpty;
+      case 'salary_range':
+        // Consider any set range as valid; optionally enforce min<=max
+        final min = salaryRange['min'];
+        final max = salaryRange['max'];
+        return min != null && max != null && min <= max;
+      case 'toggle':
+        // If requireTrue is set, toggle must be true; else it's always valid
+        final requireTrue = (section['requireTrue'] as bool?) ?? false;
+        return requireTrue ? trainingSupport == true : true;
+      default:
+        return true;
+    }
+  }
+
   bool _isStepValid() {
     if (_stepsConfig.isEmpty) return true;
-    final step = _stepsConfig[currentStep] as Map<String, dynamic>;
+    final step = _stepsConfig[currentStep] ;
     final type = step['type'] as String?;
     final key = step['key'] as String?;
     if (type == 'builtin' && key == 'job_titles') {
       return selectedJobTitles.isNotEmpty;
     }
-    // For config-driven steps, keep validation permissive for now
+    if (type == 'builtin' && key == 'review') {
+      return true;
+    }
+    final sections =
+        (step['sections'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
+    for (final section in sections) {
+      if (!_isSectionValid(section)) return false;
+    }
     return true;
   }
 

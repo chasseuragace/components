@@ -35,7 +35,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
                   home: VariantPreview(
                     variant: VariantItem(
                       name: 'Home V1 - Bassic',
-                      builder: (BuildContext context) =>  JobTitleListPage(),
+                      builder: (BuildContext context) =>  SplashScreen(),
                     ),
                   ),
                 ),

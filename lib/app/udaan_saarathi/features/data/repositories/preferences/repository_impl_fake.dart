@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/preferences/entity.dart';
 import '../../../domain/repositories/preferences/repository.dart';
+import '../../../presentation/preferences/models/job_title_models.dart';
 import '../../datasources/preferences/local_data_source.dart';
 import '../../datasources/preferences/remote_data_source.dart';
 import '../../models/preferences/model.dart';
@@ -31,8 +32,10 @@ final remoteItems = [
               'type': 'multi_select',
               'title': 'Gulf Countries',
               'source': 'gulfCountries',
-              'color': 0xFF059669
+              'color': 0xFF059669,
+              'required': true
             },
+             if(false)
             {
               'id': 'work_locations',
               'type': 'multi_select',
@@ -42,6 +45,7 @@ final remoteItems = [
             }
           ]
         },
+      
         {
           'title': 'Salary & Work Preferences',
           'subtitle': 'Set your salary expectations and work preferences.',
@@ -54,20 +58,23 @@ final remoteItems = [
               'title': 'Expected Monthly Salary (USD)',
               'color': 0xFFDC2626
             },
+             if(false)
             {
               'id': 'industries',
               'type': 'multi_select',
               'title': 'Industries',
               'source': 'industries',
-              'color': 0xFF7C3AED
-            },
+              'color': 0xFF7C3AED,
+              'required': true
+            }, if(false)
             {
               'id': 'experience',
               'type': 'single_select',
               'title': 'Experience Level',
               'source': 'experienceLevels',
-              'color': 0xFFEA580C
-            },
+              'color': 0xFFEA580C,
+              'required': true
+            }, if(false)
             {
               'id': 'shifts',
               'type': 'multi_select',
@@ -77,6 +84,7 @@ final remoteItems = [
             }
           ]
         },
+        if(false)
         {
           'title': 'Company & Culture',
           'subtitle': 'Choose your preferred work environment and company type.',
@@ -88,7 +96,8 @@ final remoteItems = [
               'type': 'single_select',
               'title': 'Company Size',
               'source': 'companySizes',
-              'color': 0xFF7C2D12
+              'color': 0xFF7C2D12,
+              'required': true
             },
             {
               'id': 'work_culture',
@@ -108,7 +117,8 @@ final remoteItems = [
               'id': 'training',
               'type': 'toggle',
               'title': 'Training Support Required',
-              'color': 0xFF059669
+              'color': 0xFF059669,
+              'requireTrue': false
             }
           ]
         },
@@ -123,7 +133,8 @@ final remoteItems = [
               'type': 'single_select',
               'title': 'Contract Duration',
               'source': 'contractDurations',
-              'color': 0xFF7C3AED
+              'color': 0xFF7C3AED,
+              'required': true
             },
             {
               'id': 'benefits',
@@ -142,6 +153,7 @@ final remoteItems = [
           'icon': 'check_circle_outline',
           'color': 0xFF059669
         }
+     
       ]
     },
     id: '1',
@@ -252,7 +264,7 @@ final List<String> contractDurations = [
   'Permanent',
   'Project Based',
 ];
-final availableJobTitles = [
+final List<JobTitle>  availableJobTitles = [
   JobTitle(
     id: 1,
     title: 'Waiter/Waitress',

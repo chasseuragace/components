@@ -1,3 +1,4 @@
+import '../../../presentation/preferences/models/job_title_models.dart';
 import '../../base_entity.dart';
 
 abstract class PreferencesEntity extends BaseEntity {
@@ -9,20 +10,7 @@ abstract class PreferencesEntity extends BaseEntity {
   });
 }
 
-// Data Models
-class JobTitle {
-  final int id;
-  final String title;
-  final String category;
-  final bool isActive;
 
-  JobTitle({
-    required this.id,
-    required this.title,
-    required this.category,
-    required this.isActive,
-  });
-}
 
 class JobTitleWithPriority {
   final JobTitle jobTitle;
