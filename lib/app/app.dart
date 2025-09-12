@@ -12,7 +12,7 @@ class MyApp extends ConsumerWidget {
     // todo starts here :
     // - profiver for app
     return MaterialApp(
-      theme: ThemeData.dark(),
+      // theme: ThemeData.dark(),
       home: true
           ? UdaanSaarathiProjectManager()
           : true
