@@ -13,9 +13,3 @@ abstract class PreferencesEntity extends BaseEntity {
 
 
 
-class JobTitleWithPriority {
-  final JobTitle jobTitle;
-  int priority;
-
-  JobTitleWithPriority({required this.jobTitle, required this.priority});
-}

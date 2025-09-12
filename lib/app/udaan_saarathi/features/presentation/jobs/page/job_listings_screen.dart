@@ -1,27 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/widgets/job_card_widget.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/job_card.dart';
 
-class JobListings1 extends StatefulWidget {
-  const JobListings1({super.key});
-
+class JobListingsScreen extends StatefulWidget {
+  const JobListingsScreen({super.key, required this.jobs});
+  final List<JobsEntity> jobs;
   @override
-  State<JobListings1> createState() => _JobListings1State();
+  State<JobListingsScreen> createState() => _JobListingsScreenState();
 }
 
-class _JobListings1State extends State<JobListings1> {
+class _JobListingsScreenState extends State<JobListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
   String _searchQuery = '';
   Map<String, dynamic> _activeFilters = {};
-  List<Map<String, dynamic>> _allJobs = [];
-  List<Map<String, dynamic>> _filteredJobs = [];
+  List<JobsEntity> _allJobs = [];
+  List<JobsEntity> _filteredJobs = [];
 
   @override
   void initState() {
     super.initState();
-    _allJobs = _getDummyJobs();
+    _allJobs = widget.jobs;
     _filteredJobs = _allJobs;
     _searchController.addListener(_onSearchChanged);
   }
@@ -48,9 +49,10 @@ class _JobListings1State extends State<JobListings1> {
       // Search filter
       if (_searchQuery.isNotEmpty) {
         final searchLower = _searchQuery.toLowerCase();
-        if (!job['title'].toLowerCase().contains(searchLower) &&
-            !job['company'].toLowerCase().contains(searchLower) &&
-            !job['location'].toLowerCase().contains(searchLower)) {
+        if (!job.postingTitle.toLowerCase().contains(searchLower) &&
+            !job.employer.companyName.toLowerCase().contains(searchLower) &&
+            !job.city.toLowerCase().contains(searchLower) &&
+            !job.country.toLowerCase().contains(searchLower)) {
           return false;
         }
       }
@@ -58,7 +60,7 @@ class _JobListings1State extends State<JobListings1> {
       // Country filter
       if (_activeFilters['country'] != null &&
           _activeFilters['country'].isNotEmpty) {
-        if (!job['location'].toLowerCase().contains(
+        if (!job.country.toLowerCase().contains(
               _activeFilters['country'].toLowerCase(),
             )) {
           return false;
@@ -68,7 +70,7 @@ class _JobListings1State extends State<JobListings1> {
       // Position filter
       if (_activeFilters['position'] != null &&
           _activeFilters['position'].isNotEmpty) {
-        if (!job['title'].toLowerCase().contains(
+        if (!job.postingTitle.toLowerCase().contains(
               _activeFilters['position'].toLowerCase(),
             )) {
           return false;
@@ -76,34 +78,36 @@ class _JobListings1State extends State<JobListings1> {
       }
 
       // Job type filter
-      if (_activeFilters['jobType'] != null &&
-          _activeFilters['jobType'].isNotEmpty) {
-        if (job['type'] != _activeFilters['jobType']) {
-          return false;
-        }
-      }
+      // if (_activeFilters['jobType'] != null &&
+      //     _activeFilters['jobType'].isNotEmpty) {
+      //   if (job['type'] != _activeFilters['jobType']) {
+      //     return false;
+      //   }
+      // }
 
       // Experience filter
       if (_activeFilters['experience'] != null &&
           _activeFilters['experience'].isNotEmpty) {
-        if (!job['experience'].contains(_activeFilters['experience'])) {
+        if (!job.experienceRequirements.minYears
+            .toString()
+            .contains(_activeFilters['experience'])) {
           return false;
         }
       }
 
       // Remote filter
-      if (_activeFilters['isRemote'] != null) {
-        if (job['isRemote'] != _activeFilters['isRemote']) {
-          return false;
-        }
-      }
+      // if (_activeFilters['isRemote'] != null) {
+      //   if (job.contract != _activeFilters['isRemote']) {
+      //     return false;
+      //   }
+      // }
 
       // Featured filter
-      if (_activeFilters['isFeatured'] != null) {
-        if (job['isFeatured'] != _activeFilters['isFeatured']) {
-          return false;
-        }
-      }
+      // if (_activeFilters['isFeatured'] != null) {
+      //   if (job['isFeatured'] != _activeFilters['isFeatured']) {
+      //     return false;
+      //   }
+      // }
 
       return true;
     }).toList();
@@ -328,7 +332,7 @@ class _JobListings1State extends State<JobListings1> {
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16),
-                        child: JobCardWidget(job: _filteredJobs[index]),
+                        child: JobCard(job: _filteredJobs[index]),
                       );
                     }, childCount: _filteredJobs.length),
                   ),

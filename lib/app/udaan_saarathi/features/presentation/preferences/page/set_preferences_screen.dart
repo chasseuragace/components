@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/quick_salary_button.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart' hide ReviewSection;
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 
 import '../../../data/models/job_title/model.dart';
@@ -309,12 +309,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
         return Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: TrainingSupportSection(
-              trainingSupport: trainingSupport,
-              onToggle: () {
-                setState(() {
-                  trainingSupport = !trainingSupport;
-                });
-              }),
+          )
         );
       default:
         return SizedBox.shrink();
