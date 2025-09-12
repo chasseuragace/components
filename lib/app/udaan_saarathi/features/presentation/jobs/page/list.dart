@@ -24,9 +24,7 @@ class _JobsListPageState extends ConsumerState<JobsListPage> {
     // listenToAddJobsAction(context);
     // listenToUpdateJobsAction(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Jobs List'),
-      ),
+      
       body: jobsState.when(
         data: (items) => items.isEmpty
             ? Center(child: Text('No items available'))

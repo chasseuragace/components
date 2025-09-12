@@ -9,19 +9,19 @@ import '../../../data/models/job_title/model.dart';
 class JobTitlesByCategory extends ConsumerWidget {
   const JobTitlesByCategory({
     super.key,
-    this.availableJobTitles,
+    this.overwriteAvailableJobTitles,
     required this.selectedJobTitles,
     required this.onAdd,
   });
 
-  final List<JobTitle>? availableJobTitles;
+  final List<JobTitle>? overwriteAvailableJobTitles;
   final List<JobTitleWithPriority> selectedJobTitles;
   final void Function(JobTitle) onAdd;
 
   @override
   Widget build(BuildContext context, ref) {
     final jobTitleState = ref.watch(getAllJobTitleProvider);
-    if(availableJobTitles!=null) return body(availableJobTitles);
+    if(overwriteAvailableJobTitles!=null) return body(overwriteAvailableJobTitles);
     return jobTitleState.when(
       data: (items) => items.isEmpty
           ? Center(child: Text('No items available'))
