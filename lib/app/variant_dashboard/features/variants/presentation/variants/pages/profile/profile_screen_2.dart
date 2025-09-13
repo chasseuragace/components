@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
 
-class ProfileScreen2 extends StatelessWidget {
+class ProfileScreen2 extends ConsumerWidget {
   const ProfileScreen2({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Job Candidate Profile',
       theme: ThemeData(
@@ -17,11 +20,11 @@ class ProfileScreen2 extends StatelessWidget {
   }
 }
 
-class JobCandidateProfilePage extends StatelessWidget {
+class JobCandidateProfilePage extends ConsumerWidget {
   const JobCandidateProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
@@ -261,7 +264,16 @@ class JobCandidateProfilePage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 24),
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await ref.read(authControllerProvider.notifier).logout();
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                      (route) => false,
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red[50],
                   foregroundColor: Colors.red,

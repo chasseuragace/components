@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -44,14 +46,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           await ref.read(onboardingControllerProvider.future);
       if (!mounted) return;
       if (shouldShowOnboarding) {
-        // Navigator.pushReplacementNamed(context, RouteConstants.kOnboarding);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => OnboardingListPage()),
         );
+        return;
+      }
+
+      // Check auth token
+      await ref.read(authControllerProvider.notifier).checkAuthOnLaunch();
+      final auth = ref.read(authControllerProvider);
+      if (auth.isAuthenticated) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const AppHomeNavigationPage()),
+        );
       } else {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              builder: (context) => const AppHomeNavigationPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       }
     });
