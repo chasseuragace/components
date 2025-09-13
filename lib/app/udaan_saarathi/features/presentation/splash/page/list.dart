@@ -5,6 +5,8 @@ import '../../../domain/entities/splash/entity.dart';
 import '../providers/providers.dart';
 
 class SplashListPage extends ConsumerStatefulWidget {
+  const SplashListPage({super.key});
+
   @override
   _SplashListPageState createState() => _SplashListPageState();
 }

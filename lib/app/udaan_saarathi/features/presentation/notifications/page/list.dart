@@ -5,6 +5,8 @@ import '../../../domain/entities/notifications/entity.dart';
 import '../providers/providers.dart';
 
 class NotificationsListPage extends ConsumerStatefulWidget {
+  const NotificationsListPage({super.key});
+
   @override
   _NotificationsListPageState createState() => _NotificationsListPageState();
 }

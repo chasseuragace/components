@@ -5,6 +5,8 @@ import '../../../domain/entities/candidate/entity.dart';
 import '../providers/providers.dart';
 
 class CandidateListPage extends ConsumerStatefulWidget {
+  const CandidateListPage({super.key});
+
   @override
   _CandidateListPageState createState() => _CandidateListPageState();
 }

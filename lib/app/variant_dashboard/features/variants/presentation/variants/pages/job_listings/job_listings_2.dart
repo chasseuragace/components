@@ -138,8 +138,9 @@ class _JobListings2State extends State<JobListings2> {
 
   int _getPostedDays(String posted) {
     if (posted.contains('day')) return int.tryParse(posted.split(' ')[0]) ?? 0;
-    if (posted.contains('week'))
+    if (posted.contains('week')) {
       return (int.tryParse(posted.split(' ')[0]) ?? 0) * 7;
+    }
     return 0;
   }
 

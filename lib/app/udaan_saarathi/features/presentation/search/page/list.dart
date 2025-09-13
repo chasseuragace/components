@@ -5,6 +5,8 @@ import '../../../domain/entities/search/entity.dart';
 import '../providers/providers.dart';
 
 class SearchListPage extends ConsumerStatefulWidget {
+  const SearchListPage({super.key});
+
   @override
   _SearchListPageState createState() => _SearchListPageState();
 }

@@ -5,6 +5,8 @@ import '../../../domain/entities/preferences/entity.dart';
 import '../providers/providers.dart';
 
 class PreferencesListPage extends ConsumerStatefulWidget {
+  const PreferencesListPage({super.key});
+
   @override
   _PreferencesListPageState createState() => _PreferencesListPageState();
 }

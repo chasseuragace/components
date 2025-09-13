@@ -6,6 +6,8 @@ import '../../../domain/entities/onboarding/entity.dart';
 import '../providers/providers.dart';
 
 class OnboardingListPage extends ConsumerStatefulWidget {
+  const OnboardingListPage({super.key});
+
   @override
   _OnboardingListPageState createState() => _OnboardingListPageState();
 }

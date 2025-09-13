@@ -5,6 +5,8 @@ import '../../../domain/entities/applicaitons/entity.dart';
 import '../providers/providers.dart';
 
 class ApplicaitonsListPage extends ConsumerStatefulWidget {
+  const ApplicaitonsListPage({super.key});
+
   @override
   _ApplicaitonsListPageState createState() => _ApplicaitonsListPageState();
 }

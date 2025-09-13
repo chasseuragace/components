@@ -503,8 +503,9 @@ class _SelectPreferencesScreenState extends State<SelectPreferencesScreen> {
 
     for (JobTitle job in availableJobTitles) {
       if (!job.isActive) continue;
-      if (selectedJobTitles.any((selected) => selected.jobTitle.id == job.id))
+      if (selectedJobTitles.any((selected) => selected.jobTitle.id == job.id)) {
         continue;
+      }
 
       if (!categorizedJobs.containsKey(job.category)) {
         categorizedJobs[job.category] = [];

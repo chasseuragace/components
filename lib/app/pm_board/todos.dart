@@ -24,7 +24,7 @@ class Todos extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ...(todo['subtasks'] as List).map((e) => Text(e)).toList(),
+                  ...(todo['subtasks'] as List).map((e) => Text(e)),
                 ],
               ),
             ],

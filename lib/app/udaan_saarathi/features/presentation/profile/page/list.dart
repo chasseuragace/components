@@ -5,6 +5,8 @@ import '../../../domain/entities/profile/entity.dart';
 import '../providers/providers.dart';
 
 class ProfileListPage extends ConsumerStatefulWidget {
+  const ProfileListPage({super.key});
+
   @override
   _ProfileListPageState createState() => _ProfileListPageState();
 }

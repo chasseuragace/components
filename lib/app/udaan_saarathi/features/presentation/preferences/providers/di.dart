@@ -1,6 +1,5 @@
 import '../../../data/datasources/preferences/local_data_source.dart';
 import '../../../data/datasources/preferences/remote_data_source.dart';
-import '../../../data/repositories/preferences/repository_impl.dart';
 import '../../../data/repositories/preferences/repository_impl_fake.dart';
 import '../../../domain/usecases/preferences/get_all.dart';
 import '../../../domain/usecases/preferences/get_by_id.dart';

@@ -4,28 +4,17 @@ class JobTitle extends JobTitleEntity {
   final String category;
 
   JobTitle( {
-    required String id,
-    Map rawJson = const {},
-    DateTime? createdAt,
-    DateTime? updatedAt,
-   required String title,
-    int? rank,
-   required bool isActive,
-    String? difficulty,
-    String? skillsSummary,
-    String? description,  this. category= 'All Categories',
-  }) : super(
-          id: id,
-          rawJson: rawJson,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          title: title,
-          rank: rank,
-          isActive: isActive,
-          difficulty: difficulty,
-          skillsSummary: skillsSummary,
-          description: description,
-        );
+    required super.id,
+    super.rawJson = const {},
+    super.createdAt,
+    super.updatedAt,
+   required super.title,
+    super.rank,
+   required super.isActive,
+    super.difficulty,
+    super.skillsSummary,
+    super.description,  this. category= 'All Categories',
+  });
 
   factory JobTitle.fromJson(Map<String, dynamic> json) {
     return JobTitle(

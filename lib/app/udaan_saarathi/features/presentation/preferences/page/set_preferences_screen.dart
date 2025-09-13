@@ -11,7 +11,6 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/prefe
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 
 import '../../../data/models/job_title/model.dart';
-import '../widgets/salary_training_sections.dart';
 
 // Removed conflicting import that defines JobTitle and JobTitleWithPriority
 // import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
@@ -262,7 +261,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
           SizedBox(height: 24),
           ...sections
               .map((section) => _buildSectionFromConfig(section))
-              .toList(),
+              ,
         ],
       ),
     );

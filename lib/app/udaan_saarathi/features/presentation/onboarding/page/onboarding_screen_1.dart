@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/core/usecases/usecase.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/onboarding/entity.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/di.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/core/usecases/usecase.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/onboarding/entity.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/di.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
 
@@ -29,7 +24,7 @@ class _OnboardingScreen1State extends ConsumerState<OnboardingScreen1> {
     return Scaffold(
         body: Builder(
           builder: (context) {
-             Widget _buildOnboardingScreen(OnboardingEntity data) {
+             Widget buildOnboardingScreen(OnboardingEntity data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
@@ -149,7 +144,7 @@ class _OnboardingScreen1State extends ConsumerState<OnboardingScreen1> {
                         },
                         itemCount: onboardingData.length,
                         itemBuilder: (context, index) {
-                          return _buildOnboardingScreen(onboardingData[index]);
+                          return buildOnboardingScreen(onboardingData[index]);
                         },
                       ),
                     ),

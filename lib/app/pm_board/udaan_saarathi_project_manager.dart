@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:variant_dashboard/app/pm_board/pm_board_app.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_title/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/core/theme/app_theme.dart';
 

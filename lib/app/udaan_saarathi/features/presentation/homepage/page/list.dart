@@ -5,6 +5,8 @@ import '../../../domain/entities/homepage/entity.dart';
 import '../providers/providers.dart';
 
 class HomepageListPage extends ConsumerStatefulWidget {
+  const HomepageListPage({super.key});
+
   @override
   _HomepageListPageState createState() => _HomepageListPageState();
 }

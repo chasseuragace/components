@@ -1,6 +1,5 @@
 import '../../../data/datasources/notifications/local_data_source.dart';
 import '../../../data/datasources/notifications/remote_data_source.dart';
-import '../../../data/repositories/notifications/repository_impl.dart';
 import '../../../data/repositories/notifications/repository_impl_fake.dart';
 import '../../../domain/usecases/notifications/get_all.dart';
 import '../../../domain/usecases/notifications/get_by_id.dart';

@@ -1,6 +1,5 @@
 import '../../../data/datasources/jobs/local_data_source.dart';
 import '../../../data/datasources/jobs/remote_data_source.dart';
-import '../../../data/repositories/jobs/repository_impl.dart';
 import '../../../data/repositories/jobs/repository_impl_fake.dart';
 import '../../../domain/usecases/jobs/get_all.dart';
 import '../../../domain/usecases/jobs/get_by_id.dart';

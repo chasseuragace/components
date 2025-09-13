@@ -1,6 +1,5 @@
 import '../../../data/datasources/search/local_data_source.dart';
 import '../../../data/datasources/search/remote_data_source.dart';
-import '../../../data/repositories/search/repository_impl.dart';
 import '../../../data/repositories/search/repository_impl_fake.dart';
 import '../../../domain/usecases/search/get_all.dart';
 import '../../../domain/usecases/search/get_by_id.dart';

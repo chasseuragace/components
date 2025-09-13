@@ -5,6 +5,8 @@ import '../../../domain/entities/job_title/entity.dart';
 import '../providers/providers.dart';
 
 class JobTitleListPage extends ConsumerStatefulWidget {
+  const JobTitleListPage({super.key});
+
   @override
   _JobTitleListPageState createState() => _JobTitleListPageState();
 }
@@ -33,7 +35,7 @@ class _JobTitleListPageState extends ConsumerState<JobTitleListPage> {
                 itemBuilder: (context, index) {
                   final item = items[index];
                   return ListTile(
-                    title: Text(item.title!), // Adjust this based on your entity properties
+                    title: Text(item.title), // Adjust this based on your entity properties
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
