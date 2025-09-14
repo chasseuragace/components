@@ -12,7 +12,7 @@ class Docs extends ConsumerWidget {
     final  docs = ref.read(docsProvider);
     return Padding(
       padding: const EdgeInsets.all(18.0),
-      child: Text("$docs"),
+      child: Text(docs),
     );
   }
 }

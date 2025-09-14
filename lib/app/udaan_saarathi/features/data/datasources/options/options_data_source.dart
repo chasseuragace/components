@@ -1,5 +1,4 @@
 import '../../models/job_title/model.dart';
-import '../../../presentation/common/models/option.dart';
 
 /// Unified data source for all option lists used in preferences
 /// This centralizes all hardcoded option data and provides a consistent interface

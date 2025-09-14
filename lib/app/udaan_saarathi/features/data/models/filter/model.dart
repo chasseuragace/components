@@ -2,14 +2,10 @@ import '../../../domain/entities/filter/entity.dart';
 
 class FilterModel extends FilterEntity {
   FilterModel({
-    required String id,
-    required String name,
-    required Map<String, dynamic> rawJson,
-  }) : super(
-          id: id,
-          name: name,
-          rawJson: rawJson,
-        );
+    required super.id,
+    required super.name,
+    required Map<String, dynamic> super.rawJson,
+  });
 
   factory FilterModel.fromJson(Map<String, dynamic> json) {
     return FilterModel(

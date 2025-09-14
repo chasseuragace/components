@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 // import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/preferences/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/quick_salary_button.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
@@ -14,7 +14,6 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/prefe
 import '../../../data/models/job_title/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/common/models/option.dart';
 import '../../countries/providers/providers.dart' show getAllCountriesProvider;
-import '../providers/providers.dart';
 import '../providers/preferences_config_provider.dart';
 import '../providers/options_provider.dart';
 import '../providers/save_preferences_notifier.dart';
@@ -118,7 +117,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
   /// This handles the user's selected job titles with priorities
   void _applyUserPreferences(List<PreferencesEntity> userPrefs) {
     try {
-      // Extract job titles from all user preferences
+      // Extract job titles from all user preferences with preference IDs
       final jobTitles = <Map<String, dynamic>>[];
       
       for (final pref in userPrefs) {
@@ -128,6 +127,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
             'id': userData['job_title_id'],
             'title': userData['title'],
             'priority': userData['priority'] ?? 0,
+            'preferenceId': pref.id, // Include the preference entity ID
           });
         }
       }
@@ -137,7 +137,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
       
       print("Applying user job titles: $jobTitles");
       
-      // Apply only job titles
+      // Apply only job titles with preference IDs
       _applyJobTitlesOnly({'jobTitles': jobTitles});
       
       setState(() {});
@@ -175,6 +175,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
                   isActive: true,
                 ),
                 priority: (m['priority'] is num) ? (m['priority'] as num).toInt() : 0,
+                preferenceId: m['preferenceId']?.toString(), // Include preference ID
               ))
           .toList();
       _reindexPriorities();
@@ -399,10 +400,8 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
                 }
                 return userPrefsAsync.when(
                   data: (userPrefs) {
-                    if (userPrefs != null) {
-                      _applyUserPreferences(userPrefs);
-                    }
-                    return _buildStepContent(steps);
+                    _applyUserPreferences(userPrefs);
+                                      return _buildStepContent(steps);
                   },
                   loading: () => Center(
                     child: Column(
@@ -1063,9 +1062,15 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
       _reindexPriorities();
     });
 
-    // Call API to reorder preferences with new order
-    final orderedIds = selectedJobTitles.map((jt) => jt.jobTitle.id).toList();
-    _reorderJobTitlePreferences(orderedIds);
+    // Call API to reorder preferences with correct preference IDs
+    final orderedPreferenceIds = selectedJobTitles
+        .where((jt) => jt.preferenceId != null)
+        .map((jt) => jt.preferenceId!)
+        .toList();
+    
+    if (orderedPreferenceIds.isNotEmpty) {
+      _reorderJobTitlePreferences(orderedPreferenceIds);
+    }
 
     HapticFeedback.mediumImpact();
   }
@@ -1241,12 +1246,12 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
   }
 
   void _navigateAfterSave() {
-    // Navigate back to previous screen or homepage
-    // For now, just pop the current screen
-    Navigator.pop(context);
-    
-    // Alternative: Navigate to homepage
-    // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    // Check if we can pop, otherwise navigate to app navigation
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacementNamed(context, RouteConstants.kAppNavigation);
+    }
   }
 
   void _showJobTitleOperationSuccess(String? operation) {

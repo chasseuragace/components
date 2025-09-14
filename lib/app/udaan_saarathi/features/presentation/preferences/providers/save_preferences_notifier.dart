@@ -64,7 +64,7 @@ class SavePreferencesNotifier extends AsyncNotifier<SavePreferencesState> {
         const SavePreferencesState(status: SavePreferencesStatus.success),
       );
       
-    } catch (error, stackTrace) {
+    } catch (error) {
       // Update state to error
       state = AsyncValue.data(
         SavePreferencesState(

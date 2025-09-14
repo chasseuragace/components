@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/usecases/usecase.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/countries/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/di.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_status.dart';
 

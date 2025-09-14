@@ -5,6 +5,8 @@ import '../../../domain/entities/countries/entity.dart';
 import '../providers/providers.dart';
 
 class CountriesListPage extends ConsumerStatefulWidget {
+  const CountriesListPage({super.key});
+
   @override
   _CountriesListPageState createState() => _CountriesListPageState();
 }

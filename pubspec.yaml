@@ -45,6 +45,7 @@ dependencies:
   openapi: 
     path: '/Users/ajaydahal/portal/agency_research/dev_tools/package_form_open_api/openapi'
 
+  dio: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
