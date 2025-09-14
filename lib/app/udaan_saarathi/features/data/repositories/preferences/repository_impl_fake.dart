@@ -21,7 +21,8 @@ final remoteItems = [
           'type': 'builtin',
           'key': 'job_titles',
           'title': 'Job Titles (Priority Order)',
-          'subtitle': 'Select and prioritize job titles. Your top choice appears first.',
+          'subtitle':
+              'Select and prioritize job titles. Your top choice appears first.',
           'icon': 'work_outline',
           'color': 0xFF3B82F6
         },
@@ -39,17 +40,16 @@ final remoteItems = [
               'color': 0xFF059669,
               'required': true
             },
-             if(false)
-            {
-              'id': 'work_locations',
-              'type': 'multi_select',
-              'title': 'Preferred Work Locations',
-              'source': 'workLocations',
-              'color': 0xFF0891B2
-            }
+            if (false)
+              {
+                'id': 'work_locations',
+                'type': 'multi_select',
+                'title': 'Preferred Work Locations',
+                'source': 'workLocations',
+                'color': 0xFF0891B2
+              }
           ]
         },
-      
         {
           'title': 'Salary & Work Preferences',
           'subtitle': 'Set your salary expectations and work preferences.',
@@ -62,70 +62,73 @@ final remoteItems = [
               'title': 'Expected Monthly Salary (USD)',
               'color': 0xFFDC2626
             },
-             if(false)
-            {
-              'id': 'industries',
-              'type': 'multi_select',
-              'title': 'Industries',
-              'source': 'industries',
-              'color': 0xFF7C3AED,
-              'required': true
-            }, if(false)
-            {
-              'id': 'experience',
-              'type': 'single_select',
-              'title': 'Experience Level',
-              'source': 'experienceLevels',
-              'color': 0xFFEA580C,
-              'required': true
-            }, if(false)
-            {
-              'id': 'shifts',
-              'type': 'multi_select',
-              'title': 'Shift Preferences',
-              'source': 'shiftPreferences',
-              'color': 0xFF0891B2
-            }
+            if (false)
+              {
+                'id': 'industries',
+                'type': 'multi_select',
+                'title': 'Industries',
+                'source': 'industries',
+                'color': 0xFF7C3AED,
+                'required': true
+              },
+            if (false)
+              {
+                'id': 'experience',
+                'type': 'single_select',
+                'title': 'Experience Level',
+                'source': 'experienceLevels',
+                'color': 0xFFEA580C,
+                'required': true
+              },
+            if (false)
+              {
+                'id': 'shifts',
+                'type': 'multi_select',
+                'title': 'Shift Preferences',
+                'source': 'shiftPreferences',
+                'color': 0xFF0891B2
+              }
           ]
         },
-        if(false)
-        {
-          'title': 'Company & Culture',
-          'subtitle': 'Choose your preferred work environment and company type.',
-          'icon': 'business',
-          'color': 0xFF7C2D12,
-          'sections': [
-            {
-              'id': 'company_size',
-              'type': 'single_select',
-              'title': 'Company Size',
-              'source': 'companySizes',
-              'color': 0xFF7C2D12,
-              'required': true
-            },
-            {
-              'id': 'work_culture',
-              'type': 'multi_select',
-              'title': 'Work Culture',
-              'source': 'workCulture',
-              'color': 0xFF059669
-            },
-            {
-              'id': 'agencies',
-              'type': 'multi_select',
-              'title': 'Preferred Agencies/Employers',
-              'source': 'agencies',
-              'color': 0xFF0891B2
-            },
-            {
-              'id': 'training',
-              'type': 'toggle',
-              'title': 'Training Support Required',
-              'color': 0xFF059669,
-              'requireTrue': false
-            }
-          ]
-        },
+        if (false)
+          {
+            'title': 'Company & Culture',
+            'subtitle':
+                'Choose your preferred work environment and company type.',
+            'icon': 'business',
+            'color': 0xFF7C2D12,
+            'sections': [
+              {
+                'id': 'company_size',
+                'type': 'single_select',
+                'title': 'Company Size',
+                'source': 'companySizes',
+                'color': 0xFF7C2D12,
+                'required': true
+              },
+              {
+                'id': 'work_culture',
+                'type': 'multi_select',
+                'title': 'Work Culture',
+                'source': 'workCulture',
+                'color': 0xFF059669
+              },
+              {
+                'id': 'agencies',
+                'type': 'multi_select',
+                'title': 'Preferred Agencies/Employers',
+                'source': 'agencies',
+                'color': 0xFF0891B2
+              },
+              {
+                'id': 'training',
+                'type': 'toggle',
+                'title': 'Training Support Required',
+                'color': 0xFF059669,
+                'requireTrue': false
+              }
+            ]
+          },
         {
           'title': 'Contract & Benefits',
           'subtitle': 'Select your contract duration and desired benefits.',
@@ -157,7 +160,6 @@ final remoteItems = [
           'icon': 'check_circle_outline',
           'color': 0xFF059669
         }
-     
       ]
     },
     id: '1',
@@ -272,7 +274,7 @@ final List<String> contractDurations = [
   'Permanent',
   'Project Based',
 ];
-final List<JobTitle>  availableJobTitles = [
+final List<JobTitle> availableJobTitles = [
   JobTitle(
     id: '',
     title: 'Waiter/Waitress',
@@ -386,13 +388,20 @@ class PreferencesRepositoryFake implements PreferencesRepository {
       final candidateId = await _storage.getCandidateId();
       if (candidateId != null && candidateId.isNotEmpty) {
         try {
-          final res = await _api.candidateControllerListPreferences(id: candidateId);
-          final data = res.data ?? [];
-          // Map OpenAPI models to PreferencesModel if needed; here we fallback to remoteItems mapping
-          // TODO: Replace with real mapping once OpenAPI DTO is known
-          if (data.isNotEmpty) {
-            return right(remoteItems.map((model) => model).toList());
-          }
+          final res =
+              await _api.candidateControllerListPreferences(id: candidateId);
+          final List<PreferenceDto> items = res.data ?? const [];
+
+          final mapped = items
+              .map((p) => PreferencesModel(
+                    id: p.id.toString(),
+                    jobTitleId: p.jobTitleId.toString(),
+                    name: p.title,
+                    rawJson: p.toJson(),
+                  ))
+              .where((m) => m.id.isNotEmpty && m.jobTitleId.isNotEmpty)
+              .toList();
+          return right(mapped);
         } catch (_) {
           // Ignore and fallback to fake data
         }

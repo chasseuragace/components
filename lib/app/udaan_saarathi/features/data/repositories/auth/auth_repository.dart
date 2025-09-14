@@ -55,7 +55,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
       if (token.isNotEmpty) {
         await _storage.setToken(token);
         // TODO: Replace with actual candidateId from backend response once available
-        await _storage.setCandidateId('fake-candidate-id');
+        await _storage.setCandidateId(res.data!.candidateId!);
       }
       return Right(token);
     } catch (_) {
@@ -83,7 +83,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
       if (token.isNotEmpty) {
         await _storage.setToken(token);
         // TODO: Replace with actual candidateId from backend response once available
-        await _storage.setCandidateId('fake-candidate-id');
+        await _storage.setCandidateId(res.data!.candidateId!);
       }
       return Right(token);
     } catch (_) {

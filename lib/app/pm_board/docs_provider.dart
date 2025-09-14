@@ -13,5 +13,10 @@ final docsProvider = StateProvider(
 - Real-time push notifications for application updates
 - Click-to-call functionality for agency contacts
 - Multi-language support (English and Nepali)
+
+- Observations | Open discussions 
+in preference selction when adding preference the list expands , which causes the ui to jump a little 
+- show compact list 
+- tap edit to show teh reorderable list in a bottom sheet ?
 '''
 );

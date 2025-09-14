@@ -49,7 +49,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
 
     // Navigate using named routes
-    Navigator.of(context).pushReplacementNamed(routeName);
+    print("pushing $routeName");
+  
+    Navigator.of(context)..popUntil((r)=>r.isFirst)..pushReplacementNamed (routeName);
   }
 
   @override
