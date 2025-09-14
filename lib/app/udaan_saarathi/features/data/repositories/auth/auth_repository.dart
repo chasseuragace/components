@@ -10,8 +10,8 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   final TokenStorage _storage;
   final AuthApi _api;
 
-  AuthRepositoryImpl({TokenStorage? storage, AuthApi? api})
-      : _storage = storage ?? TokenStorage(),
+  AuthRepositoryImpl({required TokenStorage storage, AuthApi? api})
+      : _storage = storage,
         _api = api ?? ApiConfig.client().getAuthApi();
 
   @override

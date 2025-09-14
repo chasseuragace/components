@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/storage/local_storage.dart';
 
-/// Keys for SharedPreferences
+/// Keys for LocalStorage
 const String _kLastOnboardingKey = 'last_onboarding_completed_at';
 const Duration _kOnboardingRepeatAfter = Duration(days: 7);
 
@@ -13,9 +13,8 @@ final onboardingControllerProvider = AsyncNotifierProvider<OnboardingController,
 class OnboardingController extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
-    return true;
-    final prefs = await SharedPreferences.getInstance();
-    final iso = prefs.getString(_kLastOnboardingKey);
+    final storage = ref.read(localStorageProvider);
+    final iso = await storage.getString(_kLastOnboardingKey);
     if (iso == null || iso.isEmpty) {
       // Never completed -> show onboarding
       return true;
@@ -29,8 +28,8 @@ class OnboardingController extends AsyncNotifier<bool> {
 
   /// Call when user finishes onboarding. This updates the timestamp.
   Future<void> markCompleted() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kLastOnboardingKey, DateTime.now().toIso8601String());
+    final storage = ref.read(localStorageProvider);
+    await storage.setString(_kLastOnboardingKey, DateTime.now().toIso8601String());
     // After completion, no need to show until 7 days pass
     state = const AsyncData(false);
   }

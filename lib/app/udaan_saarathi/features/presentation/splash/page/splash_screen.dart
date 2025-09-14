@@ -2,11 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/providers/splash_controller.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -17,9 +14,9 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -39,32 +36,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
 
     _animationController.forward();
-    Timer(const Duration(seconds: 3), () async {
-      if (!mounted) return;
-      // Decide destination using Riverpod onboarding controller
-      final shouldShowOnboarding =
-          await ref.read(onboardingControllerProvider.future);
-      if (!mounted) return;
-      if (shouldShowOnboarding) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => OnboardingListPage()),
-        );
-        return;
-      }
+    _initializeApp();
+  }
 
-      // Check auth token
-      await ref.read(authControllerProvider.notifier).checkAuthOnLaunch();
-      final auth = ref.read(authControllerProvider);
-      if (auth.isAuthenticated) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const AppHomeNavigationPage()),
-        );
-      } else {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      }
-    });
+  Future<void> _initializeApp() async {
+    // Wait for both animation and splash checks to complete
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+
+    // Ask controller for the route to navigate to
+    final routeName =
+        await ref.read(splashControllerProvider.notifier).determineRoute();
+    if (!mounted) return;
+
+    // Navigate using named routes
+    Navigator.of(context).pushReplacementNamed(routeName);
   }
 
   @override
@@ -111,9 +97,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(
-                                      0xFF4F7DF9,
-                                    ).withOpacity(0.3),
+                                    color: const Color(0xFF4F7DF9)
+                                        .withOpacity(0.3),
                                     blurRadius: 20,
                                     offset: const Offset(0, 10),
                                   ),
@@ -125,9 +110,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 size: 60,
                               ),
                             ),
-
                             const SizedBox(height: 40),
-
                             const Text(
                               'UdaanSarathi',
                               textAlign: TextAlign.center,
@@ -138,9 +121,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 letterSpacing: 1.2,
                               ),
                             ),
-
                             const SizedBox(height: 12),
-
                             const Text(
                               'Your Career Companion',
                               textAlign: TextAlign.center,
@@ -151,9 +132,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 letterSpacing: 0.5,
                               ),
                             ),
-
                             const SizedBox(height: 50),
-
                             // Loading indicator (centered)
                             Center(
                               child: Container(

@@ -7,9 +7,12 @@ import '../../../domain/usecases/auth/login_verify.dart';
 import '../../../domain/usecases/auth/get_token.dart';
 import '../../../domain/usecases/auth/logout.dart';
 import '../../../data/repositories/auth/auth_repository.dart';
+import '../../../data/repositories/auth/token_storage.dart';
 
 final authRepositoryProvider = Provider<domain.AuthRepository>((ref) {
-  return AuthRepositoryImpl();
+  return AuthRepositoryImpl(
+    storage: ref.watch(tokenStorageProvider),
+  );
 });
 
 final registerCandidateUseCaseProvider = Provider<RegisterCandidateUseCase>((ref) {
