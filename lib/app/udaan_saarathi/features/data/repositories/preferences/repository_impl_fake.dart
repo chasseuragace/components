@@ -10,6 +10,7 @@ import '../../datasources/preferences/local_data_source.dart';
 import '../../datasources/preferences/remote_data_source.dart';
 import '../../models/job_title/model.dart';
 import '../../models/preferences/model.dart';
+import '../../repositories/auth/token_storage.dart';
 
 // Fake data for Preferencess
 final remoteItems = [
@@ -368,19 +369,36 @@ class PreferencesRepositoryFake implements PreferencesRepository {
   final PreferencesRemoteDataSource remoteDataSource;
   // Provide API like AuthRepositoryImpl for future integration
   final CandidatesApi _api;
+  final TokenStorage _storage;
 
   PreferencesRepositoryFake({
     required this.localDataSource,
     required this.remoteDataSource,
+    required TokenStorage storage,
     CandidatesApi? api,
-  }) : _api = api ?? ApiConfig.client().getCandidatesApi();
+  })  : _storage = storage,
+        _api = api ?? ApiConfig.client().getCandidatesApi();
 
   @override
   Future<Either<Failure, List<PreferencesEntity>>> getAllItems() async {
     try {
-      // Simulate delay
-      await Future.delayed(Duration(milliseconds: 300));
-// api.candidateControllerListPreferences(id: 'candidateId');
+      // Attempt real API if candidateId available; fallback to fake data
+      final candidateId = await _storage.getCandidateId();
+      if (candidateId != null && candidateId.isNotEmpty) {
+        try {
+          final res = await _api.candidateControllerListPreferences(id: candidateId);
+          final data = res.data ?? [];
+          // Map OpenAPI models to PreferencesModel if needed; here we fallback to remoteItems mapping
+          // TODO: Replace with real mapping once OpenAPI DTO is known
+          if (data.isNotEmpty) {
+            return right(remoteItems.map((model) => model).toList());
+          }
+        } catch (_) {
+          // Ignore and fallback to fake data
+        }
+      }
+      // Fake data fallback
+      await Future.delayed(Duration(milliseconds: 200));
       return right(remoteItems.map((model) => model).toList());
     } catch (error) {
       return left(ServerFailure());

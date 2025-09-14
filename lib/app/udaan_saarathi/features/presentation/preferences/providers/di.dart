@@ -7,6 +7,7 @@ import '../../../domain/usecases/preferences/add.dart';
 import '../../../domain/usecases/preferences/update.dart';
 import '../../../domain/usecases/preferences/delete.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/repositories/auth/token_storage.dart';
 
 final getAllPreferencesUseCaseProvider = Provider<GetAllPreferencesUseCase>((ref) {
   return GetAllPreferencesUseCase(ref.watch(rPreferencesRepositoryProvider));
@@ -31,7 +32,12 @@ final deletePreferencesUseCaseProvider = Provider<DeletePreferencesUseCase>((ref
 final rPreferencesRepositoryProvider = Provider((ref) {
   final local = ref.read(localDataPreferencesSourceProvider);
   final remote = ref.read(remoteDataPreferencesSourceProvider);
-  return PreferencesRepositoryFake(localDataSource: local, remoteDataSource: remote);
+  final storage = ref.read(tokenStorageProvider);
+  return PreferencesRepositoryFake(
+    localDataSource: local,
+    remoteDataSource: remote,
+    storage: storage,
+  );
 });
 
 final localDataPreferencesSourceProvider = Provider<PreferencesLocalDataSource>((ref) {

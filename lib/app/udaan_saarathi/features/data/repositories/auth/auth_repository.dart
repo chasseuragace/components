@@ -28,6 +28,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   Future<Either<Failure, Unit>> logout() async {
     try {
       await _storage.clearToken();
+      await _storage.clearCandidateId();
       return const Right(unit);
     } catch (_) {
       return Left(CacheFailure());
@@ -53,6 +54,8 @@ class AuthRepositoryImpl implements domain.AuthRepository {
       final token = res.data?.token ?? '';
       if (token.isNotEmpty) {
         await _storage.setToken(token);
+        // TODO: Replace with actual candidateId from backend response once available
+        await _storage.setCandidateId('fake-candidate-id');
       }
       return Right(token);
     } catch (_) {
@@ -79,6 +82,8 @@ class AuthRepositoryImpl implements domain.AuthRepository {
       final token = res.data?.token ?? '';
       if (token.isNotEmpty) {
         await _storage.setToken(token);
+        // TODO: Replace with actual candidateId from backend response once available
+        await _storage.setCandidateId('fake-candidate-id');
       }
       return Right(token);
     } catch (_) {

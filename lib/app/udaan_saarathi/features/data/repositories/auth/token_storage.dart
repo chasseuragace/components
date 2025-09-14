@@ -3,6 +3,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/storage/local_storage.
 
 class TokenStorage {
   static const _kAuthTokenKey = 'auth_token';
+  static const _kCandidateIdKey = 'candidate_id';
   final LocalStorage _storage;
 
   TokenStorage(this._storage);
@@ -17,6 +18,19 @@ class TokenStorage {
 
   Future<void> clearToken() async {
     await _storage.remove(_kAuthTokenKey);
+  }
+
+  // Candidate ID helpers
+  Future<String?> getCandidateId() async {
+    return _storage.getString(_kCandidateIdKey);
+  }
+
+  Future<void> setCandidateId(String candidateId) async {
+    await _storage.setString(_kCandidateIdKey, candidateId);
+  }
+
+  Future<void> clearCandidateId() async {
+    await _storage.remove(_kCandidateIdKey);
   }
 }
 
