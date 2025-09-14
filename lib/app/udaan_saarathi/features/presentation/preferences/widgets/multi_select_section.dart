@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/common/models/option.dart';
 
 class MultiSelectSection extends StatelessWidget {
   final String title;
-  final List<String> options;
+  final List<Option> options;
   final List<String> selected;
   final Function(String) onToggle;
   final Color color;
@@ -83,10 +84,10 @@ class MultiSelectSection extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: options.map((option) {
-                final bool isSelected = selected.contains(option);
+                final bool isSelected = selected.contains(option.value);
 
                 return GestureDetector(
-                  onTap: () => onToggle(option),
+                  onTap: () => onToggle(option.value),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -103,7 +104,7 @@ class MultiSelectSection extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      option,
+                      option.label,
                       style: TextStyle(
                         color: isSelected ? color : const Color(0xFF475569),
                         fontSize: 14,

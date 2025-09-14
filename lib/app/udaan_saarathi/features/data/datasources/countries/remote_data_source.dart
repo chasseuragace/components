@@ -1,4 +1,4 @@
-import '../../models/Countries/model.dart';
+import '../../models/countries/model.dart';
 
 abstract class CountriesRemoteDataSource {
   Future<List<CountriesModel>> getAllItems();

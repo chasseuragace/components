@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../../../domain/entities/Countries/entity.dart';
-import '../../../domain/repositories/Countries/repository.dart';
-import '../../datasources/Countries/local_data_source.dart';
-import '../../datasources/Countries/remote_data_source.dart';
-import '../../models/Countries/model.dart';
+import '../../../domain/entities/countries/entity.dart';
+import '../../../domain/repositories/countries/repository.dart';
+import '../../datasources/countries/local_data_source.dart';
+import '../../datasources/countries/remote_data_source.dart';
+import '../../models/countries/model.dart';
 class CountriesRepositoryImpl implements CountriesRepository {
   final CountriesLocalDataSource localDataSource;
   final CountriesRemoteDataSource remoteDataSource;

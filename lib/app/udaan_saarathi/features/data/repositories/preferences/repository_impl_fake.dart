@@ -50,6 +50,7 @@ final remoteItems = [
               }
           ]
         },
+        
         {
           'title': 'Salary & Work Preferences',
           'subtitle': 'Set your salary expectations and work preferences.',
@@ -129,7 +130,7 @@ final remoteItems = [
               }
             ]
           },
-        {
+    if(false)    {
           'title': 'Contract & Benefits',
           'subtitle': 'Select your contract duration and desired benefits.',
           'icon': 'description',

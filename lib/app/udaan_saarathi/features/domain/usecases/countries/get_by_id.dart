@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import '../../entities/Countries/entity.dart';
-import '../../repositories/Countries/repository.dart';
+import '../../entities/countries/entity.dart';
+import '../../repositories/countries/repository.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 

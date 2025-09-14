@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/errors/failures.dart';
-import '../../../domain/entities/Countries/entity.dart';
+import '../../../domain/entities/countries/entity.dart';
 
 import '../../../../core/usecases/usecase.dart';
 import './di.dart';

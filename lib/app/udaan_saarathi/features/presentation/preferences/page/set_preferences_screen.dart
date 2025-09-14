@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 // import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/preferences/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/quick_salary_button.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/training_support_section.dart';
@@ -11,27 +12,34 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/prefe
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 
 import '../../../data/models/job_title/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/common/models/option.dart';
+import '../../countries/providers/providers.dart' show getAllCountriesProvider;
+import '../providers/providers.dart';
+import '../providers/preferences_config_provider.dart';
 
 // Removed conflicting import that defines JobTitle and JobTitleWithPriority
 // import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
 
+
+
 final currentStepProvider = StateProvider((ref) => 0);
 
-class SetPreferenceScreen extends StatefulWidget {
-  const SetPreferenceScreen({super.key});
+class SetPreferenceScreen extends ConsumerStatefulWidget {
+
+  const SetPreferenceScreen({super.key, });
 
   @override
   _SetPreferenceScreenState createState() => _SetPreferenceScreenState();
 }
 
-class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
+class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
   int currentStep = 0;
 
   // Ordered job titles with priorities
   List<JobTitleWithPriority> selectedJobTitles = [];
 
   // Other preferences
-  List<String> selectedCountries = [];
+  List<Option> selectedCountries = [];
   List<String> selectedIndustries = [];
   List<String> selectedWorkLocations = [];
   Map<String, double> salaryRange = {'min': 800, 'max': 3000}; // USD monthly
@@ -43,129 +51,120 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   bool trainingSupport = false;
   String contractDuration = '';
   List<String> selectedBenefits = [];
+  
+  // Track if we've already prefilled from server data
+  bool _hasPrefilledData = false;
 
 
-  // Steps configuration: loaded from repository fake's rawJson or falls back
-  // to a local default with two built-in steps (job_titles, review) and
-  // the middle steps rendered from config sections.
+  // Steps configuration: loaded from provider
   List<Map<String, dynamic>> get _stepsConfig {
-    try {
-      final steps = (remoteItems.first.rawJson['steps'] as List?)
-              ?.cast<Map<String, dynamic>>() ??
-          const [];
-      if (steps.isNotEmpty) return steps;
-    } catch (_) {}
+    final stepsAsync = ref.watch(stepsConfigProvider);
+    return stepsAsync;
+  }
 
-    // Fallback default
-    return [
-      {
-        'type': 'builtin',
-        'key': 'job_titles',
-        'title': 'Job Titles (Priority Order)'
+  @override
+  void initState() {
+    super.initState();
+    // Apply default template initially
+    // This will be overridden by server data if available
+    _applyTemplate(_defaultTemplate());
+  }
+
+  void _applyTemplate(Map<String, dynamic> tpl) {
+    try {
+      // Job titles
+      final jobTitles = (tpl['jobTitles'] as List?) ?? const [];
+      selectedJobTitles = jobTitles
+          .whereType<Map>()
+          .map((m) => JobTitleWithPriority(
+                jobTitle: JobTitle(
+                  id: (m['id'] ?? '').toString(),
+                  title: (m['title'] ?? '').toString(),
+                  isActive: true,
+                ),
+                priority: (m['priority'] is num) ? (m['priority'] as num).toInt() : 0,
+              ))
+          .toList();
+      _reindexPriorities();
+
+      // Countries
+      final countries = (tpl['countries'] as List?) ?? const [];
+      selectedCountries = countries.map((e) {
+        if (e is Map) {
+          final label = (e['label'] ?? e['name'] ?? '').toString();
+          final value = (e['value'] ?? e['id'] ?? '').toString();
+          return Option(label: label, value: value);
+        }
+        // Fallback for string-like entries
+        return Option(label: e.toString(), value: e.toString());
+      }).toList();
+
+      // Salary range
+      final sr = tpl['salaryRange'];
+      if (sr is Map) {
+        final min = sr['min'];
+        final max = sr['max'];
+        if (min is num) salaryRange['min'] = min.toDouble();
+        if (max is num) salaryRange['max'] = max.toDouble();
+      }
+
+      setState(() {});
+    } catch (_) {
+      // Ignore template errors silently for now
+    }
+  }
+
+  Map<String, dynamic> _defaultTemplate() {
+    return {
+      'jobTitles': [
+        {
+          'id': '899033ea-b0c8-4109-93b0-2504809782aa',
+          'title': 'Heavy/Trailer Driver',
+          'priority': 0,
+        }
+      ],
+      'countries': [
+        {
+          'label': 'Bulgaria',
+          'value': '4b62a218-3849-4909-87bc-6434f07b75d5',
+        },
+        {
+          'label': 'Cyprus',
+          'value': '54fb3d0e-f55c-4bc3-97dd-18cb5b406bef',
+        },
+      ],
+      'salaryRange': {
+        'min': 800.0,
+        'max': 3600.0,
       },
-      {
-        'title': 'Countries & Locations',
-        'icon': 'public',
-        'color': 0xFF059669,
-        'sections': [
-          {
-            'id': 'countries',
-            'type': 'multi_select',
-            'title': 'Gulf Countries',
-            'source': 'gulfCountries',
-            'color': 0xFF059669
-          },
-          {
-            'id': 'work_locations',
-            'type': 'multi_select',
-            'title': 'Preferred Work Locations',
-            'source': 'workLocations',
-            'color': 0xFF0891B2
-          }
-        ]
-      },
-      {
-        'title': 'Salary & Work Preferences',
-        'icon': 'attach_money',
-        'color': 0xFFDC2626,
-        'sections': [
-          {
-            'id': 'salary',
-            'type': 'salary_range',
-            'title': 'Expected Monthly Salary (USD)',
-            'color': 0xFFDC2626
-          },
-          {
-            'id': 'industries',
-            'type': 'multi_select',
-            'title': 'Industries',
-            'source': 'industries',
-            'color': 0xFF7C3AED
-          },
-          {
-            'id': 'experience',
-            'type': 'single_select',
-            'title': 'Experience Level',
-            'source': 'experienceLevels',
-            'color': 0xFFEA580C
-          },
-          {
-            'id': 'shifts',
-            'type': 'multi_select',
-            'title': 'Shift Preferences',
-            'source': 'shiftPreferences',
-            'color': 0xFF0891B2
-          }
-        ]
-      },
-      {
-        'title': 'Company & Culture',
-        'icon': 'business',
-        'color': 0xFF7C2D12,
-        'sections': [
-          {
-            'id': 'company_size',
-            'type': 'single_select',
-            'title': 'Company Size',
-            'source': 'companySizes',
-            'color': 0xFF7C2D12
-          },
-          {
-            'id': 'work_culture',
-            'type': 'multi_select',
-            'title': 'Work Culture',
-            'source': 'workCulture',
-            'color': 0xFF059669
-          }
-        ]
-      },
-      {
-        'title': 'Contract & Benefits',
-        'icon': 'description',
-        'color': 0xFF7C3AED,
-        'sections': [
-          {
-            'id': 'contract_duration',
-            'type': 'single_select',
-            'title': 'Contract Duration',
-            'source': 'contractDurations',
-            'color': 0xFF7C3AED
-          },
-          {
-            'id': 'benefits',
-            'type': 'multi_select',
-            'title': 'Desired Work Benefits',
-            'source': 'workBenefits',
-            'color': 0xFF059669
-          }
-        ]
-      },
-      {'type': 'builtin', 'key': 'review', 'title': 'Review & Confirm'},
-    ];
+    };
+  }
+
+  /// Pre-fill user selections from server data (business requirement)
+  /// This is separate from the UI configuration - it's about user's saved preferences
+  void _prefillFromUserPreferences(PreferencesEntity userPrefs) {
+    try {
+      // Extract user data from the server response
+      final userData = userPrefs.rawJson;
+      
+      // Apply the user's saved template/selections
+      _applyTemplate(Map<String,dynamic>.from(userData));
+      
+      // Mark as prefilled to avoid doing this multiple times
+      _hasPrefilledData = true;
+      
+      setState(() {});
+    } catch (e) {
+      // If prefilling fails, just continue with defaults
+      print('Failed to prefill user preferences: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final steps = ref.watch(stepsConfigProvider);
+    final userPrefsAsync = ref.watch(userPreferencesProvider);
+    
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFC),
       appBar: _buildAppBar(),
@@ -173,16 +172,62 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
         children: [
           PreferencesProgressIndicator(
             currentStep: currentStep,
-            totalSteps: _stepsConfig.length,
-            stepTitle: _getStepTitle(currentStep),
+            totalSteps: steps.length,
+            stepTitle: _getStepTitle(currentStep, steps),
           ),
-          Expanded(child: _buildStepContent()),
+          Expanded(
+            child: userPrefsAsync.when(
+              data: (userPrefs) {
+                // Pre-fill user selections if available
+                if (userPrefs != null && !_hasPrefilledData) {
+                  _prefillFromUserPreferences(userPrefs);
+                }
+                return _buildStepContent(steps);
+              },
+              loading: () => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Loading your preferences...'),
+                  ],
+                ),
+              ),
+              error: (error, stack) => Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.warning, color: Colors.orange),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Could not load saved preferences. Starting fresh.',
+                            style: TextStyle(color: Colors.orange.shade800),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(child: _buildStepContent(steps)),
+                ],
+              ),
+            ),
+          ),
           PreferencesBottomNavigation(
             currentStep: currentStep,
-            totalSteps: _stepsConfig.length,
+            totalSteps: steps.length,
             onPrevious: _previousStep,
             onNext: _nextStep,
-            isStepValid: _isStepValid,
+            isStepValid: () => _isStepValid(steps),
           ),
         ],
       ),
@@ -201,10 +246,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
           fontWeight: FontWeight.w600,
         ),
       ),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios, color: Color(0xFF64748B)),
-        onPressed: () => Navigator.pop(context),
-      ),
+     
       actions: [
         TextButton(
           onPressed: _skipToEnd,
@@ -219,15 +261,15 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
   // Progress indicator extracted to PreferencesProgressIndicator
 
-  String _getStepTitle(int step) {
-    if (step < 0 || step >= _stepsConfig.length) return '';
-    final s = _stepsConfig[step] ;
+  String _getStepTitle(int step, List<Map<String, dynamic>> steps) {
+    if (step < 0 || step >= steps.length) return '';
+    final s = steps[step];
     return (s['title'] as String?) ?? '';
   }
 
-  Widget _buildStepContent() {
-    if (_stepsConfig.isEmpty) return Container();
-    final step = _stepsConfig[currentStep] ;
+  Widget _buildStepContent(List<Map<String, dynamic>> steps) {
+    if (steps.isEmpty) return Container();
+    final step = steps[currentStep];
     final type = step['type'] as String?;
     final key = step['key'] as String?;
     if (type == 'builtin' && key == 'job_titles') {
@@ -275,20 +317,24 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
 
     switch (type) {
       case 'multi_select':
-        final options = _resolveOptions(section['source'] as String?);
+        final optionObjs = _resolveOptions(section['source'] as String?);
         final selected = _selectedListFor(id);
         return Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: MultiSelectSection(
             title: title,
-            options: options,
-            selected: selected,
-            onToggle: (value) => _toggleSelection(selected, value),
+            options: optionObjs,
+            selected: selected.map((e)=>e.value).toList(),
+            onToggle: (value) {
+             
+              _toggleSelection( selected, optionObjs.firstWhere((e)=>e.value==value));
+            },
             color: Color(colorValue),
           ),
         );
       case 'single_select':
-        final options = _resolveOptions(section['source'] as String?);
+        final optionObjs = _resolveOptions(section['source'] as String?);
+        final options = optionObjs.map((o) => o.label).toList();
         return Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: SingleSelectSection(
@@ -336,52 +382,61 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     }
   }
 
-  List<String> _resolveOptions(String? source) {
+  List<Option> _resolveOptions(String? source) {
     switch (source) {
       case 'gulfCountries':
-        return gulfCountries;
-      case 'industries':
-        return industries;
-      case 'workLocations':
-        return workLocations;
-      case 'experienceLevels':
-        return experienceLevels;
-      case 'shiftPreferences':
-        return shiftPreferences;
-      case 'companySizes':
-        return companySizes;
-      case 'workCulture':
-        return workCulture;
-      case 'agencies':
-        return agencies;
-      case 'contractDurations':
-        return contractDurations;
-      case 'workBenefits':
-        return workBenefits;
+        return ref.watch(getAllCountriesProvider).when(
+          data: (data) => data
+              .map((e) => Option(
+                    label: e.name.toString(),
+                    value: e.id.toString(),
+                  ))
+              .toList(),
+          error: (error, s) => const [],
+          loading: () => const [],
+        );
+      // case 'industries':
+      //   return industries;
+      // case 'workLocations':
+      //   return workLocations;
+      // case 'experienceLevels':
+      //   return experienceLevels;
+      // case 'shiftPreferences':
+      //   return shiftPreferences;
+      // case 'companySizes':
+      //   return companySizes;
+      // case 'workCulture':
+      //   return workCulture;
+      // case 'agencies':
+      //   return agencies;
+      // case 'contractDurations':
+      //   return contractDurations;
+      // case 'workBenefits':
+      //   return workBenefits;
       default:
         return const [];
     }
   }
 
   // Selected state mappers for config-driven sections
-  List<String> _selectedListFor(String id) {
+  List<Option> _selectedListFor(String id) {
     switch (id) {
       case 'countries':
         return selectedCountries;
-      case 'work_locations':
-        return selectedWorkLocations;
-      case 'industries':
-        return selectedIndustries;
-      case 'work_culture':
-        return selectedWorkCulture;
-      case 'agencies':
-        return selectedAgencies;
-      case 'shifts':
-        return selectedShiftPreferences;
-      case 'benefits':
-        return selectedBenefits;
+      // case 'work_locations':
+      //   return selectedWorkLocations;
+      // case 'industries':
+      //   return selectedIndustries;
+      // case 'work_culture':
+      //   return selectedWorkCulture;
+      // case 'agencies':
+      //   return selectedAgencies;
+      // case 'shifts':
+      //   return selectedShiftPreferences;
+      // case 'benefits':
+      //   return selectedBenefits;
       default:
-        return <String>[];
+        return [];
     }
   }
 
@@ -532,7 +587,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
           if (selectedCountries.isNotEmpty)
             _buildReviewSection(
               'Target Countries',
-              selectedCountries,
+              selectedCountries.map((e)=>e.label).toList(),
               Color(0xFF059669),
             ),
 
@@ -799,7 +854,7 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   }
 
   // Utility Methods
-  void _toggleSelection(List<String> list, String item) {
+  void _toggleSelection(List<Option> list, Option item) {
     setState(() {
       if (list.contains(item)) {
         list.remove(item);
@@ -840,9 +895,9 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
     }
   }
 
-  bool _isStepValid() {
-    if (_stepsConfig.isEmpty) return true;
-    final step = _stepsConfig[currentStep] ;
+  bool _isStepValid(List<Map<String, dynamic>> steps) {
+    if (steps.isEmpty) return true;
+    final step = steps[currentStep];
     final type = step['type'] as String?;
     final key = step['key'] as String?;
     if (type == 'builtin' && key == 'job_titles') {
@@ -860,7 +915,8 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   }
 
   void _nextStep() {
-    if (currentStep < _stepsConfig.length - 1) {
+    final steps = ref.read(stepsConfigProvider);
+    if (currentStep < steps.length - 1) {
       setState(() {
         currentStep++;
       });
@@ -878,8 +934,9 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
   }
 
   void _skipToEnd() {
+    final steps = ref.read(stepsConfigProvider);
     setState(() {
-      currentStep = _stepsConfig.length - 1;
+      currentStep = steps.length - 1;
     });
   }
 
@@ -899,20 +956,11 @@ class _SetPreferenceScreenState extends State<SetPreferenceScreen> {
             },
           )
           .toList(),
-      'countries': selectedCountries,
-      'industries': selectedIndustries,
-      'workLocations': selectedWorkLocations,
+      'countries': selectedCountries.map((e)=>e.toJson()).toList(),
       'salaryRange': salaryRange,
-      'workCulture': selectedWorkCulture,
-      'agencies': selectedAgencies,
-      'companySize': selectedCompanySize,
-      'shiftPreferences': selectedShiftPreferences,
-      'experienceLevel': selectedExperienceLevel,
-      'trainingSupport': trainingSupport,
-      'contractDuration': contractDuration,
-      'benefits': selectedBenefits,
+      
     };
-
+print(preferences);
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

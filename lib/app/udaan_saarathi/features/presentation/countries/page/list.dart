@@ -1,7 +1,7 @@
 // lib/features/Countries/presentation/pages/list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../domain/entities/Countries/entity.dart';
+import '../../../domain/entities/countries/entity.dart';
 import '../providers/providers.dart';
 
 class CountriesListPage extends ConsumerStatefulWidget {

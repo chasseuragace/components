@@ -172,4 +172,10 @@ i see i have grown big enough
     - me : reflect on the plan 
     - create 2 files 
         - plan.md , reflections.md
-                    
+
+- clairty 
+    - demand ruthles clarity 
+    - if you demand vague 
+        - youll recieve vague 
+        - ruthless quantum clarity 
+    

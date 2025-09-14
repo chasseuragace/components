@@ -1,12 +1,12 @@
-import '../../../data/datasources/Countries/local_data_source.dart';
-import '../../../data/datasources/Countries/remote_data_source.dart';
-import '../../../data/repositories/Countries/repository_impl.dart';
-import '../../../data/repositories/Countries/repository_impl_fake.dart';
-import '../../../domain/usecases/Countries/get_all.dart';
-import '../../../domain/usecases/Countries/get_by_id.dart';
-import '../../../domain/usecases/Countries/add.dart';
-import '../../../domain/usecases/Countries/update.dart';
-import '../../../domain/usecases/Countries/delete.dart';
+import '../../../data/datasources/countries/local_data_source.dart';
+import '../../../data/datasources/countries/remote_data_source.dart';
+import '../../../data/repositories/countries/repository_impl.dart';
+import '../../../data/repositories/countries/repository_impl_fake.dart';
+import '../../../domain/usecases/countries/get_all.dart';
+import '../../../domain/usecases/countries/get_by_id.dart';
+import '../../../domain/usecases/countries/add.dart';
+import '../../../domain/usecases/countries/update.dart';
+import '../../../domain/usecases/countries/delete.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getAllCountriesUseCaseProvider = Provider<GetAllCountriesUseCase>((ref) {

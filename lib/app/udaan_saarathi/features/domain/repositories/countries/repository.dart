@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import '../../entities/Countries/entity.dart';
+import '../../entities/countries/entity.dart';
 import '../../../../core/errors/failures.dart';
 
 abstract class CountriesRepository {
