@@ -13,6 +13,7 @@ final onboardingControllerProvider = AsyncNotifierProvider<OnboardingController,
 class OnboardingController extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
+    return true;
     final prefs = await SharedPreferences.getInstance();
     final iso = prefs.getString(_kLastOnboardingKey);
     if (iso == null || iso.isEmpty) {
