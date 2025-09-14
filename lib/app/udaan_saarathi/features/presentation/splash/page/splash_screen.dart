@@ -45,8 +45,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
 
     // Ask controller for the route to navigate to
-    final routeName =
-        await ref.read(splashControllerProvider.notifier).determineRoute();
+    final routeName = await ref.read(splashControllerProvider).determineRoute();
     if (!mounted) return;
 
     // Navigate using named routes

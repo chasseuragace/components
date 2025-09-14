@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:openapi/openapi.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/config/api_config.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/preferences/entity.dart';
@@ -158,16 +160,19 @@ final remoteItems = [
       ]
     },
     id: '1',
+    jobTitleId: '1',
     name: 'Admin',
   ),
   PreferencesModel(
     rawJson: {},
     id: '2',
+    jobTitleId: '2',
     name: 'User',
   ),
   PreferencesModel(
     rawJson: {},
     id: '3',
+    jobTitleId: '3',
     name: 'Guest',
   ),
 ];
@@ -361,18 +366,21 @@ final List<String> workBenefits = [
 class PreferencesRepositoryFake implements PreferencesRepository {
   final PreferencesLocalDataSource localDataSource;
   final PreferencesRemoteDataSource remoteDataSource;
+  // Provide API like AuthRepositoryImpl for future integration
+  final CandidatesApi _api;
 
   PreferencesRepositoryFake({
     required this.localDataSource,
     required this.remoteDataSource,
-  });
+    CandidatesApi? api,
+  }) : _api = api ?? ApiConfig.client().getCandidatesApi();
 
   @override
   Future<Either<Failure, List<PreferencesEntity>>> getAllItems() async {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
-
+// api.candidateControllerListPreferences(id: 'candidateId');
       return right(remoteItems.map((model) => model).toList());
     } catch (error) {
       return left(ServerFailure());
