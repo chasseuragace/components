@@ -7,6 +7,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/quick_salary_button.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/salary_training_sections.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/training_support_section.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/widgets.dart' hide ReviewSection;
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
@@ -18,6 +19,7 @@ import '../providers/preferences_config_provider.dart';
 import '../providers/options_provider.dart';
 import '../providers/save_preferences_notifier.dart';
 import '../providers/job_title_preferences_provider.dart';
+import 'providers.dart';
 
 // Removed conflicting import that defines JobTitle and JobTitleWithPriority
 // import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
@@ -65,50 +67,6 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
     super.initState();
     // Template will be loaded from filter provider
     // No need to apply default template here
-  }
-
-  void _applyTemplate(Map<String, dynamic> tpl) {
-    try {
-      // Job titles
-      final jobTitles = (tpl['jobTitles'] as List?) ?? const [];
-      selectedJobTitles = jobTitles
-          .whereType<Map>()
-          .map((m) => JobTitleWithPriority(
-                jobTitle: JobTitle(
-                  id: (m['id'] ?? '').toString(),
-                  title: (m['title'] ?? '').toString(),
-                  isActive: true,
-                ),
-                priority: (m['priority'] is num) ? (m['priority'] as num).toInt() : 0,
-              ))
-          .toList();
-      _reindexPriorities();
-
-      // Countries
-      final countries = (tpl['countries'] as List?) ?? const [];
-      selectedCountries = countries.map((e) {
-        if (e is Map) {
-          final label = (e['label'] ?? e['name'] ?? '').toString();
-          final value = (e['value'] ?? e['id'] ?? '').toString();
-          return Option(label: label, value: value);
-        }
-        // Fallback for string-like entries
-        return Option(label: e.toString(), value: e.toString());
-      }).toList();
-
-      // Salary range
-      final sr = tpl['salaryRange'];
-      if (sr is Map) {
-        final min = sr['min'];
-        final max = sr['max'];
-        if (min is num) salaryRange['min'] = min.toDouble();
-        if (max is num) salaryRange['max'] = max.toDouble();
-      }
-
-      setState(() {});
-    } catch (_) {
-      // Ignore template errors silently for now
-    }
   }
 
 
@@ -205,6 +163,10 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
         final max = sr['max'];
         if (min is num) salaryRange['min'] = min.toDouble();
         if (max is num) salaryRange['max'] = max.toDouble();
+         ref.read(salaryRangeProvider.notifier).state = {
+          'min': min.toDouble(),
+          'max': max.toDouble(),
+        };
       }
       
       // Industries
@@ -829,166 +791,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
   }
 
   Widget _buildSalaryRangeSection() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.attach_money, color: Color(0xFFDC2626), size: 24),
-              SizedBox(width: 8),
-              Text(
-                'Expected Monthly Salary (USD)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E293B),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-
-          // Salary Display
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Color(0xFFDC2626).withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Minimum',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                    ),
-                    Text(
-                      'USD ${salaryRange['min']!.round()}',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFDC2626),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(width: 1, height: 40, color: Color(0xFFE2E8F0)),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Maximum',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                    ),
-                    Text(
-                      'USD ${salaryRange['max']!.round()}',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFDC2626),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 20),
-
-          // Salary Range Slider
-          RangeSlider(
-            values: RangeValues(salaryRange['min']!, salaryRange['max']!),
-            min: 200,
-            max: 5000,
-            divisions: 48,
-            activeColor: Color(0xFFDC2626),
-            inactiveColor: Color(0xFFE2E8F0),
-            labels: RangeLabels(
-              'USD ${salaryRange['min']!.round()}',
-              'USD ${salaryRange['max']!.round()}',
-            ),
-            onChanged: (values) {
-              setState(() {
-                salaryRange['min'] = values.start;
-                salaryRange['max'] = values.end;
-              });
-            },
-          ),
-
-          // Quick Select Buttons
-          SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                  child: QuickSalaryButton(
-                isSelected:
-                    salaryRange['min'] == 400 && salaryRange['max'] == 800,
-                label: 'Entry Level',
-                min: 400,
-                max: 800,
-                onTap: () {
-                  setState(() {
-                    salaryRange['min'] = 400;
-                    salaryRange['max'] = 800;
-                  });
-                },
-              )),
-              SizedBox(width: 8),
-              Expanded(
-                  child: QuickSalaryButton(
-                isSelected:
-                    salaryRange['min'] == 800 && salaryRange['max'] == 1500,
-                label: 'Mid Level',
-                min: 800,
-                max: 1500,
-                onTap: () {
-                  setState(() {
-                    salaryRange['min'] = 800;
-                    salaryRange['max'] = 1500;
-                  });
-                },
-              )),
-              SizedBox(width: 8),
-              Expanded(
-                  child: QuickSalaryButton(
-                isSelected:
-                    salaryRange['min'] == 1500 && salaryRange['max'] == 3000,
-                label: 'Senior',
-                min: 1500,
-                max: 3000,
-                onTap: () {
-                  setState(() {
-                    salaryRange['min'] = 1500;
-                    salaryRange['max'] = 3000;
-                  });
-                },
-              )),
-            ],
-          ),
-        ],
-      ),
-    );
+   return SalaryRangeSection();
   }
 
 
@@ -1185,7 +988,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
           )
           .toList(),
       'countries': selectedCountries.map((e) => e.toJson()).toList(),
-      'salaryRange': salaryRange,
+      'salaryRange': ref.read(salaryRangeProvider),
       'industries': selectedIndustries,
       'workLocations': selectedWorkLocations,
       'workCulture': selectedWorkCulture,
