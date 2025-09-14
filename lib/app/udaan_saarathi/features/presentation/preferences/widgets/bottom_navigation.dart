@@ -8,6 +8,7 @@ class PreferencesBottomNavigation extends StatelessWidget {
     required this.onPrevious,
     required this.onNext,
     required this.isStepValid,
+    this.isSaving = false,
   });
 
   final int currentStep;
@@ -15,6 +16,7 @@ class PreferencesBottomNavigation extends StatelessWidget {
   final VoidCallback onPrevious;
   final VoidCallback onNext;
   final bool Function() isStepValid;
+  final bool isSaving;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,7 @@ class PreferencesBottomNavigation extends StatelessWidget {
           Expanded(
             flex: currentStep == 0 ? 1 : 2,
             child: ElevatedButton(
-              onPressed: isStepValid() ? onNext : null,
+              onPressed: (isStepValid() && !isSaving) ? onNext : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1E88E5),
                 foregroundColor: Colors.white,
@@ -68,10 +70,29 @@ class PreferencesBottomNavigation extends StatelessWidget {
                 ),
                 disabledBackgroundColor: const Color(0xFFE2E8F0),
               ),
-              child: Text(
-                currentStep == totalSteps - 1 ? 'Save Preferences' : 'Next',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
+              child: isSaving && currentStep == totalSteps - 1
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Saving...',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    )
+                  : Text(
+                      currentStep == totalSteps - 1 ? 'Save Preferences' : 'Next',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
             ),
           ),
         ],

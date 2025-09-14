@@ -179,3 +179,157 @@ i see i have grown big enough
         - youll recieve vague 
         - ruthless quantum clarity 
     
+- the preference module is now complete 
+    - use cases addresssed :
+        - at any point in hte app journey 
+            - i can comup tot hte preference screen with my settings preloaded .
+    - impacts 
+        - the search filter uses my preference 
+        - the notificaitons i get are based on the preference 
+            - the notificaitons 
+                - i get notified for the countries and job tites i selected 
+        - what about hte other ?
+            - those are for the filters
+            - loaded when the app loads ,
+                - written to local storage 
+                - updating this filter also sends data to server 
+                - server can internally use these filters 
+                    - frontend can just refresh
+                    - new api endpoint can be created as wrapper 
+    - peace of mind :   
+        - i have in db tables 
+            - the user's
+                -  preference 
+                -  job profile 
+        - this thing that we discussed is neither of these, but 
+            - user's filters 
+                - that are applied to the search automatically by hte server 
+            - well call this the matching engined 
+                - manage search results 
+                - mange notifications 
+        - then why do the table exist, whats their purpose 
+            - for search ?
+            - matching ?
+            - the purpose 
+                - the existance  
+                    - the crystaliztion 
+         - how this helps tomorrow 
+            - simple query's 
+                 - 
+             
+thence hte resolution 
+    - new modules in server to mange and act on  user filter 
+        - the existing 
+    - endpoint 
+        - JobProfile
+            - skill and educations 
+        - Filters 
+            - insert into the jobProfile
+                - as special node 
+                    - filters
+            - fet filters / these are the template
+            - update filters / all at once  
+                - no nested data manipulation
+
+- so existing apis can be used as is 
+    - what needs be done 
+    - in backend , create new apis 
+        - create new methods , maybe a new service , a new module 
+            - except it works with the job profile entity . no new table 
+            - dtos and validations on insertion exist .
+            - test cases confirm that 
+- so now in the flutter code 
+    - what do we do
+        - new module filters ? 
+        - nah no need  
+        - create a new use case for fetch filters , update filter, 
+    - 
+
+
+
+            
+-this salary seciton shows $ in hte ui , we would prefer the currency to be Rs, NRP [low ]
+- when save preference is pressed , 
+    - use async notifier 
+    - listen to it in the ui 
+    - save to local db
+    - send to remote  
+- when complete navigate pop screen else send the homepage
+
+- what happends now is 
+    - hte job title selection 
+    - when job titels are selcted 
+        - we haev apis for for add job with priority
+        - remove from priority 
+        - reorder 
+- what happens then ?
+    - the filter's are fetched 
+        - this wont include hte titles 
+        - this includes countries and  salary   range.
+    - the preferred titles are fetched 
+        ```
+
+            class PreferencesRepositoryFake implements PreferencesRepository {
+            final PreferencesLocalDataSource localDataSource;
+            final PreferencesRemoteDataSource remoteDataSource;
+            // Provide API like AuthRepositoryImpl for future integration
+            final CandidatesApi _api;
+            final TokenStorage _storage;
+
+            PreferencesRepositoryFake({
+                required this.localDataSource,
+                required this.remoteDataSource,
+                required TokenStorage storage,
+                CandidatesApi? api,
+            })  : _storage = storage,
+                    _api = api ?? ApiConfig.client().getCandidatesApi();
+
+            @override
+            Future<Either<Failure, List<PreferencesEntity>>> getAllItems() async {
+                try {
+                // Attempt real API if candidateId available; fallback to fake data
+                final candidateId = await _storage.getCandidateId();
+
+
+                    final res =
+                        await _api.candidateControllerListPreferences(id: candidateId!);
+                    final List<PreferenceDto> items = res.data ?? const [];
+
+                    final mapped = items
+                        .map((p) => PreferencesModel(
+                                id: p.id.toString(),
+                                jobTitleId: p.jobTitleId.toString(),
+                                name: p.title,
+                                rawJson: p.toJson(),
+                            ))
+                        .where((m) => m.id.isNotEmpty && m.jobTitleId.isNotEmpty)
+                        .toList();
+                    return right(mapped);
+                    
+                
+                // Fake data fallback
+                } catch (error) {
+                return left(ServerFailure());
+                }
+            }
+        ```
+- here 
+    - /Users/ajaydahal/portal/agency_research/code/variant_dashboard/lib/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart
+
+- these are use to construct the selected job title prefill template. 
+    - i see we haev something like that (or exactly that ) implemented here 
+    - /Users/ajaydahal/portal/agency_research/code/variant_dashboard/lib/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart
+
+- when implemented 
+    - we can implement add preference jobtitle
+    - remove
+    - and reorder 
+            - here , for your reference 
+        ``` _(){
+            ApiConfig.client().getCandidatesApi().candidateControllerRemovePreference(id: "candidate id we have a convention for this, ", removePreferenceDto:RemovePreferenceDto(title: "") );
+            ApiConfig.client().getCandidatesApi().candidateControllerReorderPreferences(id: id, reorderPreferencesDto: ReorderPreferencesDto(orderedIds: ["ids of the reordered job titles "]))
+            }
+
+                final candidateId = await _storage.getCandidateId();
+                in /Users/ajaydahal/portal/agency_research/code/variant_dashboard/lib/app/udaan_saarathi/features/data/repositories/preferences/repository_impl_fake.dart
+        ```

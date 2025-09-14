@@ -11,6 +11,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/prefe
 class PreferencesController extends AsyncNotifier<PreferencesStatus> {
   @override
   Future<PreferencesStatus> build() async {
+    return PreferencesStatus.notConfigured;
     final result = await ref.read(getAllPreferencesUseCaseProvider)(NoParm());
     return result.fold(
       (_) => PreferencesStatus.error,

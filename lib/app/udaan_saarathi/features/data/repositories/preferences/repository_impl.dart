@@ -63,6 +63,12 @@ class PreferencesRepositoryImpl implements PreferencesRepository {
       return left(ServerFailure());
     }
   }
+  
+  @override
+  Future<Either<Failure, Map<String, dynamic>?>> getFilter() {
+    // TODO: implement getFilter
+    throw UnimplementedError();
+  }
 }
 extension model on PreferencesEntity {
   PreferencesModel toModel() {

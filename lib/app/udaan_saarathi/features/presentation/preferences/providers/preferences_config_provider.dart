@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
+import '../../../../core/storage/local_storage.dart';
 import '../../../domain/repositories/preferences/repository.dart';
 import '../../../data/repositories/preferences/repository_impl_fake.dart';
 import '../../../data/datasources/preferences/local_data_source.dart';
@@ -9,22 +10,35 @@ import '../../../data/repositories/auth/token_storage.dart';
 // Provider for the preferences repository
 final preferencesRepositoryProvider = Provider<PreferencesRepository>((ref) {
   final tokenStorage = ref.watch(tokenStorageProvider);
+  final localStorage = ref.watch(localStorageProvider);
   return PreferencesRepositoryFake(
-    localDataSource: PreferencesLocalDataSourceImpl(),
+    localDataSource: PreferencesLocalDataSourceImpl(localStorage),
     remoteDataSource: PreferencesRemoteDataSourceImpl(),
     storage: tokenStorage,
   );
 });
 
 /// Provider for user preferences data (actual user selections)
-/// This loads the user's saved preferences from server/storage
-final userPreferencesProvider = FutureProvider<PreferencesEntity?>((ref) async {
+/// This loads ALL user's saved preferences from server/storage
+final userPreferencesProvider = FutureProvider<List<PreferencesEntity>>((ref) async {
   final repository = ref.watch(preferencesRepositoryProvider);
   final result = await repository.getAllItems();
   
   return result.fold(
     (failure) => throw Exception('Failed to load user preferences'),
-    (items) => items.isNotEmpty ? items.first : null,
+    (items) => items, // Return all items, not just first
+  );
+});
+
+/// Provider for filter/template data for pre-filling preferences
+/// This loads the user's filter data from the matching engine
+final filterDataProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
+  final repository = ref.watch(preferencesRepositoryProvider);
+  final result = await repository.getFilter();
+  
+  return result.fold(
+    (failure) => null, // Return null on failure, UI will use default template
+    (filterData) => filterData,
   );
 });
 

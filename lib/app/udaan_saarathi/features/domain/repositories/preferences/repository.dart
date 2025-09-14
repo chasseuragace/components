@@ -8,4 +8,7 @@ abstract class PreferencesRepository {
   Future<Either<Failure, Unit>> addItem(PreferencesEntity entity);
   Future<Either<Failure, Unit>> updateItem(PreferencesEntity entity);
   Future<Either<Failure, Unit>> deleteItem(String id);
+  
+  /// Get user's filter/template data for pre-filling preferences
+  Future<Either<Failure, Map<String, dynamic>?>> getFilter();
 }

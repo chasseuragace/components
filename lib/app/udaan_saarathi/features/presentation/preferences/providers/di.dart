@@ -1,3 +1,4 @@
+import '../../../../core/storage/local_storage.dart';
 import '../../../data/datasources/preferences/local_data_source.dart';
 import '../../../data/datasources/preferences/remote_data_source.dart';
 import '../../../data/repositories/preferences/repository_impl_fake.dart';
@@ -41,7 +42,7 @@ final rPreferencesRepositoryProvider = Provider((ref) {
 });
 
 final localDataPreferencesSourceProvider = Provider<PreferencesLocalDataSource>((ref) {
-  return PreferencesLocalDataSourceImpl();
+  return PreferencesLocalDataSourceImpl(ref.watch(localStorageProvider));
 });
 
 final remoteDataPreferencesSourceProvider = Provider<PreferencesRemoteDataSource>((ref) {

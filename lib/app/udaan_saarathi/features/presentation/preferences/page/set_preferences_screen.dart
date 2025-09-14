@@ -16,6 +16,9 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/commo
 import '../../countries/providers/providers.dart' show getAllCountriesProvider;
 import '../providers/providers.dart';
 import '../providers/preferences_config_provider.dart';
+import '../providers/options_provider.dart';
+import '../providers/save_preferences_notifier.dart';
+import '../providers/job_title_preferences_provider.dart';
 
 // Removed conflicting import that defines JobTitle and JobTitleWithPriority
 // import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/set_preferences/set_preferences_3.dart';
@@ -56,18 +59,13 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
   bool _hasPrefilledData = false;
 
 
-  // Steps configuration: loaded from provider
-  List<Map<String, dynamic>> get _stepsConfig {
-    final stepsAsync = ref.watch(stepsConfigProvider);
-    return stepsAsync;
-  }
+
 
   @override
   void initState() {
     super.initState();
-    // Apply default template initially
-    // This will be overridden by server data if available
-    _applyTemplate(_defaultTemplate());
+    // Template will be loaded from filter provider
+    // No need to apply default template here
   }
 
   void _applyTemplate(Map<String, dynamic> tpl) {
@@ -114,56 +112,209 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
     }
   }
 
-  Map<String, dynamic> _defaultTemplate() {
-    return {
-      'jobTitles': [
-        {
-          'id': '899033ea-b0c8-4109-93b0-2504809782aa',
-          'title': 'Heavy/Trailer Driver',
-          'priority': 0,
-        }
-      ],
-      'countries': [
-        {
-          'label': 'Bulgaria',
-          'value': '4b62a218-3849-4909-87bc-6434f07b75d5',
-        },
-        {
-          'label': 'Cyprus',
-          'value': '54fb3d0e-f55c-4bc3-97dd-18cb5b406bef',
-        },
-      ],
-      'salaryRange': {
-        'min': 800.0,
-        'max': 3600.0,
-      },
-    };
-  }
 
-  /// Pre-fill user selections from server data (business requirement)
-  /// This is separate from the UI configuration - it's about user's saved preferences
-  void _prefillFromUserPreferences(PreferencesEntity userPrefs) {
+
+  /// Apply user preferences (job titles only) from server data
+  /// This handles the user's selected job titles with priorities
+  void _applyUserPreferences(List<PreferencesEntity> userPrefs) {
     try {
-      // Extract user data from the server response
-      final userData = userPrefs.rawJson;
+      // Extract job titles from all user preferences
+      final jobTitles = <Map<String, dynamic>>[];
       
-      // Apply the user's saved template/selections
-      _applyTemplate(Map<String,dynamic>.from(userData));
+      for (final pref in userPrefs) {
+        final userData = pref.rawJson;
+        if (userData.containsKey('title') && userData.containsKey('job_title_id')) {
+          jobTitles.add({
+            'id': userData['job_title_id'],
+            'title': userData['title'],
+            'priority': userData['priority'] ?? 0,
+          });
+        }
+      }
       
-      // Mark as prefilled to avoid doing this multiple times
-      _hasPrefilledData = true;
+      // Sort by priority
+      jobTitles.sort((a, b) => (a['priority'] as int).compareTo(b['priority'] as int));
+      
+      print("Applying user job titles: $jobTitles");
+      
+      // Apply only job titles
+      _applyJobTitlesOnly({'jobTitles': jobTitles});
       
       setState(() {});
     } catch (e) {
-      // If prefilling fails, just continue with defaults
-      print('Failed to prefill user preferences: $e');
+      print('Failed to apply user preferences: $e');
+    }
+  }
+  
+  /// Apply filter data (everything except job titles)
+  /// This handles countries, salary range, industries, etc.
+  void _applyFilterData(Map<String, dynamic> filterData) {
+    try {
+      print("Applying filter data: $filterData");
+      
+      // Apply everything except job titles
+      _applyNonJobTitleData(filterData);
+      
+      setState(() {});
+    } catch (e) {
+      print('Failed to apply filter data: $e');
+    }
+  }
+  
+  /// Apply only job titles from template data
+  void _applyJobTitlesOnly(Map<String, dynamic> data) {
+    try {
+      // Job titles
+      final jobTitles = (data['jobTitles'] as List?) ?? const [];
+      selectedJobTitles = jobTitles
+          .whereType<Map>()
+          .map((m) => JobTitleWithPriority(
+                jobTitle: JobTitle(
+                  id: (m['id'] ?? '').toString(),
+                  title: (m['title'] ?? '').toString(),
+                  isActive: true,
+                ),
+                priority: (m['priority'] is num) ? (m['priority'] as num).toInt() : 0,
+              ))
+          .toList();
+      _reindexPriorities();
+    } catch (e) {
+      print('Error applying job titles: $e');
+    }
+  }
+  
+  /// Apply non-job-title data from template (countries, salary, etc.)
+  void _applyNonJobTitleData(Map<String, dynamic> data) {
+    try {
+      // Countries
+      final countries = (data['countries'] as List?) ?? const [];
+      selectedCountries = countries.map((e) {
+        if (e is Map) {
+          final label = (e['label'] ?? e['name'] ?? '').toString();
+          final value = (e['value'] ?? e['id'] ?? '').toString();
+          return Option(label: label, value: value);
+        }
+        return Option(label: e.toString(), value: e.toString());
+      }).toList();
+
+      // Salary range
+      final sr = data['salaryRange'];
+      if (sr is Map) {
+        final min = sr['min'];
+        final max = sr['max'];
+        if (min is num) salaryRange['min'] = min.toDouble();
+        if (max is num) salaryRange['max'] = max.toDouble();
+      }
+      
+      // Industries
+      final industries = data['industries'];
+      if (industries is List) {
+        selectedIndustries = industries.cast<String>();
+      }
+      
+      // Work locations
+      final workLocations = data['workLocations'];
+      if (workLocations is List) {
+        selectedWorkLocations = workLocations.cast<String>();
+      }
+      
+      // Work culture
+      final workCulture = data['workCulture'];
+      if (workCulture is List) {
+        selectedWorkCulture = workCulture.cast<String>();
+      }
+      
+      // Agencies
+      final agencies = data['agencies'];
+      if (agencies is List) {
+        selectedAgencies = agencies.cast<String>();
+      }
+      
+      // Company size
+      final companySize = data['companySize'];
+      if (companySize is String) {
+        selectedCompanySize = companySize;
+      }
+      
+      // Shift preferences
+      final shiftPreferences = data['shiftPreferences'];
+      if (shiftPreferences is List) {
+        selectedShiftPreferences = shiftPreferences.cast<String>();
+      }
+      
+      // Experience level
+      final experienceLevel = data['experienceLevel'];
+      if (experienceLevel is String) {
+        selectedExperienceLevel = experienceLevel;
+      }
+      
+      // Training support
+      final trainingSupportValue = data['trainingSupport'];
+      if (trainingSupportValue is bool) {
+        trainingSupport = trainingSupportValue;
+      }
+      
+      // Contract duration
+      final contractDurationValue = data['contractDuration'];
+      if (contractDurationValue is String) {
+        contractDuration = contractDurationValue;
+      }
+      
+      // Benefits
+      final benefits = data['benefits'];
+      if (benefits is List) {
+        selectedBenefits = benefits.cast<String>();
+      }
+      
+    } catch (e) {
+      print('Error applying non-job-title data: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final steps = ref.watch(stepsConfigProvider);
+    final filterAsync = ref.watch(filterDataProvider);
     final userPrefsAsync = ref.watch(userPreferencesProvider);
+    final saveState = ref.watch(savePreferencesNotifierProvider);
+    final jobTitlePrefState = ref.watch(jobTitlePreferencesNotifierProvider);
+    
+    // Listen to save state changes
+    ref.listen<AsyncValue<SavePreferencesState>>(savePreferencesNotifierProvider, (previous, next) {
+      next.whenData((state) {
+        switch (state.status) {
+          case SavePreferencesStatus.success:
+            _showSuccessMessage();
+            _navigateAfterSave();
+            break;
+          case SavePreferencesStatus.error:
+            _showErrorMessage(state.errorMessage);
+            break;
+          case SavePreferencesStatus.saving:
+          case SavePreferencesStatus.idle:
+            break;
+        }
+      });
+    });
+    
+    // Listen to job title preference state changes
+    ref.listen<AsyncValue<JobTitlePreferenceState>>(jobTitlePreferencesNotifierProvider, (previous, next) {
+      next.whenData((state) {
+        switch (state.status) {
+          case JobTitlePreferenceStatus.success:
+            _showJobTitleOperationSuccess(state.lastOperation);
+            // Refresh the preferences list after successful operation
+            ref.invalidate(userPreferencesProvider);
+            break;
+          case JobTitlePreferenceStatus.error:
+            _showJobTitleOperationError(state.errorMessage, state.lastOperation);
+            break;
+          case JobTitlePreferenceStatus.loading:
+          case JobTitlePreferenceStatus.idle:
+            break;
+        }
+      });
+    });
     
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFC),
@@ -176,13 +327,59 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
             stepTitle: _getStepTitle(currentStep, steps),
           ),
           Expanded(
-            child: userPrefsAsync.when(
-              data: (userPrefs) {
-                // Pre-fill user selections if available
-                if (userPrefs != null && !_hasPrefilledData) {
-                  _prefillFromUserPreferences(userPrefs);
+            child: filterAsync.when(
+              data: (filterData) {
+                // Apply filter data (countries, salary, etc.) when available
+                if (filterData != null && !_hasPrefilledData) {
+                  _applyFilterData(filterData);
                 }
-                return _buildStepContent(steps);
+                
+                return userPrefsAsync.when(
+                  data: (userPrefs) {
+                    // Apply user preferences (job titles) - this complements filter data
+                    if (userPrefs.isNotEmpty && !_hasPrefilledData) {
+                      _applyUserPreferences(userPrefs);
+                      _hasPrefilledData = true;
+                    }
+                    return _buildStepContent(steps);
+                  },
+                  loading: () => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Loading your preferences...'),
+                      ],
+                    ),
+                  ),
+                  error: (error, stack) => Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.orange.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.warning, color: Colors.orange),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Could not load job title preferences. Using filter data only.',
+                                style: TextStyle(color: Colors.orange.shade800),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(child: _buildStepContent(steps)),
+                    ],
+                  ),
+                );
               },
               loading: () => Center(
                 child: Column(
@@ -190,36 +387,61 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('Loading your preferences...'),
+                    Text('Loading filter data...'),
                   ],
                 ),
               ),
-              error: (error, stack) => Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.orange.shade200),
-                    ),
-                    child: Row(
+              error: (error, stack) {
+                // If filter fails, use default template and continue
+                if (!_hasPrefilledData) {
+                 
+                  _hasPrefilledData = false;
+                }
+                return userPrefsAsync.when(
+                  data: (userPrefs) {
+                    if (userPrefs != null) {
+                      _applyUserPreferences(userPrefs);
+                    }
+                    return _buildStepContent(steps);
+                  },
+                  loading: () => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.warning, color: Colors.orange),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Could not load saved preferences. Starting fresh.',
-                            style: TextStyle(color: Colors.orange.shade800),
-                          ),
-                        ),
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Loading preferences...'),
                       ],
                     ),
                   ),
-                  Expanded(child: _buildStepContent(steps)),
-                ],
-              ),
+                  error: (error, stack) => Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.error, color: Colors.red),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Could not load data. Using defaults.',
+                                style: TextStyle(color: Colors.red.shade800),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(child: _buildStepContent(steps)),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
           PreferencesBottomNavigation(
@@ -228,6 +450,9 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
             onPrevious: _previousStep,
             onNext: _nextStep,
             isStepValid: () => _isStepValid(steps),
+            isSaving: saveState.whenOrNull(
+              data: (state) => state.status == SavePreferencesStatus.saving,
+            ) ?? false,
           ),
         ],
       ),
@@ -383,39 +608,24 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
   }
 
   List<Option> _resolveOptions(String? source) {
-    switch (source) {
-      case 'gulfCountries':
-        return ref.watch(getAllCountriesProvider).when(
-          data: (data) => data
-              .map((e) => Option(
-                    label: e.name.toString(),
-                    value: e.id.toString(),
-                  ))
-              .toList(),
-          error: (error, s) => const [],
-          loading: () => const [],
-        );
-      // case 'industries':
-      //   return industries;
-      // case 'workLocations':
-      //   return workLocations;
-      // case 'experienceLevels':
-      //   return experienceLevels;
-      // case 'shiftPreferences':
-      //   return shiftPreferences;
-      // case 'companySizes':
-      //   return companySizes;
-      // case 'workCulture':
-      //   return workCulture;
-      // case 'agencies':
-      //   return agencies;
-      // case 'contractDurations':
-      //   return contractDurations;
-      // case 'workBenefits':
-      //   return workBenefits;
-      default:
-        return const [];
+    if (source == null) return const [];
+    
+    // Special case for countries - use the existing countries provider
+    if (source == 'gulfCountries') {
+      return ref.watch(getAllCountriesProvider).when(
+        data: (data) => data
+            .map((e) => Option(
+                  label: e.name.toString(),
+                  value: e.id.toString(),
+                ))
+            .toList(),
+        error: (error, s) => const [],
+        loading: () => const [],
+      );
     }
+    
+    // Use unified options provider for all other sources
+    return ref.watch(optionsBySourceProvider(source));
   }
 
   // Selected state mappers for config-driven sections
@@ -796,29 +1006,35 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
 
   // Job Title Management Methods
   void _addJobTitle(JobTitle jobTitle) {
-    setState(() {
-      // Check if already exists
-      int existingIndex = selectedJobTitles.indexWhere(
-        (jt) => jt.jobTitle.id == jobTitle.id,
-      );
+    // Check if already exists locally
+    int existingIndex = selectedJobTitles.indexWhere(
+      (jt) => jt.jobTitle.id == jobTitle.id,
+    );
 
-      if (existingIndex != -1) {
-        // Move to top (re-prioritize)
-        JobTitleWithPriority existing = selectedJobTitles.removeAt(
-          existingIndex,
-        );
+    if (existingIndex != -1) {
+      // Already exists, move to top (re-prioritize)
+      setState(() {
+        JobTitleWithPriority existing = selectedJobTitles.removeAt(existingIndex);
         selectedJobTitles.insert(0, existing);
-      } else {
-        // Add new at top
+        _reindexPriorities();
+      });
+      
+      // Call API to reorder preferences
+      final orderedIds = selectedJobTitles.map((jt) => jt.jobTitle.id).toList();
+      _reorderJobTitlePreferences(orderedIds);
+    } else {
+      // Add new job title
+      setState(() {
         selectedJobTitles.insert(
           0,
           JobTitleWithPriority(jobTitle: jobTitle, priority: 0),
         );
-      }
-
-      // Reindex priorities
-      _reindexPriorities();
-    });
+        _reindexPriorities();
+      });
+      
+      // Call API to add preference
+      _addJobTitlePreference(jobTitle, 0);
+    }
 
     HapticFeedback.lightImpact();
   }
@@ -828,6 +1044,9 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
       selectedJobTitles.remove(jobTitle);
       _reindexPriorities();
     });
+
+    // Call API to remove preference
+    _removeJobTitlePreference(jobTitle.jobTitle.title);
 
     HapticFeedback.lightImpact();
   }
@@ -843,6 +1062,10 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
 
       _reindexPriorities();
     });
+
+    // Call API to reorder preferences with new order
+    final orderedIds = selectedJobTitles.map((jt) => jt.jobTitle.id).toList();
+    _reorderJobTitlePreferences(orderedIds);
 
     HapticFeedback.mediumImpact();
   }
@@ -945,7 +1168,7 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
     List<JobTitleWithPriority> validatedTitles =
         selectedJobTitles.where((jt) => jt.jobTitle.isActive).toList();
 
-    // Simulate API call to save preferences
+    // Prepare preferences data
     Map<String, dynamic> preferences = {
       'jobTitles': validatedTitles
           .map(
@@ -956,12 +1179,25 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
             },
           )
           .toList(),
-      'countries': selectedCountries.map((e)=>e.toJson()).toList(),
+      'countries': selectedCountries.map((e) => e.toJson()).toList(),
       'salaryRange': salaryRange,
-      
+      'industries': selectedIndustries,
+      'workLocations': selectedWorkLocations,
+      'workCulture': selectedWorkCulture,
+      'agencies': selectedAgencies,
+      'companySize': selectedCompanySize,
+      'shiftPreferences': selectedShiftPreferences,
+      'experienceLevel': selectedExperienceLevel,
+      'trainingSupport': trainingSupport,
+      'contractDuration': contractDuration,
+      'benefits': selectedBenefits,
     };
-print(preferences);
-    // Show success message
+
+    // Use async notifier to save preferences
+    ref.read(savePreferencesNotifierProvider.notifier).savePreferences(preferences);
+  }
+
+  void _showSuccessMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -976,8 +1212,118 @@ print(preferences);
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
+  }
 
-    // Navigate back or to next screen
-    // Navigator.pop(context, preferences);
+  void _showErrorMessage(String? errorMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                errorMessage ?? 'Failed to save preferences. Please try again.',
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        action: SnackBarAction(
+          label: 'Retry',
+          textColor: Colors.white,
+          onPressed: _savePreferences,
+        ),
+      ),
+    );
+  }
+
+  void _navigateAfterSave() {
+    // Navigate back to previous screen or homepage
+    // For now, just pop the current screen
+    Navigator.pop(context);
+    
+    // Alternative: Navigate to homepage
+    // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+  }
+
+  void _showJobTitleOperationSuccess(String? operation) {
+    String message = 'Job title preference updated successfully!';
+    switch (operation) {
+      case 'add':
+        message = 'Job title added to preferences!';
+        break;
+      case 'remove':
+        message = 'Job title removed from preferences!';
+        break;
+      case 'reorder':
+        message = 'Job title preferences reordered!';
+        break;
+    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white),
+            SizedBox(width: 12),
+            Text(message),
+          ],
+        ),
+        backgroundColor: Color(0xFF059669),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  void _showJobTitleOperationError(String? errorMessage, String? operation) {
+    String message = 'Failed to update job title preference. Please try again.';
+    switch (operation) {
+      case 'add':
+        message = 'Failed to add job title preference.';
+        break;
+      case 'remove':
+        message = 'Failed to remove job title preference.';
+        break;
+      case 'reorder':
+        message = 'Failed to reorder job title preferences.';
+        break;
+    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(errorMessage ?? message),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  // API-based job title preference management methods
+  void _addJobTitlePreference(JobTitle jobTitle, int priority) {
+    ref.read(jobTitlePreferencesNotifierProvider.notifier)
+        .addJobTitlePreference(jobTitle.title, priority);
+  }
+
+  void _removeJobTitlePreference(String title) {
+    ref.read(jobTitlePreferencesNotifierProvider.notifier)
+        .removeJobTitlePreference(title);
+  }
+
+  void _reorderJobTitlePreferences(List<String> orderedIds) {
+    ref.read(jobTitlePreferencesNotifierProvider.notifier)
+        .reorderJobTitlePreferences(orderedIds);
   }
 }

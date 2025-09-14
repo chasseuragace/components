@@ -30,7 +30,7 @@ class SalaryRangeSection extends ConsumerWidget {
               Icon(Icons.attach_money, color: Color(0xFFDC2626), size: 24),
               SizedBox(width: 8),
               Text(
-                'Expected Monthly Salary (USD)',
+                'Expected Monthly Salary (NPR)',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -63,7 +63,7 @@ class SalaryRangeSection extends ConsumerWidget {
                       style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                     ),
                     Text(
-                      'USD ${salaryRange['min']!.round()}',
+                      'Rs ${(salaryRange['min']! * 133).round()}',  // Convert USD to NPR (1 USD ≈ 133 NPR)
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -81,7 +81,7 @@ class SalaryRangeSection extends ConsumerWidget {
                       style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                     ),
                     Text(
-                      'USD ${salaryRange['max']!.round()}',
+                      'Rs ${(salaryRange['max']! * 133).round()}',  // Convert USD to NPR (1 USD ≈ 133 NPR)
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -105,8 +105,8 @@ class SalaryRangeSection extends ConsumerWidget {
             activeColor: const Color(0xFFDC2626),
             inactiveColor: const Color(0xFFE2E8F0),
             labels: RangeLabels(
-              'USD ${salaryRange['min']!.round()}',
-              'USD ${salaryRange['max']!.round()}',
+              'Rs ${(salaryRange['min']! * 133).round()}',
+              'Rs ${(salaryRange['max']! * 133).round()}',
             ),
             onChanged: (values) {
               ref.read(salaryRangeProvider.notifier).state = {
@@ -170,7 +170,7 @@ class _QuickSalaryButton extends ConsumerWidget {
               ),
             ),
             Text(
-              '${min.round()}-${max.round()}',
+              '${(min * 133).round()}-${(max * 133).round()}',  // Convert to NPR
               style: TextStyle(
                 fontSize: 10,
                 color: isSelected ? const Color(0xFFDC2626) : const Color(0xFF94A3B8),
