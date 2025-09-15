@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/quick_salary_button.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/review_section.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/salary_training_sections.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/training_support_section.dart';

@@ -3,7 +3,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart
 
 class PrimaryButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed; // nullable to allow disabled state
   final bool isLoading;
 
   const PrimaryButton({
@@ -20,13 +20,13 @@ class PrimaryButton extends StatelessWidget {
       height: 48,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: AppColors.primaryColor.withValues(alpha: 0.3),
+        //     blurRadius: 12,
+        //     offset: const Offset(0, 4),
+        //   ),
+        // ],
       ),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
