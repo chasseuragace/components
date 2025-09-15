@@ -46,7 +46,7 @@ class PreferencesLocalDataSourceImpl implements PreferencesLocalDataSource {
     final metadata = {
       'id': model.id,
       'jobTitleId': model.jobTitleId,
-      'name': model.name,
+      'name': model.title,
       'lastModified': DateTime.now().toIso8601String(),
     };
     await _localStorage.setString('user_preferences_${model.id}_meta', json.encode(metadata));

@@ -45,7 +45,8 @@ class PreferencesRepositoryFake implements PreferencesRepository {
               .map((p) => PreferencesModel(
                     id: p.id.toString(),
                     jobTitleId: p.jobTitleId.toString(),
-                    name: p.title,
+                    title: p.title,
+                    priority: p.priority.toInt(),
                     rawJson: p.toJson(),
                   ))
               .where((m) => m.id.isNotEmpty && m.jobTitleId.isNotEmpty)
