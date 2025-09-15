@@ -49,7 +49,8 @@ class JobTitlePreferencesNotifier extends AsyncNotifier<JobTitlePreferenceState>
   }
 
   /// Add a job title preference with priority
-  Future<void> addJobTitlePreference(String jobTitleId, int priority) async {
+  /// note that its job title  not id 
+  Future<void> addJobTitlePreference(String jobtitle, int priority) async {
     state = const AsyncValue.loading();
     
     try {
@@ -61,7 +62,7 @@ class JobTitlePreferencesNotifier extends AsyncNotifier<JobTitlePreferenceState>
       );
 
       final repository = ref.read(jobTitlePreferencesRepositoryProvider);
-      final result = await repository.addJobTitlePreference(jobTitleId, priority);
+      final result = await repository.addJobTitlePreference(jobtitle, priority);
       
       result.fold(
         (failure) => throw Exception('Failed to add job title preference'),
