@@ -11,6 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+/Users/masovison/components/pubspec.yaml
 
 # IntelliJ related
 *.iml

@@ -1,17 +1,19 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartz/dartz.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/auth/auth_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/errors/failures.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/usecases/usecase.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/register.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/verify.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/auth/auth_state.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/get_token.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/login_start.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/login_verify.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/get_token.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/logout.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/register.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/auth/verify.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/di.dart';
 
-final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AuthState>((ref) {
   final registerUC = ref.watch(registerCandidateUseCaseProvider);
   final verifyUC = ref.watch(verifyCandidateUseCaseProvider);
   final loginStartUC = ref.watch(loginStartUseCaseProvider);
@@ -51,7 +53,11 @@ class AuthController extends StateNotifier<AuthState> {
       (_) => state = AuthState.unauthenticated,
       (token) {
         if (token != null && token.isNotEmpty) {
-          state = state.copyWith(token: token, loading: false);
+          state = state.copyWith(
+              token: token,
+              loading: false,
+              responseState: ResponseStates.success,
+              message: 'Session restored');
         } else {
           state = AuthState.unauthenticated;
         }
@@ -59,47 +65,104 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
-  Future<String> register({required String fullName, required String phone}) async {
-    state = state.copyWith(loading: true);
+  Future<String> register(
+      {required String fullName, required String phone}) async {
+    state = state.copyWith(
+        loading: true, responseState: ResponseStates.loading, message: null);
     try {
-      final Either<Failure, String> res = await registerUC(RegisterParams(fullName: fullName, phone: phone));
-      return res.fold((l) => '', (r) => r);
+      final Either<Failure, String> res =
+          await registerUC(RegisterParams(fullName: fullName, phone: phone));
+      return res.fold(
+        (l) {
+          state = state.copyWith(
+              responseState: ResponseStates.failure,
+              message: 'Registration failed');
+          return '';
+        },
+        (otp) {
+          state = state.copyWith(
+              responseState: ResponseStates.success,
+              message: 'OTP sent successfully');
+          return otp;
+        },
+      );
     } finally {
       state = state.copyWith(loading: false);
     }
   }
 
   Future<String> verify({required String phone, required String otp}) async {
-    state = state.copyWith(loading: true);
+    state = state.copyWith(
+        loading: true, responseState: ResponseStates.loading, message: null);
     try {
       final res = await verifyUC(VerifyParams(phone: phone, otp: otp));
-      return res.fold((l) => '', (token) {
-        state = state.copyWith(token: token, loading: false);
-        return token;
-      });
+      return res.fold(
+        (l) {
+          state = state.copyWith(
+              responseState: ResponseStates.failure,
+              message: 'Verification failed');
+          return '';
+        },
+        (token) {
+          state = state.copyWith(
+              token: token,
+              loading: false,
+              responseState: ResponseStates.success,
+              message: 'Verified');
+          return token;
+        },
+      );
     } finally {
       state = state.copyWith(loading: false);
     }
   }
 
   Future<String> loginStart({required String phone}) async {
-    state = state.copyWith(loading: true);
+    state = state.copyWith(
+        loading: true, responseState: ResponseStates.loading, message: null);
     try {
       final res = await loginStartUC(LoginStartParams(phone: phone));
-      return res.fold((l) => '', (r) => r);
+      return res.fold(
+        (l) {
+          state = state.copyWith(
+              responseState: ResponseStates.failure,
+              message: 'Failed to start login');
+          return '';
+        },
+        (otp) {
+          state = state.copyWith(
+              message: 'OTP sent', responseState: ResponseStates.success);
+          return otp;
+        },
+      );
     } finally {
       state = state.copyWith(loading: false);
     }
   }
 
-  Future<String> loginVerify({required String phone, required String otp}) async {
-    state = state.copyWith(loading: true);
+  Future<String> loginVerify(
+      {required String phone, required String otp}) async {
+    state = state.copyWith(
+        loading: true, responseState: ResponseStates.loading, message: null);
     try {
-      final res = await loginVerifyUC(LoginVerifyParams(phone: phone, otp: otp));
-      return res.fold((l) => '', (token) {
-        state = state.copyWith(token: token, loading: false);
-        return token;
-      });
+      final res =
+          await loginVerifyUC(LoginVerifyParams(phone: phone, otp: otp));
+      return res.fold(
+        (l) {
+          state = state.copyWith(
+              responseState: ResponseStates.failure,
+              message: 'Login verification failed');
+          return '';
+        },
+        (token) {
+          state = state.copyWith(
+              token: token,
+              loading: false,
+              responseState: ResponseStates.success,
+              message: 'Welcome back');
+          return token;
+        },
+      );
     } finally {
       state = state.copyWith(loading: false);
     }
@@ -107,6 +170,6 @@ class AuthController extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     await logoutUC(NoParm());
-    state = AuthState.unauthenticated;
+    state = AuthState.unauthenticated.copyWith(message: 'Logged out');
   }
 }

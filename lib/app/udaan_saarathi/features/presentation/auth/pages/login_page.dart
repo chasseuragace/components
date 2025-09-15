@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/otp_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/register_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -13,125 +16,240 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final _nameCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
-  bool _isRegister = true; // toggle between register and login
   String? _message;
+  bool isButtonEnabled = false;
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
     _phoneCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _doRegister() async {
-    final auth = ref.read(authControllerProvider.notifier);
-    final name = _nameCtrl.text.trim();
-    final phone = _phoneCtrl.text.trim();
-    if (name.isEmpty || phone.isEmpty) {
-      setState(() => _message = 'Enter name and phone');
-      return;
-    }
-    setState(() => _message = 'Registering...');
-    try {
-      final devOtp = await auth.register(fullName: name, phone: phone);
-      // Auto-verify in dev using returned OTP
-      final token = await auth.verify(phone: phone, otp: devOtp);
-      if (token.isNotEmpty && mounted) {
-        // Decide destination by onboarding controller
-        final shouldShowOnboarding = await ref.read(onboardingControllerProvider.future);
-        if (!mounted) return;
-        if (shouldShowOnboarding) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => OnboardingListPage()),
-          );
-        } else {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const AppHomeNavigationPage()),
-          );
-        }
-      }
-    } catch (e) {
-      setState(() => _message = 'Register failed');
-    }
-  }
+  // Future<void> _navigatePostAuth(String phone, String otpOrToken) async {
+  //   final shouldShowOnboarding =
+  //       await ref.read(onboardingControllerProvider.future);
+  //   if (!mounted) return;
+  //   if (shouldShowOnboarding) {
+  //     Navigator.of(context).pushReplacement(
+  //       MaterialPageRoute(builder: (_) => OnboardingListPage()),
+  //     );
+  //   } else {
+  //     Navigator.of(context).pushReplacement(
+  //       MaterialPageRoute(builder: (_) => const AppHomeNavigationPage()),
+  //     );
+  //   }
+  // }
 
   Future<void> _doLogin() async {
     final auth = ref.read(authControllerProvider.notifier);
     final phone = _phoneCtrl.text.trim();
     if (phone.isEmpty) {
-      setState(() => _message = 'Enter phone');
+      setState(() => _message = 'Enter phone number');
       return;
     }
-    setState(() => _message = 'Starting login...');
+    // Async status and errors will be driven by AuthState
     try {
       final devOtp = await auth.loginStart(phone: phone);
-      final token = await auth.loginVerify(phone: phone, otp: devOtp);
-      if (token.isNotEmpty && mounted) {
-        final shouldShowOnboarding = await ref.read(onboardingControllerProvider.future);
-        if (!mounted) return;
-        if (shouldShowOnboarding) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => OnboardingListPage()),
-          );
-        } else {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const AppHomeNavigationPage()),
-          );
-        }
+      if (devOtp.isNotEmpty && mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (_) => OTPVerificationPage(
+                    phoneNumber: phone,
+                    isLogin: true,
+                  )),
+        );
       }
     } catch (e) {
-      setState(() => _message = 'Login failed');
+      // AuthController will set error
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(authControllerProvider, (prev, next) {
+      if (prev?.responseState == ResponseStates.loading &&
+          next.responseState == ResponseStates.success) {
+        CustomSnackbar.showSuccessSnackbar(context, next.message!);
+      }
+      if (prev?.responseState == ResponseStates.loading &&
+          next.responseState == ResponseStates.failure) {
+        CustomSnackbar.showFailureSnackbar(context, next.message!);
+      }
+    });
     final state = ref.watch(authControllerProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Candidate Auth')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                ChoiceChip(
-                  label: const Text('Register'),
-                  selected: _isRegister,
-                  onSelected: (v) => setState(() => _isRegister = true),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 60),
+
+                        // Header
+                        HeaderWidget(
+                          title: 'Welcome back',
+                          subtitle: 'Sign in to your account to continue',
+                        ),
+
+                        const SizedBox(height: 48),
+
+                        // Form Card
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceColor,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                                color: AppColors.borderColor.withOpacity(0.5)),
+                          ),
+                          child: Column(
+                            children: [
+                              PhoneTextField(
+                                phoneCtrl: _phoneCtrl,
+                                onChange: (phone) {
+                                  setState(() {
+                                    isButtonEnabled = phone.length == 10;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                              PrimaryButton(
+                                text: 'Sign In',
+                                onPressed: isButtonEnabled
+                                    ? () {
+                                        final valid =
+                                            formKey.currentState?.validate() ??
+                                                false;
+                                        if (valid) {
+                                          _doLogin();
+                                        }
+                                      }
+                                    : null,
+                                isLoading: state.loading,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Switch to Register
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Don't have an account? ",
+                              style: TextStyle(
+                                  color: AppColors.textSecondary, fontSize: 14),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (_) => const RegisterPage()),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                              ),
+                              child: const Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+
+                        // Validation message (local)
+                        // if (_message != null) ...[
+                        //   const SizedBox(height: 16),
+                        //   Container(
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: const Color(0xFFfef2f2),
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       border: Border.all(color: const Color(0xFFfecaca)),
+                        //     ),
+                        //     child: Text(
+                        //       _message!,
+                        //       style: const TextStyle(
+                        //         color: Color(0xFFdc2626),
+                        //         fontSize: 14,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ],
+
+                        // // Controller-driven error
+                        // if (state.responseState == ResponseStates.failure) ...[
+                        //   const SizedBox(height: 12),
+                        //   Container(
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: const Color(0xFFfef2f2),
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       border: Border.all(color: const Color(0xFFfecaca)),
+                        //     ),
+                        //     child: Text(
+                        //       state.message!,
+                        //       style: const TextStyle(
+                        //         color: Color(0xFFdc2626),
+                        //         fontSize: 14,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ],
+
+                        // // Controller-driven info/success
+                        // if (state.message != null) ...[
+                        //   const SizedBox(height: 12),
+                        //   Container(
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: const Color(0xFFf0f9ff),
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       border: Border.all(color: const Color(0xFFbae6fd)),
+                        //     ),
+                        //     child: Text(
+                        //       state.message!,
+                        //       style: const TextStyle(
+                        //         color: Color(0xFF0369a1),
+                        //         fontSize: 14,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ],
+
+                        // const SizedBox(height: 60),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                ChoiceChip(
-                  label: const Text('Login'),
-                  selected: !_isRegister,
-                  onSelected: (v) => setState(() => _isRegister = false),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_isRegister) ...[
-              const Text('Full Name'),
-              TextField(controller: _nameCtrl),
-              const SizedBox(height: 12),
-            ],
-            const Text('Phone (+977...)'),
-            TextField(controller: _phoneCtrl, keyboardType: TextInputType.phone),
-            const SizedBox(height: 16),
-            if (state.loading) const Text('Loading...')
-            else ...[
-              ElevatedButton(
-                onPressed: _isRegister ? _doRegister : _doLogin,
-                child: Text(_isRegister ? 'Register' : 'Login'),
               ),
-            ],
-            if (_message != null) ...[
-              const SizedBox(height: 8),
-              Text(_message!),
-            ]
-          ],
+            );
+          },
         ),
       ),
     );

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
-class JobDetailScreen1 extends StatefulWidget {
+class JobDetailScreen extends StatefulWidget {
   final JobPosting job;
 
-  const JobDetailScreen1({super.key, required this.job});
+  const JobDetailScreen({super.key, required this.job});
 
   @override
-  State<JobDetailScreen1> createState() => _JobDetailScreen1State();
+  State<JobDetailScreen> createState() => _JobDetailScreenState();
 }
 
-class _JobDetailScreen1State extends State<JobDetailScreen1> {
+class _JobDetailScreenState extends State<JobDetailScreen> {
   bool isSaved = false;
 
   @override
@@ -469,120 +469,20 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
     );
   }
 
-  // Widget _buildFacilitiesSection(JobPosting job) {
-  //   final facilities =
-  //       // job.facilities?.isNotEmpty == true
-  //       //     ? job.facilities
-  //       //     :
-  //       [
-  //         'Free accommodation',
-  //         'Transportation provided',
-  //         'Health insurance',
-  //         'Annual leave',
-  //         'Training programs',
-  //         'Career development',
-  //       ];
-
-  //   return Container(
-  //     padding: const EdgeInsets.all(20),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(20),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.04),
-  //           blurRadius: 12,
-  //           offset: const Offset(0, 4),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         // Header Row (similar to Contract & Employment)
-  //         Row(
-  //           children: [
-  //             Container(
-  //               padding: const EdgeInsets.all(8),
-  //               decoration: BoxDecoration(
-  //                 color: const Color(0xFF10B981).withOpacity(0.1),
-  //                 borderRadius: BorderRadius.circular(8),
-  //               ),
-  //               child: const Icon(
-  //                 Icons.apartment, // Facility-related icon
-  //                 color: Color(0xFF10B981),
-  //                 size: 20,
-  //               ),
-  //             ),
-  //             const SizedBox(width: 12),
-  //             const Text(
-  //               'Company Facilities',
-  //               style: TextStyle(
-  //                 fontSize: 18,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Color(0xFF1E293B),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //         const SizedBox(height: 16),
-
-  //         // Facilities List (mapped like details but styled)
-  //         Wrap(
-  //           spacing: 8,
-  //           runSpacing: 8,
-  //           children: facilities
-  //               .map(
-  //                 (facility) => Container(
-  //                   padding: const EdgeInsets.symmetric(
-  //                     horizontal: 12,
-  //                     vertical: 8,
-  //                   ),
-  //                   decoration: BoxDecoration(
-  //                     color: Colors.grey.shade50,
-  //                     borderRadius: BorderRadius.circular(20),
-  //                     border: Border.all(color: Colors.grey.shade200),
-  //                   ),
-  //                   child: Row(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     children: [
-  //                       const Icon(
-  //                         Icons.check_circle,
-  //                         color: Color(0xFF10B981),
-  //                         size: 16,
-  //                       ),
-  //                       const SizedBox(width: 6),
-  //                       Text(
-  //                         facility.toString(),
-  //                         style: const TextStyle(
-  //                           fontSize: 12,
-  //                           fontWeight: FontWeight.w500,
-  //                           color: Color(0xFF374151),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               )
-  //               .toList(),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  
   Widget _buildFacilitiesSection(JobPosting job) {
     final facilities =
         //  job.facilities?.isNotEmpty == true
         //     ? job.facilities
         //     :
         [
-      'Free accommodation',
-      'Transportation provided',
-      'Health insurance',
-      'Annual leave',
-      'Training programs',
-      'Career development',
-    ];
+          'Free accommodation',
+          'Transportation provided',
+          'Health insurance',
+          'Annual leave',
+          'Training programs',
+          'Career development',
+        ];
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -802,7 +702,8 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   }
 
   Widget _buildRequirementSection(JobPosting job) {
-    final requirements = job.positions as List<dynamic>? ??
+    final requirements =
+        job.positions as List<dynamic>? ??
         [
           'Bachelor\'s degree in relevant field',
           'Minimum 2 years of experience',
@@ -810,8 +711,9 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
           'Proficiency in English',
           'Valid passport',
         ];
-    final allRequirements =
-        job.positions.expand((p) => p.requirements).toList();
+    final allRequirements = job.positions
+        .expand((p) => p.requirements)
+        .toList();
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
