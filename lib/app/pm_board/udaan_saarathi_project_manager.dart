@@ -24,65 +24,91 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    var width3 = MediaQuery.of(context).size.width;
+    var height2 = MediaQuery.of(context).size.height;
+    var other = 1.4;
     return Scaffold(
-      body: AnimatedSize(
-        duration: Duration(milliseconds: 200),
-        child: Row(
-          children: [
-            Consumer(
-                child: PMBoardApp(),
-                builder: (context, ref, child) {
-                  return AnimatedContainer(
-                    width: (ref.watch(expansionStateProvider) ? 3 : 0) * 300,
-                    duration: Duration(seconds: 1),
-                    child: GestureDetector(
-                        onDoubleTap: () {
-                          ref
-                              .read(expansionStateProvider.notifier)
-                              .update((_) => !_);
-                        },
-                        child: child!),
-                  );
-                }),
-            // mobile screen for udaansaarathi app
-            // can set builder here
-            // eg: shows using one of the hte existing variant page in use
-
-            Expanded(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 3,
-                height: MediaQuery.of(context).size.height,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                    buildScreen(const SplashScreen()),
-                      buildScreen(const OnboardingListPage()),
-                      SizedBox(
-                        width: width2,
-                        child: PageView(
-                          controller: PageController(viewportFraction: .79),
-                          clipBehavior: Clip.none,
-                          scrollDirection: Axis.vertical,
-                          // crossAxisAlignment: CrossAxisAlignment.stretch,
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            buildScreen(const RegisterPage(),wideMultifiler:1),
-                            buildScreen(const LoginPage()),
-                          ]
-                              .map((e) => Expanded(child: FittedBox(child: e)))
-                              .toList(),
-                        ),
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: SizedBox(
+          width: width3,
+          height:height2 ,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Udaan Sarathi",style: Theme.of(context).textTheme.headlineLarge,),
+              Text("Udaan Sarathi – Guiding Nepali Talent to Global Success.",style: Theme.of(context).textTheme.titleMedium,),
+              Expanded(
+                child: FittedBox(
+                  child: SizedBox(
+                     width: width3*other,
+                height:height2*other ,
+                    child: AnimatedSize(
+                      duration: Duration(milliseconds: 200),
+                      child: Row(
+                        children: [
+                          if(false)
+                          Consumer(
+                              child: PMBoardApp(),
+                              builder: (context, ref, child) {
+                                return AnimatedContainer(
+                                  width: (ref.watch(expansionStateProvider) ? 3 : 0) * 300,
+                                  duration: Duration(seconds: 1),
+                                  child: GestureDetector(
+                                      onDoubleTap: () {
+                                        ref
+                                            .read(expansionStateProvider.notifier)
+                                            .update((_) => !_);
+                                      },
+                                      child: child!),
+                                );
+                              }),
+                          // mobile screen for udaansaarathi app
+                          // can set builder here
+                          // eg: shows using one of the hte existing variant page in use
+                    
+                          Expanded(
+                            child: SizedBox(
+                              width: width3 * 3,
+                              height: height2,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                  buildScreen(const SplashScreen()),
+                                    buildScreen(const OnboardingListPage()),
+                                    SizedBox(
+                                      width: width2,
+                                      child: PageView(
+                                        controller: PageController(viewportFraction: .79),
+                                        clipBehavior: Clip.none,
+                                        scrollDirection: Axis.vertical,
+                                        // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        // mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          buildScreen(const RegisterPage(),wideMultifiler:1),
+                                          buildScreen(const LoginPage()),
+                                        ]
+                                            .map((e) => Expanded(child: FittedBox(child: e)))
+                                            .toList(),
+                                      ),
+                                    ),
+                                    buildScreen(const SetPreferenceScreen()),
+                                    buildScreen(const HomePageVariant1()),
+                                  ].map((e) => e).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      buildScreen(const SetPreferenceScreen()),
-                      buildScreen(const HomePageVariant1()),
-                    ].map((e) => e).toList(),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
