@@ -10,6 +10,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/agency_listings/agency_listing_screen_2.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/agency_listings/agency_listing_screen_3.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant_5.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/interview_schedule/interview_schedule_screen1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/interview_schedule/interview_schedule_screen2.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/interview_schedule/interview_schedule_screen3.dart';

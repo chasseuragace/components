@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
 import 'package:intl/intl.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/grouped_jobs_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_controller.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_section.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting_mapper.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/recommended_jobs_section.dart';
+
+import 'widgets/job_post_card.dart';
 
 // Global Riverpod provider for JobDashboardData
 
@@ -52,59 +58,6 @@ class JobProfile {
     required this.profileBlob,
     this.label,
     required this.updatedAt,
-  });
-}
-
-class JobPosting {
-  final String id;
-  final String postingTitle;
-  final String country;
-  final String city;
-  final String agency;
-  final String employer;
-  final List<JobPosition> positions;
-  final String description;
-  final Map<String, dynamic> contractTerms;
-  final bool isActive;
-  final DateTime postedDate;
-  final String? preferencePriority;
-  final String preferenceText;
-  final String? location;
-  final String? experience;
-  final String? salary;
-  final String? type;
-  final bool? isRemote;
-  final bool? isFeatured;
-  final String? companyLogo;
-  final String? matchPercentage;
-  final String? convertedSalary;
-  final int? applications;
-  final String? policy;
-  JobPosting({
-    required this.id,
-    required this.postingTitle,
-    required this.country,
-    required this.city,
-    required this.agency,
-    required this.employer,
-    required this.positions,
-    required this.description,
-    required this.contractTerms,
-    this.isActive = true,
-    required this.postedDate,
-    this.preferencePriority,
-    required this.preferenceText,
-    this.location,
-    this.experience,
-    this.salary,
-    this.type,
-    this.isRemote,
-    this.isFeatured,
-    this.companyLogo,
-    this.matchPercentage,
-    this.convertedSalary,
-    this.applications,
-    this.policy,
   });
 }
 
@@ -362,76 +315,6 @@ String getGreeting() {
   if (hour < 12) return 'Morning';
   if (hour < 17) return 'Afternoon';
   return 'Evening';
-}
-
-class RecommendedJobsSection extends ConsumerWidget {
-  // Changed to ConsumerWidget
-  const RecommendedJobsSection({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final jobsState = ref.watch(getGroupedJobsProvider);
-
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Recommended Jobs',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3748),
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'View All',
-                  style: TextStyle(
-                    color: Color(0xFF4F7DF9),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16.0),
-          ...jobsState.when(data: (jobs) {
-            return jobs.groups.map<Widget>((job) => Column(
-              
-                      children: [
-                        Text("${job.title}"),
-                        Column(
-                          children: [
-                            if (job.jobs.isEmpty) Text("Empty"),
-                            if (!job.jobs.isEmpty)
-                              ...job.jobs.map((e) => Column(
-                                    children: [
-                                      Text((e as GroupJobModel)
-                                          .toJson()
-                                          .toString()),
-                                    ],
-                                  ))
-                          ],
-                        )
-                      ],
-                    )
-                // JobPostingCard(posting: job)
-                );
-          }, error: (e, s) {
-            return [];
-          }, loading: () {
-            return [];
-          })
-        ],
-      ),
-    );
-  }
 }
 
 // class JobPostingCard extends StatelessWidget {
