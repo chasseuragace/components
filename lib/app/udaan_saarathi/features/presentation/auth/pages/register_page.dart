@@ -1,69 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/otp_page.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/register_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/input_decoration.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends ConsumerStatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
+  final _nameCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
+  // final _emailCtrl = TextEditingController();
+  // final _usernameCtrl = TextEditingController();
+  // final _passwordCtrl = TextEditingController();
   String? _message;
 
   @override
   void dispose() {
+    _nameCtrl.dispose();
     _phoneCtrl.dispose();
+    // _emailCtrl.dispose();
+    // _usernameCtrl.dispose();
+    // _passwordCtrl.dispose();
     super.dispose();
   }
 
-  // Future<void> _navigatePostAuth(String phone, String otpOrToken) async {
-  //   final shouldShowOnboarding =
-  //       await ref.read(onboardingControllerProvider.future);
-  //   if (!mounted) return;
-  //   if (shouldShowOnboarding) {
-  //     Navigator.of(context).pushReplacement(
-  //       MaterialPageRoute(builder: (_) => OnboardingListPage()),
-  //     );
-  //   } else {
-  //     Navigator.of(context).pushReplacement(
-  //       MaterialPageRoute(builder: (_) => const AppHomeNavigationPage()),
-  //     );
-  //   }
-  // }
+  Future<void> _navigatePostAuth(String phone, String otpOrToken) async {
+    final shouldShowOnboarding =
+        await ref.read(onboardingControllerProvider.future);
+    if (!mounted) return;
+    if (shouldShowOnboarding) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => OnboardingListPage()),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const AppHomeNavigationPage()),
+      );
+    }
+  }
 
-  Future<void> _doLogin() async {
+  Future<void> _doRegister() async {
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //       builder: (_) => OTPVerificationPage(
+    //             phoneNumber: _phoneCtrl.text.trim(),
+    //             fullName: _nameCtrl.text.trim(),
+    //             isLogin: false,
+    //           )),
+    // );
     final auth = ref.read(authControllerProvider.notifier);
+    final name = _nameCtrl.text.trim();
     final phone = _phoneCtrl.text.trim();
-    if (phone.isEmpty) {
-      setState(() => _message = 'Enter phone and password');
+    // final email = _emailCtrl.text.trim();
+    // final username = _usernameCtrl.text.trim();
+    // final password = _passwordCtrl.text.trim();
+
+    if (name.isEmpty || phone.isEmpty
+        // email.isEmpty ||
+        // username.isEmpty ||
+        // password.isEmpty
+        ) {
+      setState(() => _message = 'Please fill all fields');
       return;
     }
-    setState(() => _message = 'Starting login...');
+    setState(() => _message = 'Registering...');
     try {
-      final devOtp = await auth.loginStart(phone: phone);
+      final devOtp = await auth.register(fullName: name, phone: phone);
+
       if (devOtp.isNotEmpty && mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (_) => OTPVerificationPage(
                     phoneNumber: phone,
+                    fullName: name,
                     isLogin: false,
                   )),
         );
       }
-      // final token = await auth.loginVerify(phone: phone, otp: devOtp);
-      // if (token.isNotEmpty && mounted) {
-      //   await _navigatePostAuth(phone, token);
-      // }
     } catch (e) {
-      setState(() => _message = 'Login failed');
+      setState(() => _message = 'Register failed');
     }
   }
 
@@ -84,15 +110,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 60),
+                      const SizedBox(height: 40),
 
                       // Header
                       HeaderWidget(
-                        title: 'Welcome back',
-                        subtitle: 'Sign in to your account to continue',
+                        title: 'Create account',
+                        subtitle: 'Get started with your new account',
                       ),
 
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 32),
 
                       // Form Card
                       Container(
@@ -106,6 +132,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         child: Column(
                           children: [
                             TextField(
+                              controller: _nameCtrl,
+                              textCapitalization: TextCapitalization.words,
+                              decoration: minimalistInputDecoration(
+                                'Full name',
+                                icon: Icons.person_outline,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            // TextField(
+                            //   controller: _usernameCtrl,
+                            //   decoration: minimalistInputDecoration(
+                            //     'Username',
+                            //     icon: Icons.alternate_email_outlined,
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 16),
+                            // TextField(
+                            //   controller: _emailCtrl,
+                            //   keyboardType: TextInputType.emailAddress,
+                            //   decoration: minimalistInputDecoration(
+                            //     'Email address',
+                            //     icon: Icons.mail_outline,
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 16),
+                            TextField(
                               controller: _phoneCtrl,
                               keyboardType: TextInputType.phone,
                               decoration: minimalistInputDecoration(
@@ -113,10 +165,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 icon: Icons.phone_outlined,
                               ),
                             ),
+                            // const SizedBox(height: 16),
+                            // TextField(
+                            //   controller: _passwordCtrl,
+                            //   obscureText: true,
+                            //   decoration: minimalistInputDecoration(
+                            //     'Password',
+                            //     icon: Icons.lock_outline,
+                            //   ),
+                            // ),
                             const SizedBox(height: 24),
                             PrimaryButton(
-                              text: 'Sign In',
-                              onPressed: _doLogin,
+                              text: 'Create Account',
+                              onPressed: _doRegister,
                               isLoading: state.loading,
                             ),
                           ],
@@ -125,12 +186,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                       const SizedBox(height: 24),
 
-                      // Switch to Register
+                      // Switch to Login
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            "Don't have an account? ",
+                            'Already have an account? ',
                             style: TextStyle(
                                 color: AppColors.textSecondary, fontSize: 14),
                           ),
@@ -138,7 +199,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             onPressed: () {
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (_) => const RegisterPage()),
+                                    builder: (_) => const LoginPage()),
                               );
                             },
                             style: TextButton.styleFrom(
@@ -146,7 +207,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   horizontal: 8, vertical: 4),
                             ),
                             child: const Text(
-                              'Sign Up',
+                              'Sign In',
                               style: TextStyle(
                                 color: AppColors.primaryColor,
                                 fontSize: 14,
@@ -184,7 +245,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                       ],
 
-                      const SizedBox(height: 60),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),

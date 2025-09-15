@@ -46,6 +46,7 @@ dependencies:
     path: '/Users/masovison/Downloads/dev_tools/package_form_open_api/openapi'
 
   dio: any
+  sms_autofill: ^2.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
