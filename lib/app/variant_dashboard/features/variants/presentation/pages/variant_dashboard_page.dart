@@ -397,7 +397,7 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
         VariantItem(
           name: 'Job Details V1',
           builder: (BuildContext context) =>
-              JobDetailScreen(job: blueCollarJobQatar),
+              JobDetailScreen1(job: blueCollarJobQatar),
         ),
         VariantItem(
           name: 'Job Details V2',
