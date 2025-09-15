@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
 
@@ -9,6 +10,17 @@ class GetAllJobsNotifier extends AsyncNotifier<List<JobsEntity>> {
   @override
   Future<List<JobsEntity>> build() async {
     final result = await ref.read(getAllJobsUseCaseProvider)(NoParm());
+    return result.fold(
+      (failure) => throw _mapFailureToException(failure),
+      (items) => items,
+    );
+  }
+}
+
+class GetGroupedJobListings extends AsyncNotifier<GroupedJobsEntity> {
+  @override
+  Future<GroupedJobsEntity> build() async {
+    final result = await ref.read(getGroupedJobsUseCaseProvider)(NoParm());
     return result.fold(
       (failure) => throw _mapFailureToException(failure),
       (items) => items,
@@ -95,6 +107,9 @@ Exception _mapFailureToException(Failure failure) {
 
 final getAllJobsProvider = AsyncNotifierProvider<GetAllJobsNotifier, List<JobsEntity>>(() {
   return GetAllJobsNotifier();
+});
+final getGroupedJobsProvider = AsyncNotifierProvider<GetGroupedJobListings, GroupedJobsEntity>(() {
+  return GetGroupedJobListings();
 });
 
 final getJobsByIdProvider = AsyncNotifierProvider<GetJobsByIdNotifier, JobsEntity?>(() {

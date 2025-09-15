@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
 import 'package:intl/intl.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/grouped_jobs_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_section.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_post_card.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
 // Global Riverpod provider for JobDashboardData
 
@@ -269,7 +269,8 @@ class DashboardHeader extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Greetings(candidate: candidate, analytics: analytics),
+                    child:
+                        Greetings(candidate: candidate, analytics: analytics),
                   ),
                   Container(
                     width: 60,
@@ -354,15 +355,14 @@ class DashboardHeader extends ConsumerWidget {
       ),
     );
   }
-
- 
 }
- String getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Morning';
-    if (hour < 17) return 'Afternoon';
-    return 'Evening';
-  }
+
+String getGreeting() {
+  final hour = DateTime.now().hour;
+  if (hour < 12) return 'Morning';
+  if (hour < 17) return 'Afternoon';
+  return 'Evening';
+}
 
 class RecommendedJobsSection extends ConsumerWidget {
   // Changed to ConsumerWidget
@@ -370,10 +370,7 @@ class RecommendedJobsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Added WidgetRef ref
-    final jobs = ref
-        .watch(jobDashboardDataProvider)
-        .recommendedJobs; // Access data via ref
+    final jobsState = ref.watch(getGroupedJobsProvider);
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -404,7 +401,33 @@ class RecommendedJobsSection extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16.0),
-          ...jobs.map<Widget>((job) => JobPostingCard(posting: job)),
+          ...jobsState.when(data: (jobs) {
+            return jobs.groups.map<Widget>((job) => Column(
+              
+                      children: [
+                        Text("${job.title}"),
+                        Column(
+                          children: [
+                            if (job.jobs.isEmpty) Text("Empty"),
+                            if (!job.jobs.isEmpty)
+                              ...job.jobs.map((e) => Column(
+                                    children: [
+                                      Text((e as GroupJobModel)
+                                          .toJson()
+                                          .toString()),
+                                    ],
+                                  ))
+                          ],
+                        )
+                      ],
+                    )
+                // JobPostingCard(posting: job)
+                );
+          }, error: (e, s) {
+            return [];
+          }, loading: () {
+            return [];
+          })
         ],
       ),
     );
@@ -762,7 +785,6 @@ class JobDetailsModal extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -783,7 +805,6 @@ class JobDetailsModal extends StatelessWidget {
                     ),
                     _buildDetailRow('Posted', _formatDate(posting.postedDate)),
                   ]),
-
                   const SizedBox(height: 24),
                   _buildSection('Description', [
                     Text(
@@ -795,7 +816,6 @@ class JobDetailsModal extends StatelessWidget {
                       ),
                     ),
                   ]),
-
                   const SizedBox(height: 24),
                   _buildSection(
                     'Available Positions (${posting.positions.length})',
@@ -807,7 +827,6 @@ class JobDetailsModal extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 24),
           Container(
             width: double.infinity,
@@ -1184,7 +1203,6 @@ class ApplicationsSection extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
           ],
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

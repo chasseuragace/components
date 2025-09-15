@@ -1,5 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:openapi/openapi.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/grouped_jobs_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
 
+import '../../../../core/config/api_config.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
 import '../../../domain/repositories/jobs/repository.dart';
@@ -257,15 +262,15 @@ final List<JobsEntity> jobPostings = [
 ];
 
 class JobsRepositoryFake implements JobsRepository {
-
   final JobsLocalDataSource localDataSource;
   final JobsRemoteDataSource remoteDataSource;
 
   JobsRepositoryFake({
     required this.localDataSource,
     required this.remoteDataSource,
-  });
-
+    required this.storage,
+  }) : _api = ApiConfig.client().getCandidatesApi();
+  final CandidatesApi _api;
   @override
   Future<Either<Failure, List<JobsEntity>>> getAllItems() async {
     try {
@@ -330,4 +335,18 @@ class JobsRepositoryFake implements JobsRepository {
       return left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, GroupedJobsEntity>> getGroupedJobs() async {
+    try {
+      final data = await _api.candidateControllerGetRelevantJobsGrouped(
+          id: (await storage.getCandidateId())!);
+
+      return right(GroupedJobsModel.fromJson(data.data!.toJson()));
+    } catch (e) {
+      return left(ServerFailure());
+    }
+  }
+
+  final TokenStorage storage;
 }

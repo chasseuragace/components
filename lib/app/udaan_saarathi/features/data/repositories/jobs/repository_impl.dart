@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
 import '../../../domain/repositories/jobs/repository.dart';
@@ -62,6 +63,12 @@ class JobsRepositoryImpl implements JobsRepository {
     } catch (error) {
       return left(ServerFailure());
     }
+  }
+
+  @override
+  Future<Either<Failure, GroupedJobsEntity>> getGroupedJobs() {
+    // TODO: implement getGroupedJobs
+    throw UnimplementedError();
   }
 }
 extension model on JobsEntity {
