@@ -82,6 +82,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
                         // Job Overview
                         JobOverviewSection(job: job),
                         const SizedBox(height: 24),
+                        OtherPositionsSection(job: job),
+                        const SizedBox(height: 24),
 
                         // Contract & Employment Details
                         ContractDetailsSection(job: job),

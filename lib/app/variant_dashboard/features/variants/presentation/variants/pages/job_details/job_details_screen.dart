@@ -128,7 +128,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
                   // Job Overview
                   _buildJobOverviewSection(job),
                   const SizedBox(height: 24),
-
+                  _buildOtherPositionsSection(job),
                   // Contract & Employment Details
                   _buildContractDetailsSection(job),
                   const SizedBox(height: 24),
