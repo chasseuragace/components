@@ -51,6 +51,8 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
       }
       FocusScope.of(context).unfocus();
       setState(() => _isOtpComplete = true);
+      // Auto-submit when code is auto-filled
+      _verifyOTP();
     }
   }
 
@@ -201,7 +203,13 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
             _focusNodes[index - 1].requestFocus();
           }
           // Update completion state without auto-submitting
-          setState(() => _isOtpComplete = _otpCode.length == 6);
+          final complete = _otpCode.length == 6;
+          setState(() => _isOtpComplete = complete);
+          if (complete) {
+            // Auto-submit when all 6 digits are entered
+            FocusScope.of(context).unfocus();
+            _verifyOTP();
+          }
         },
       ),
     );
@@ -253,7 +261,7 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
                     const SizedBox(height: 32),
                     PrimaryButton(
                       text: 'Verify OTP',
-                      onPressed: () => _isOtpComplete ? _verifyOTP : null,
+                      onPressed: _isOtpComplete ? _verifyOTP : null,
                       isLoading: state.loading,
                     ),
                     const SizedBox(height: 16),
