@@ -1,6 +1,7 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/widgets/job_card_widget.dart';
 
 class HomePageVariant2 extends StatelessWidget {
@@ -296,7 +297,7 @@ class JobAnalyticsCards extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -420,7 +421,7 @@ class _JobPreferencesSectionState extends State<JobPreferencesSection> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: AppColors.blackColor,
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

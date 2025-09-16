@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
 
 class AgencyListingScreen1 extends StatefulWidget {
@@ -83,8 +84,8 @@ class _AgencyListingScreen1State extends State<AgencyListingScreen1> {
           (agency) =>
               agency.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
               agency.location.toLowerCase().contains(
-                _searchQuery.toLowerCase(),
-              ),
+                    _searchQuery.toLowerCase(),
+                  ),
         )
         .toList();
   }
@@ -105,7 +106,7 @@ class ManpowerCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: Offset(0, 2),
           ),

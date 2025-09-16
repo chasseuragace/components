@@ -21,7 +21,8 @@ class JobsModel extends JobsEntity {
       required super.interview,
       required super.cutoutUrl,
       required super.fitnessScore,
-      required super.isFeatured});
+      required super.isFeatured,
+      required super.description});
 
   factory JobsModel.fromJson(Map<String, dynamic> json) {
     return JobsModel(
@@ -48,6 +49,7 @@ class JobsModel extends JobsEntity {
       cutoutUrl: json['cutout_url'],
       fitnessScore: json['fitness_score'],
       isFeatured: json['is_featured'],
+      description: json['description'],
     );
   }
 }

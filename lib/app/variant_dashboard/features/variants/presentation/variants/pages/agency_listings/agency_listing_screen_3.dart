@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 // Dummy model
 class ManpowerModel {
@@ -150,7 +151,7 @@ class ManpowerCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

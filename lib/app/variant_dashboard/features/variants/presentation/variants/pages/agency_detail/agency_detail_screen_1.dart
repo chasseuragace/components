@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
 
 class AgencyDetailScreen1 extends StatefulWidget {
@@ -85,7 +86,6 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
                   ),
                 ),
               ),
-
               SliverToBoxAdapter(
                 child: Column(
                   children: [
@@ -101,7 +101,6 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
               ),
             ],
           ),
-
           if (_showReviewModal) _buildReviewModal(),
         ],
       ),
@@ -372,7 +371,7 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -425,7 +424,7 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -555,7 +554,7 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -710,7 +709,7 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -813,7 +812,7 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -1114,23 +1113,23 @@ class _AgencyDetailScreen1State extends State<AgencyDetailScreen1> {
                     child: ElevatedButton(
                       onPressed:
                           _userRating > 0 && _reviewController.text.isNotEmpty
-                          ? () {
-                              // Submit review logic here
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Review submitted successfully!',
-                                  ),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                              setState(() {
-                                _showReviewModal = false;
-                                _userRating = 0.0;
-                                _reviewController.clear();
-                              });
-                            }
-                          : null,
+                              ? () {
+                                  // Submit review logic here
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Review submitted successfully!',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  setState(() {
+                                    _showReviewModal = false;
+                                    _userRating = 0.0;
+                                    _reviewController.clear();
+                                  });
+                                }
+                              : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue[600],
                         foregroundColor: Colors.white,

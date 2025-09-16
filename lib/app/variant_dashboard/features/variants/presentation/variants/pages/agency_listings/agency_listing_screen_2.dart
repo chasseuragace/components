@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class AgencyListingScreen2 extends StatefulWidget {
   const AgencyListingScreen2({super.key});
@@ -278,7 +279,7 @@ class ManpowerCard extends StatelessWidget {
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 4,
             offset: const Offset(0, 1),
             spreadRadius: 0,

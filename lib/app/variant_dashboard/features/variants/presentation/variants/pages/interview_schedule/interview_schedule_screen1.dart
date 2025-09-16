@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/interview_schedule.dart';
 
 class InterviewScheduleScreen1 extends StatefulWidget {
@@ -135,14 +136,14 @@ class _InterviewScheduleScreen1State extends State<InterviewScheduleScreen1> {
       } else {
         _filteredInterviews = _allInterviews.where((interview) {
           return interview.jobTitle.toLowerCase().contains(
-                query.toLowerCase(),
-              ) ||
+                    query.toLowerCase(),
+                  ) ||
               interview.companyName.toLowerCase().contains(
-                query.toLowerCase(),
-              ) ||
+                    query.toLowerCase(),
+                  ) ||
               interview.interviewer.toLowerCase().contains(
-                query.toLowerCase(),
-              ) ||
+                    query.toLowerCase(),
+                  ) ||
               interview.status.toLowerCase().contains(query.toLowerCase());
         }).toList();
       }
@@ -311,7 +312,7 @@ class MinimalInterviewCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 8,
             offset: Offset(0, 2),
           ),

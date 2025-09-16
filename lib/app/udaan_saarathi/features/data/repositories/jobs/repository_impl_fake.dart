@@ -49,6 +49,7 @@ final List<JobsEntity> jobPostings = [
         country: "UAE",
         city: "Dubai",
         companyLogo: ''),
+    description: '',
     contract: Contract(
       periodYears: 2,
       renewable: true,
@@ -156,6 +157,7 @@ final List<JobsEntity> jobPostings = [
       transport: "paid",
       annualLeaveDays: 21,
     ),
+    description: '',
     positions: [
       Position(
         title: "Electrician",
@@ -195,6 +197,7 @@ final List<JobsEntity> jobPostings = [
   ),
   JobsEntity(
     id: "job_003",
+    description: '',
     postingTitle: "Saudi-Heavy Driver",
     country: "Saudi Arabia",
     city: "Riyadh",

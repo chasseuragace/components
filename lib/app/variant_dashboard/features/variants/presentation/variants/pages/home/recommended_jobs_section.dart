@@ -58,7 +58,7 @@ class RecommendedJobsSection extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
                     child: Text(
-                      group.title + " (${group.jobs.length})",
+                      "${group.title} (${group.jobs.length})",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,

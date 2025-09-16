@@ -13,9 +13,9 @@ class MyApp extends ConsumerWidget {
     // - profiver for app
     return MaterialApp(
       // theme: ThemeData.dark(),
-      home: true
+      home: !false
           ? UdaanSaarathiProjectManager()
-          : true
+          : !true
               ? UdaanSaarathiApp()
               : VariantDashboardPage(),
       // initialRoute: RouteConstants.kSplashScreen,

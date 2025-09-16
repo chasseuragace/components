@@ -79,7 +79,17 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
             ),
           ),
           // Bottom Action Buttons
-          _buildBottomActionButtons(),
+          BottomActionButtons(
+            onApply: () {
+              // your apply logic
+            },
+            onContact: () {
+              // your contact logic
+            },
+            onWebView: () {
+              // your webview logic
+            },
+          )
         ],
       ),
     );
@@ -525,11 +535,11 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
                       topRight: Radius.circular(12),
                     )
                   : index == details.length - 1
-                  ? const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
-                    )
-                  : null,
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        )
+                      : null,
             ),
             child: Row(
               children: [
@@ -674,8 +684,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
 
   // Section 5: Requirements List
   Widget _buildRequirementsSection(Map<String, dynamic> job) {
-    final requirements =
-        job['requirements'] as List<dynamic>? ??
+    final requirements = job['requirements'] as List<dynamic>? ??
         [
           'Bachelor\'s degree in relevant field',
           'Minimum 2 years of experience',
@@ -780,8 +789,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
 
   // Section 6: Company Facilities
   Widget _buildFacilitiesSection(Map<String, dynamic> job) {
-    final facilities =
-        job['facilities'] as List<dynamic>? ??
+    final facilities = job['facilities'] as List<dynamic>? ??
         [
           'Free accommodation',
           'Transportation provided',
@@ -983,9 +991,22 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
       ),
     );
   }
+}
 
-  // Bottom Action Buttons
-  Widget _buildBottomActionButtons() {
+class BottomActionButtons extends StatelessWidget {
+  final VoidCallback? onApply;
+  final VoidCallback? onContact;
+  final VoidCallback? onWebView;
+
+  const BottomActionButtons({
+    super.key,
+    this.onApply,
+    this.onContact,
+    this.onWebView,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -998,9 +1019,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
           Expanded(
             flex: 1,
             child: ElevatedButton.icon(
-              onPressed: () {
-                // Handle apply now action
-              },
+              onPressed: onApply ?? () {},
               icon: const Icon(Icons.send, color: Colors.white, size: 18),
               label: const Text(
                 'Apply Now',
@@ -1027,9 +1046,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
           Expanded(
             flex: 1,
             child: ElevatedButton.icon(
-              onPressed: () {
-                // Handle contact us action
-              },
+              onPressed: onContact ?? () {},
               icon: const Icon(Icons.phone, color: Colors.white, size: 18),
               label: const Text(
                 'Contact Us',
@@ -1056,9 +1073,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
           Expanded(
             flex: 1,
             child: OutlinedButton.icon(
-              onPressed: () {
-                // Handle webview action
-              },
+              onPressed: onWebView ?? () {},
               icon: const Icon(Icons.web, color: Color(0xFF64748B), size: 18),
               label: const Text(
                 'Web View',

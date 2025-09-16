@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
 
 class AgencyDetailScreen2 extends StatefulWidget {
@@ -453,7 +454,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -579,7 +580,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -753,7 +754,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -905,7 +906,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1023,7 +1024,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1389,8 +1390,8 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient:
-                            _userRating > 0 && _reviewController.text.isNotEmpty
+                        gradient: _userRating > 0 &&
+                                _reviewController.text.isNotEmpty
                             ? const LinearGradient(
                                 colors: [Color(0xFF3B82F6), Color(0xFF8B5CF6)],
                               )
@@ -1400,23 +1401,23 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
                       child: ElevatedButton(
                         onPressed:
                             _userRating > 0 && _reviewController.text.isNotEmpty
-                            ? () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Review submitted successfully!',
-                                    ),
-                                    backgroundColor: Color(0xFF059669),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
-                                setState(() {
-                                  _showReviewModal = false;
-                                  _userRating = 0.0;
-                                  _reviewController.clear();
-                                });
-                              }
-                            : null,
+                                ? () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Review submitted successfully!',
+                                        ),
+                                        backgroundColor: Color(0xFF059669),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                    setState(() {
+                                      _showReviewModal = false;
+                                      _userRating = 0.0;
+                                      _reviewController.clear();
+                                    });
+                                  }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           foregroundColor: Colors.white,

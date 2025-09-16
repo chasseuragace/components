@@ -12,6 +12,7 @@ class JobsEntity {
   final String postingTitle;
   final String country;
   final String city;
+  final String description;
   final String announcementType;
   final DateTime postingDateAd;
   final String notes;
@@ -50,6 +51,7 @@ class JobsEntity {
     required this.cutoutUrl,
     required this.fitnessScore,
     required this.isFeatured,
+    required this.description,
   });
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class JobDetailScreen3 extends StatefulWidget {
   final Map<String, dynamic> job;
@@ -133,7 +134,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -224,7 +225,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -347,7 +348,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -422,7 +423,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -684,9 +685,8 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         border: Border.all(color: Colors.white.withOpacity(0.2)),
       ),
       child: Column(
-        crossAxisAlignment: fullWidth
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
+        crossAxisAlignment:
+            fullWidth ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
           Text(
             label,
@@ -714,8 +714,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
 
   // Section 6: Requirements List - Clean Design
   Widget _buildRequirementsSection(Map<String, dynamic> job) {
-    final requirements =
-        job['requirements'] as List<dynamic>? ??
+    final requirements = job['requirements'] as List<dynamic>? ??
         [
           'Bachelor\'s degree in relevant field',
           'Minimum 2 years of experience',
@@ -731,7 +730,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -805,8 +804,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
 
   // Section 7: Company Facilities - Minimal Design
   Widget _buildFacilitiesSection(Map<String, dynamic> job) {
-    final facilities =
-        job['facilities'] as List<dynamic>? ??
+    final facilities = job['facilities'] as List<dynamic>? ??
         [
           'Free accommodation',
           'Transportation provided',
@@ -823,7 +821,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -899,7 +897,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -967,7 +965,7 @@ class _JobDetailScreen3State extends State<JobDetailScreen3> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),

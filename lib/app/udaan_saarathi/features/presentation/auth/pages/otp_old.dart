@@ -229,8 +229,8 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage> {
                 decoration: BoxDecoration(
                   color: AppColors.surfaceColor,
                   borderRadius: BorderRadius.circular(16),
-                  border:
-                      Border.all(color: AppColors.borderColor.withOpacity(0.5)),
+                  border: Border.all(
+                      color: AppColors.borderColor.withValues(alpha: 0.5)),
                 ),
                 child: Column(
                   children: [

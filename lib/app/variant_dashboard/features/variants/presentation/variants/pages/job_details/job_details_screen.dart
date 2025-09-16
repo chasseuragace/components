@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 class JobDetailScreen1 extends StatefulWidget {
@@ -213,7 +213,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -265,7 +265,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12),
+          BoxShadow(color: AppColors.blackColor, blurRadius: 12),
         ],
       ),
       child: Column(
@@ -300,7 +300,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -412,7 +412,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -490,7 +490,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   //       borderRadius: BorderRadius.circular(20),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.04),
+  //           color: AppColors.blackColor,
   //           blurRadius: 12,
   //           offset: const Offset(0, 4),
   //         ),
@@ -591,7 +591,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -654,7 +654,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -819,7 +819,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -920,7 +920,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   //       borderRadius: BorderRadius.circular(20),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.04),
+  //           color: AppColors.blackColor,
   //           blurRadius: 12,
   //           offset: const Offset(0, 4),
   //         ),
@@ -1009,7 +1009,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -1173,7 +1173,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -1241,7 +1241,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -1284,7 +1284,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.blackColor,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
