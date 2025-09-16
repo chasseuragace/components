@@ -609,12 +609,9 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
                                 onTap: () {
                                   setState(() => selectedVariant = variant);
                                 },
-                                child: Hero(
-                                  tag: variant.name,
-                                  child: Transform.scale(
-                                    scale: 0.8,
-                                    child: VariantPreview(variant: variant),
-                                  ),
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: VariantPreview(variant: variant),
                                 ),
                               );
                             }).toList(),

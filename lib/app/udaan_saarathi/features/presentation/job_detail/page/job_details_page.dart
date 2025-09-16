@@ -30,14 +30,33 @@ class _JobDetailPageState extends State<JobDetailPage> {
           ),
           title: Text("Job Detail"),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.bookmark_border),
-              onPressed: () {
-                setState(() {
-                  isSaved = !isSaved;
-                });
-              },
+            Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF8F0),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.bookmark_border,
+                  color: Color(0xFFE67E22),
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isSaved = !isSaved;
+                  });
+                },
+              ),
             ),
+            // IconButton(
+            //   icon: const Icon(Icons.bookmark_border),
+            //   onPressed: () {
+            //     setState(() {
+            //       isSaved = !isSaved;
+            //     });
+            //   },
+            // ),
           ],
         ),
         body: Column(children: [
