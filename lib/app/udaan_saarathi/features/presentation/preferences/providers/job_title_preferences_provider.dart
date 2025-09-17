@@ -16,7 +16,6 @@ enum JobTitlePreferenceStatus {
   success,
   error,
 }
-
 class JobTitlePreferenceState {
   final JobTitlePreferenceStatus status;
   final String? errorMessage;

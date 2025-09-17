@@ -4,12 +4,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onSave;
   final bool showSave;
-
+  final bool isLoading;
   const CustomAppBar({
     super.key,
     required this.title,
     this.onSave,
     this.showSave = true,
+    this.isLoading = false,
   });
 
   @override
@@ -31,17 +32,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: showSave
           ? [
-              TextButton(
-                onPressed: onSave,
-                child: const Text(
-                  'Save',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF2196F3),
-                  ),
-                ),
-              ),
+              isLoading
+                  ? CircularProgressIndicator()
+                  : TextButton(
+                      onPressed: onSave,
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2196F3),
+                        ),
+                      ),
+                    ),
             ]
           : null,
     );

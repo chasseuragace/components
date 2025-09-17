@@ -1,22 +1,19 @@
 import '../../../domain/entities/profile/entity.dart';
 
 class ProfileModel extends ProfileEntity {
-  ProfileModel({required super.id, this.name, required super.rawJson});
+  ProfileModel({required super.skills, this.name});
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
     return ProfileModel(
-      id: json['id'] as String,
-        name: json['name'] as String?,
-        rawJson: json, // Pass the entire JSON object
-      );
+      skills: json['skills'] as List<Map<String, dynamic>>?,
+    );
   }
-  
+
   final String? name;
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
+      'skills': skills,
     };
   }
 }

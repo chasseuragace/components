@@ -10,6 +10,7 @@ class AddMoreButton extends StatelessWidget {
     required this.title,
     this.color = const Color(0xFF2196F3),
     required this.onTap,
+    
   });
 
   @override

@@ -1,6 +1,7 @@
 // lib/features/Profile/presentation/pages/list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../domain/entities/profile/entity.dart';
 import '../providers/providers.dart';
 
@@ -14,15 +15,13 @@ class ProfileListPage extends ConsumerStatefulWidget {
 class _ProfileListPageState extends ConsumerState<ProfileListPage> {
   BuildContext? barrierContext;
 
-
-
   @override
   Widget build(BuildContext context) {
     final ProfileState = ref.watch(getAllProfileProvider);
-      listenToDeleteProfileAction(context);
-      // TODO: Set up listeners for other actions
-      // listenToAddProfileAction(context);
-      // listenToUpdateProfileAction(context);
+    listenToDeleteProfileAction(context);
+    // TODO: Set up listeners for other actions
+    // listenToAddProfileAction(context);
+    // listenToUpdateProfileAction(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile List'),
@@ -35,7 +34,8 @@ class _ProfileListPageState extends ConsumerState<ProfileListPage> {
                 itemBuilder: (context, index) {
                   final item = items[index];
                   return ListTile(
-                    title: Text(item.runtimeType.toString()), // Adjust this based on your entity properties
+                    title: Text(item.runtimeType
+                        .toString()), // Adjust this based on your entity properties
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -48,7 +48,7 @@ class _ProfileListPageState extends ConsumerState<ProfileListPage> {
                         IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
-                            _showDeleteConfirmation(context, ref, item.id);
+                            // _showDeleteConfirmation(context, ref, item.id);
                           },
                         ),
                       ],
@@ -120,12 +120,14 @@ class _ProfileListPageState extends ConsumerState<ProfileListPage> {
     // Implementation remains the same
   }
 
-  void _showEditDialog(BuildContext context, WidgetRef ref, ProfileEntity item) {
+  void _showEditDialog(
+      BuildContext context, WidgetRef ref, ProfileEntity item) {
     // Implementation remains the same
   }
 
-  void _showDeleteConfirmation(BuildContext context, WidgetRef ref, String itemId)async  {
-  final result = await   showDialog(
+  void _showDeleteConfirmation(
+      BuildContext context, WidgetRef ref, String itemId) async {
+    final result = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirm Deletion'),
@@ -137,7 +139,6 @@ class _ProfileListPageState extends ConsumerState<ProfileListPage> {
           ),
           TextButton(
             onPressed: () {
-              
               Navigator.of(context).pop(true);
             },
             child: Text('Delete'),
@@ -145,8 +146,8 @@ class _ProfileListPageState extends ConsumerState<ProfileListPage> {
         ],
       ),
     );
-    if(result==true){
-    ref.read(deleteProfileProvider.notifier).delete(itemId);
+    if (result == true) {
+      ref.read(deleteProfileProvider.notifier).delete(itemId);
     }
   }
 }

@@ -1,30 +1,51 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 
 // Import your custom form field
 // import 'custom_form_builder_text_field.dart';
 
-class SkillsFormPage extends StatefulWidget {
+class SkillsFormPage extends ConsumerStatefulWidget {
   const SkillsFormPage({super.key});
 
   @override
-  State<SkillsFormPage> createState() => _SkillsFormPageState();
+  ConsumerState<SkillsFormPage> createState() => _SkillsFormPageState();
 }
 
-class _SkillsFormPageState extends State<SkillsFormPage> {
+class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   List<SkillForm> skills = [SkillForm()];
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<ProfileState>>(profileProvider, (previous, next) {
+      next.whenData((state) {
+        switch (state.status) {
+          case ResponseStates.success:
+            CustomSnackbar.showSuccessSnackbar(context, state.message!);
+            Navigator.pop(context);
+            break;
+          case ResponseStates.failure:
+            CustomSnackbar.showFailureSnackbar(context, state.errorMessage!);
+            break;
+          case ResponseStates.loading:
+          case ResponseStates.initial:
+            break;
+        }
+      });
+    });
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
         title: 'Skills',
         onSave: _saveSkills,
+        isLoading: ref.watch(profileProvider).isLoading,
       ),
       body: FormBuilder(
         key: _formKey,
@@ -123,8 +144,8 @@ class _SkillsFormPageState extends State<SkillsFormPage> {
     });
   }
 
-  void _saveSkills() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
+  void _saveSkills() async {
+    if (_formKey.currentState?.validate() ?? false) {
       // Process the data
       List<Map<String, dynamic>> skillsData = skills
           .map((skill) => {
@@ -138,21 +159,22 @@ class _SkillsFormPageState extends State<SkillsFormPage> {
           .toList();
 
       print('Skills data: $skillsData');
+      await ref.read(profileProvider.notifier).addProfileBlob(skillsData);
 
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Skills saved successfully!'),
-          backgroundColor: Colors.green[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: const Text('Skills saved successfully!'),
+      //     backgroundColor: Colors.green[600],
+      //     behavior: SnackBarBehavior.floating,
+      //     shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.circular(8),
+      //     ),
+      //   ),
+      // );
 
       // Navigate back
-      Navigator.pop(context);
+      // Navigator.pop(context);
     }
   }
 
@@ -213,8 +235,8 @@ class SkillCard extends StatelessWidget {
             label: 'Skill/Language Title',
             hint: 'e.g. JavaScript, English, Data Analysis',
             icon: Icons.star_outline,
-            validator: (value) =>
-                CustomValidator.nameValidator(type: 'Skill Title'),
+            validator: (value) => CustomValidator.nameValidator(
+                type: 'Skill Title', input: value),
           ),
           const SizedBox(height: 16),
           Row(
@@ -227,8 +249,8 @@ class SkillCard extends StatelessWidget {
                   hint: 'e.g. 24',
                   icon: Icons.schedule_outlined,
                   keyboardType: TextInputType.number,
-                  validator: (value) =>
-                      CustomValidator.nameValidator(type: 'Years'),
+                  validator: (value) => CustomValidator.nameValidator(
+                      type: 'Years', input: value),
                 ),
               ),
               const SizedBox(width: 16),
@@ -240,8 +262,8 @@ class SkillCard extends StatelessWidget {
                   hint: 'e.g. 3',
                   icon: Icons.timeline_outlined,
                   keyboardType: TextInputType.number,
-                  validator: (value) =>
-                      CustomValidator.nameValidator(type: 'Years'),
+                  // validator: (value) => CustomValidator.nameValidator(
+                  //     type: 'Years', input: value),
                 ),
               ),
             ],
