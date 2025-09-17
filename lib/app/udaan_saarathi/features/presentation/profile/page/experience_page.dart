@@ -21,32 +21,7 @@ class _WorkExperienceFormPageState extends State<WorkExperienceFormPage> {
         title: 'Work Experience',
         onSave: _saveExperiences,
       ),
-      // AppBar(
-      //   elevation: 0,
-      //   backgroundColor: Colors.white,
-      //   foregroundColor: Colors.black87,
-      //   title: const Text(
-      //     'Work Experience',
-      //     style: TextStyle(
-      //       fontSize: 20,
-      //       fontWeight: FontWeight.w600,
-      //       color: Colors.black87,
-      //     ),
-      //   ),
-      //   actions: [
-      //     TextButton(
-      //       onPressed: _saveExperiences,
-      //       child: const Text(
-      //         'Save',
-      //         style: TextStyle(
-      //           fontSize: 16,
-      //           fontWeight: FontWeight.w600,
-      //           color: Color(0xFF2196F3),
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
+
       body: FormBuilder(
         key: _formKey,
         child: ListView.builder(

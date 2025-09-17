@@ -103,7 +103,7 @@ class ProfilePage extends ConsumerWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
@@ -180,7 +180,7 @@ class ProfilePage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -193,7 +193,14 @@ class ProfilePage extends ConsumerWidget {
                     title: "Personal Information",
                     subtitle: "Update your personal details",
                     iconColor: Colors.blue,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PersonalInfoFormPage(),
+                        ),
+                      );
+                    },
                   ),
                   _ProfileMenuItem(
                     icon: Icons.work,
@@ -337,7 +344,7 @@ class ProfilePage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -370,7 +377,7 @@ class ProfilePage extends ConsumerWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFD60A).withOpacity(0.2),
+                  color: Color(0xFFFFD60A).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
