@@ -48,6 +48,8 @@ dependencies:
 
   dio: any
   sms_autofill: ^2.4.1
+  flutter_form_builder: ^10.1.0
+  file_picker: ^10.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

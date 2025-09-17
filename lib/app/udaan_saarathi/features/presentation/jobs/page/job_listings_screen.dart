@@ -149,7 +149,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
           SliverAppBar(
             expandedHeight: 120,
             floating: false,
-            pinned: true,
+            pinned: false,
             backgroundColor: Colors.white,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
@@ -194,37 +194,37 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
             ),
           ),
 
-          // Search and Filter Section
-          SliverToBoxAdapter(
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // Search Bar
-                  SearchBarWidget(
-                    controller: _searchController,
-                    onFilterTap: _showFilterModal,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Active Filters
-                  if (_activeFilters.isNotEmpty || _searchQuery.isNotEmpty)
-                    ActiveFiltersWidget(
-                      activeFilters: _activeFilters,
-                      searchQuery: _searchQuery,
-                      onClearAll: _clearAllFilters,
-                      onRemoveFilter: (key) {
-                        setState(() {
-                          _activeFilters.remove(key);
-                          _applyFilters();
-                        });
-                      },
-                    ),
-                ],
+          // Sticky Search Bar
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SearchBarHeaderDelegate(
+              height: 80,
+              child: SearchBarWidget(
+                controller: _searchController,
+                onFilterTap: _showFilterModal,
               ),
             ),
           ),
+
+          // Active Filters (scrolls with content)
+          if (_activeFilters.isNotEmpty || _searchQuery.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                child: ActiveFiltersWidget(
+                  activeFilters: _activeFilters,
+                  searchQuery: _searchQuery,
+                  onClearAll: _clearAllFilters,
+                  onRemoveFilter: (key) {
+                    setState(() {
+                      _activeFilters.remove(key);
+                      _applyFilters();
+                    });
+                  },
+                ),
+              ),
+            ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -345,94 +345,94 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
     );
   }
 
-  List<Map<String, dynamic>> _getDummyJobs() {
-    return [
-      {
-        'title': 'Electrician',
-        'company': 'Qatar Power Services',
-        'location': 'Doha, Qatar',
-        'salary': 'QAR 1,800 - 2,200',
-        'type': 'Full Time',
-        'experience': '2-3 years',
-        'posted': '2 days ago',
-        'isRemote': false,
-        'isFeatured': true,
-        'companyLogo': 'Q',
-        'matchPercentage': 92,
-        'gender': 'Male',
-      },
-      {
-        'title': 'Plumber',
-        'company': 'Dubai Facility Management',
-        'location': 'Dubai, UAE',
-        'salary': 'AED 1,500 - 2,000',
-        'type': 'Full Time',
-        'experience': '1-2 years',
-        'posted': '1 day ago',
-        'isRemote': false,
-        'isFeatured': false,
-        'companyLogo': 'D',
-        'matchPercentage': 85,
-        'gender': 'Male',
-      },
-      {
-        'title': 'Construction Worker',
-        'company': 'Saudi Build Co.',
-        'location': 'Riyadh, Saudi Arabia',
-        'salary': 'SAR 1,200 - 1,800',
-        'type': 'Contract',
-        'experience': 'No prior experience required',
-        'posted': '3 days ago',
-        'isRemote': false,
-        'isFeatured': true,
-        'companyLogo': 'S',
-        'matchPercentage': 80,
-        'gender': 'Male',
-      },
-      {
-        'title': 'Driver',
-        'company': 'Al Jazeera Transport',
-        'location': 'Doha, Qatar',
-        'salary': 'QAR 2,000 - 2,500',
-        'type': 'Full Time',
-        'experience': '2+ years with GCC License',
-        'posted': '1 week ago',
-        'isRemote': false,
-        'isFeatured': true,
-        'companyLogo': 'A',
-        'matchPercentage': 88,
-        'gender': 'Male',
-      },
-      {
-        'title': 'Housekeeper',
-        'company': 'Dubai Hospitality Group',
-        'location': 'Dubai, UAE',
-        'salary': 'AED 1,200 - 1,800',
-        'type': 'Full Time',
-        'experience': '1-2 years in hotels/residences',
-        'posted': '4 days ago',
-        'isRemote': false,
-        'isFeatured': false,
-        'companyLogo': 'H',
-        'matchPercentage': 76,
-        'gender': 'Female',
-      },
-      {
-        'title': 'Cook',
-        'company': 'Saudi Catering Services',
-        'location': 'Jeddah, Saudi Arabia',
-        'salary': 'SAR 1,800 - 2,200',
-        'type': 'Full Time',
-        'experience': '2-4 years in restaurant kitchen',
-        'posted': '5 days ago',
-        'isRemote': false,
-        'isFeatured': false,
-        'companyLogo': 'C',
-        'matchPercentage': 83,
-        'gender': 'Any',
-      },
-    ];
-  }
+  // List<Map<String, dynamic>> _getDummyJobs() {
+  //   return [
+  //     {
+  //       'title': 'Electrician',
+  //       'company': 'Qatar Power Services',
+  //       'location': 'Doha, Qatar',
+  //       'salary': 'QAR 1,800 - 2,200',
+  //       'type': 'Full Time',
+  //       'experience': '2-3 years',
+  //       'posted': '2 days ago',
+  //       'isRemote': false,
+  //       'isFeatured': true,
+  //       'companyLogo': 'Q',
+  //       'matchPercentage': 92,
+  //       'gender': 'Male',
+  //     },
+  //     {
+  //       'title': 'Plumber',
+  //       'company': 'Dubai Facility Management',
+  //       'location': 'Dubai, UAE',
+  //       'salary': 'AED 1,500 - 2,000',
+  //       'type': 'Full Time',
+  //       'experience': '1-2 years',
+  //       'posted': '1 day ago',
+  //       'isRemote': false,
+  //       'isFeatured': false,
+  //       'companyLogo': 'D',
+  //       'matchPercentage': 85,
+  //       'gender': 'Male',
+  //     },
+  //     {
+  //       'title': 'Construction Worker',
+  //       'company': 'Saudi Build Co.',
+  //       'location': 'Riyadh, Saudi Arabia',
+  //       'salary': 'SAR 1,200 - 1,800',
+  //       'type': 'Contract',
+  //       'experience': 'No prior experience required',
+  //       'posted': '3 days ago',
+  //       'isRemote': false,
+  //       'isFeatured': true,
+  //       'companyLogo': 'S',
+  //       'matchPercentage': 80,
+  //       'gender': 'Male',
+  //     },
+  //     {
+  //       'title': 'Driver',
+  //       'company': 'Al Jazeera Transport',
+  //       'location': 'Doha, Qatar',
+  //       'salary': 'QAR 2,000 - 2,500',
+  //       'type': 'Full Time',
+  //       'experience': '2+ years with GCC License',
+  //       'posted': '1 week ago',
+  //       'isRemote': false,
+  //       'isFeatured': true,
+  //       'companyLogo': 'A',
+  //       'matchPercentage': 88,
+  //       'gender': 'Male',
+  //     },
+  //     {
+  //       'title': 'Housekeeper',
+  //       'company': 'Dubai Hospitality Group',
+  //       'location': 'Dubai, UAE',
+  //       'salary': 'AED 1,200 - 1,800',
+  //       'type': 'Full Time',
+  //       'experience': '1-2 years in hotels/residences',
+  //       'posted': '4 days ago',
+  //       'isRemote': false,
+  //       'isFeatured': false,
+  //       'companyLogo': 'H',
+  //       'matchPercentage': 76,
+  //       'gender': 'Female',
+  //     },
+  //     {
+  //       'title': 'Cook',
+  //       'company': 'Saudi Catering Services',
+  //       'location': 'Jeddah, Saudi Arabia',
+  //       'salary': 'SAR 1,800 - 2,200',
+  //       'type': 'Full Time',
+  //       'experience': '2-4 years in restaurant kitchen',
+  //       'posted': '5 days ago',
+  //       'isRemote': false,
+  //       'isFeatured': false,
+  //       'companyLogo': 'C',
+  //       'matchPercentage': 83,
+  //       'gender': 'Any',
+  //     },
+  //   ];
+  // }
 }
 
 // Search Bar Widget
@@ -500,6 +500,39 @@ class SearchBarWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+// Sticky Search Bar Header Delegate
+class _SearchBarHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double height;
+  final Widget child;
+
+  _SearchBarHeaderDelegate({required this.height, required this.child});
+
+  @override
+  double get minExtent => height;
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      alignment: Alignment.center,
+      child: SafeArea(
+        bottom: false,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _SearchBarHeaderDelegate oldDelegate) {
+    return oldDelegate.height != height || oldDelegate.child != child;
   }
 }
 

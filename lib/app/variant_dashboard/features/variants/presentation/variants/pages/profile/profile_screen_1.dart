@@ -8,13 +8,13 @@ class ProfileScreen1 extends StatelessWidget {
     return MaterialApp(
       title: 'Profile Page',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const ProfilePage(),
+      home: const ProfilePages(),
     );
   }
 }
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ProfilePages extends StatelessWidget {
+  const ProfilePages({super.key});
 
   @override
   Widget build(BuildContext context) {

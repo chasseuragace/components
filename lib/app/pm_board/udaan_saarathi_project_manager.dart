@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:variant_dashboard/app/pm_board/pm_board_app.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/page/splash_screen.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/pages/variant_dashboard_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
@@ -108,7 +110,8 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
                                     ),
                                     buildScreen(const SetPreferenceScreen()),
                                     buildScreen(const HomePageVariant1()),
-                                    // buildScreen(const JobsListPage()),
+                                    buildScreen(const JobsListPage()),
+                                    buildScreen(const ProfilePage()),
                                     buildScreen(
                                         JobDetailPage(job: blueCollarJobQatar))
                                   ].map((e) => e).toList(),

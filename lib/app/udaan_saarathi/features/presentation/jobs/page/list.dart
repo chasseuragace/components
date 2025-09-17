@@ -24,7 +24,6 @@ class _JobsListPageState extends ConsumerState<JobsListPage> {
     // listenToAddJobsAction(context);
     // listenToUpdateJobsAction(context);
     return Scaffold(
-      
       body: jobsState.when(
         data: (items) => items.isEmpty
             ? Center(child: Text('No items available'))
@@ -64,12 +63,12 @@ class _JobsListPageState extends ConsumerState<JobsListPage> {
         loading: () => Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(child: Text(error.toString())),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddDialog(context, ref);
-        },
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     _showAddDialog(context, ref);
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
     );
   }
 
