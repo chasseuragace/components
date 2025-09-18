@@ -15,7 +15,7 @@ class MyApp extends ConsumerWidget {
       // theme: ThemeData.dark(),
       home: !false
           ? UdaanSaarathiProjectManager()
-          : !true
+          : true
               ? UdaanSaarathiApp()
               : VariantDashboardPage(),
       // initialRoute: RouteConstants.kSplashScreen,

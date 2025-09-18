@@ -27,7 +27,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
   Widget build(BuildContext context) {
     var width3 = MediaQuery.of(context).size.width;
     var height2 = MediaQuery.of(context).size.height;
-    var other = 1.4;
+    var other = 1.9;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(18.0),

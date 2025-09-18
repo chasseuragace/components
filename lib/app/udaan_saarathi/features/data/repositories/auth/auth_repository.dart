@@ -38,7 +38,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   @override
   Future<Either<Failure, String>> registerCandidate({required String fullName, required String phone}) async {
     try {
-      final req = RegisterCandidateDto(fullName: fullName, phone: phone);
+      final req = RegisterCandidateDto(fullName: fullName, phone: "+977"+phone);
       final res = await _api.authControllerRegister(registerCandidateDto: req);
       return Right(res.data?.devOtp ?? '');
     } catch (_) {
@@ -49,7 +49,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   @override
   Future<Either<Failure, String>> verifyCandidate({required String phone, required String otp}) async {
     try {
-      final req = VerifyOtpDto(phone: phone, otp: otp);
+      final req = VerifyOtpDto(phone: "+977"+phone, otp: otp);
       final res = await _api.authControllerVerify(verifyOtpDto: req);
       final token = res.data?.token ?? '';
       if (token.isNotEmpty) {
@@ -66,7 +66,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   @override
   Future<Either<Failure, String>> loginStart({required String phone}) async {
     try {
-      final req = AuthControllerLoginStartRequest(phone: phone);
+      final req = AuthControllerLoginStartRequest(phone: "+977"+phone);
       final res = await _api.authControllerLoginStart(authControllerLoginStartRequest: req);
       return Right(res.data?.devOtp ?? '');
     } catch (_) {

@@ -43,8 +43,8 @@ dependencies:
   dartz:
   shared_preferences: ^2.2.3
   openapi: 
-    path: '/Users/masovison/Downloads/dev_tools/package_form_open_api/openapi'
-    # path: '/Users/ajaydahal/portal/agency_research/dev_tools/package_form_open_api/openapi'
+    # path: '/Users/masovison/Downloads/dev_tools/package_form_open_api/openapi'
+    path: '/Users/ajaydahal/portal/agency_research/dev_tools/package_form_open_api/openapi'
 
   dio: any
   sms_autofill: ^2.4.1

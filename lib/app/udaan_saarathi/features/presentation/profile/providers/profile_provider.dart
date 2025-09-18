@@ -56,7 +56,14 @@ class ProfileProvider extends AsyncNotifier<ProfileState> {
       );
       // await Future.delayed(const Duration(seconds: 5));
       final result = await addProfileUseCase(ProfileEntity(
-        skills: skills,
+        profileBlob: ProfileBlobEntity(
+          skills: skills.map((skill) => SkillEntity(
+            title: skill['title'] as String?,
+            durationMonths: skill['duration_months'] as int?,
+            years: skill['years'] as int?,
+            documents: (skill['documents'] as List<dynamic>?)?.cast<String>(),
+          )).toList(),
+        ),
         // priority: priority,
       ));
 
