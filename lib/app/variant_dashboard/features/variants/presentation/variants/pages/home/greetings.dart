@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart' as cand;
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
-class Greetings extends StatelessWidget {
+class Greetings extends ConsumerWidget {
   const Greetings({
     super.key,
-    required this.candidate,
     required this.analytics,
   });
 
-  final Candidate candidate;
+
   final DashboardAnalytics analytics;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final candState = ref.watch(cand.getCandidateByIdProvider);
+    final name = candState.when(
+      data: (c) => (c?.fullName?.trim().isNotEmpty == true) ? c!.fullName! : 'Guest',
+      loading: () => '...',
+      error: (_, __) => 'Guest',
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -25,7 +32,7 @@ class Greetings extends StatelessWidget {
           ),
         ),
         Text(
-          candidate.fullName,
+          name,
           style: TextStyle(
             fontSize: 28,
             color: Colors.white,

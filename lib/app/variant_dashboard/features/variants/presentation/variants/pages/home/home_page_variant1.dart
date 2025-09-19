@@ -223,7 +223,7 @@ class DashboardHeader extends ConsumerWidget {
                 children: [
                   Expanded(
                     child:
-                        Greetings(candidate: candidate, analytics: analytics),
+                        Greetings( analytics: analytics),
                   ),
                   Container(
                     width: 60,

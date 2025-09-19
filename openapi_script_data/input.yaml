@@ -1,0 +1,2561 @@
+openapi: 3.0.0
+paths:
+  /jobs/seedv1:
+    post:
+      operationId: DomainController_seedV1
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /jobs/{id}:
+    get:
+      operationId: PublicJobsController_getJobDetails
+      summary: Get public job details by ID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Job Posting ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job details payload
+      tags:
+        - jobs
+  /interviews:
+    get:
+      operationId: InterviewsController_list
+      summary: List interviews by candidate IDs, upcoming-first by default
+      parameters:
+        - name: order
+          required: false
+          in: query
+          schema:
+            enum:
+              - upcoming
+              - recent
+            type: string
+        - name: only_upcoming
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: page
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: candidate_ids
+          required: true
+          in: query
+          description: One or more candidate UUIDs
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - interviews
+  /job-titles:
+    get:
+      operationId: JobTitleController_listAll
+      summary: List job titles with optional filters
+      parameters:
+        - name: is_active
+          required: false
+          in: query
+          description: true|false
+          schema:
+            type: string
+        - name: q
+          required: false
+          in: query
+          description: Search by title (ILIKE)
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: Max rows to return
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          description: Offset for pagination
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTitleListResponseDto'
+      tags:
+        - job-titles
+  /job-titles/seedv1:
+    post:
+      operationId: JobTitleController_seedV1
+      summary: Seed job titles from src/seed/jobs.seed.json (upsert by title)
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTitleSeedResponseDto'
+      tags:
+        - job-titles
+  /applications:
+    post:
+      operationId: ApplicationController_apply
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - applications
+  /applications/candidates/{id}:
+    get:
+      operationId: ApplicationController_listForCandidate
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: status
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: page
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: limit
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - applications
+  /applications/{id}/shortlist:
+    post:
+      operationId: ApplicationController_shortlist
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - applications
+  /applications/{id}/schedule-interview:
+    post:
+      operationId: ApplicationController_scheduleInterview
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - applications
+  /applications/{id}/complete-interview:
+    post:
+      operationId: ApplicationController_completeInterview
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - applications
+  /applications/{id}/withdraw:
+    post:
+      operationId: ApplicationController_withdraw
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - applications
+  /applications/analytics/{id}:
+    get:
+      operationId: ApplicationController_analytics
+      summary: Get candidate application analytics
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID (UUID v4)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analytics summary for the candidate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationAnalyticsDto'
+      tags:
+        - applications
+  /agencies/owner/agency:
+    post:
+      operationId: AgencyController_createMyAgency
+      summary: Create one agency for the authenticated owner
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                license_number:
+                  type: string
+              required:
+                - name
+                - license_number
+      responses:
+        '201':
+          description: Agency created
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  license_number:
+                    type: string
+      tags:
+        - Agencies
+      security:
+        - bearer: []
+    get:
+      operationId: AgencyController_getMyAgency
+      summary: Get agency owned by the authenticated user
+      parameters: []
+      responses:
+        '200':
+          description: Agency details
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  license_number:
+                    type: string
+                  address:
+                    type: string
+                    nullable: true
+                  phones:
+                    type: array
+                    items:
+                      type: string
+                    nullable: true
+                  emails:
+                    type: array
+                    items:
+                      type: string
+                    nullable: true
+                  website:
+                    type: string
+                    nullable: true
+        '403':
+          description: Forbidden if user is not an agency owner
+        '404':
+          description: Not found if agency does not exist
+      tags:
+        - Agencies
+      security:
+        - bearer: []
+  /agencies/owner/members/invite:
+    post:
+      operationId: AgencyController_inviteMember
+      summary: Invite an agency member and set an admin-managed password
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                full_name:
+                  type: string
+                phone:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - staff
+                    - owner
+              required:
+                - full_name
+                - phone
+      responses:
+        '201':
+          description: Member invited
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  phone:
+                    type: string
+                  role:
+                    type: string
+                  dev_password:
+                    type: string
+      tags:
+        - Agencies
+      security:
+        - bearer: []
+  /agencies/owner/members/{id}/reset-password:
+    post:
+      operationId: AgencyController_resetMemberPassword
+      summary: Reset a member password (admin-managed)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  phone:
+                    type: string
+                  dev_password:
+                    type: string
+      tags:
+        - Agencies
+      security:
+        - bearer: []
+  /agencies/owner/members:
+    get:
+      operationId: AgencyController_listMembers
+      summary: List members of the owner's agency
+      parameters: []
+      responses:
+        '200':
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    full_name:
+                      type: string
+                    phone:
+                      type: string
+                    role:
+                      type: string
+      tags:
+        - Agencies
+      security:
+        - bearer: []
+  /agencies:
+    post:
+      operationId: AgencyController_createAgency
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}:
+    get:
+      operationId: AgencyController_getJobPosting
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+    patch:
+      operationId: AgencyController_updateJobPosting
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/analytics/applicants-by-phase:
+    get:
+      operationId: AgencyController_getApplicantsByPhase
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/seedv1:
+    post:
+      operationId: AgencyController_seedV1
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings:
+    post:
+      operationId: AgencyController_createJobPostingForAgency
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobPostingWithTagsDto'
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+    get:
+      operationId: AgencyController_listAgencyJobPostings
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/tags:
+    patch:
+      operationId: AgencyController_updateJobPostingTags
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateJobTagsDto'
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+    get:
+      operationId: AgencyController_getJobPostingTags
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/expenses/medical:
+    post:
+      operationId: AgencyController_addMedicalExpense
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/expenses/insurance:
+    post:
+      operationId: AgencyController_addInsuranceExpense
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/expenses/travel:
+    post:
+      operationId: AgencyController_addTravelExpense
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/expenses/visa:
+    post:
+      operationId: AgencyController_addVisaExpense
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/expenses/training:
+    post:
+      operationId: AgencyController_addTrainingExpense
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/expenses/welfare:
+    post:
+      operationId: AgencyController_addWelfareExpense
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/interview:
+    post:
+      operationId: AgencyController_createInterview
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+    get:
+      operationId: AgencyController_getInterview
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+    patch:
+      operationId: AgencyController_updateInterview
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /agencies/{license}/job-postings/{id}/cutout:
+    post:
+      operationId: AgencyController_uploadCutout
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - Agencies
+    delete:
+      operationId: AgencyController_removeCutout
+      parameters:
+        - name: license
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: deleteFile
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Agencies
+  /register:
+    post:
+      operationId: AuthController_register
+      summary: Register candidate by phone (OTP flow). Dev returns dev_otp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCandidateDto'
+      responses:
+        '200':
+          description: OTP issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  dev_otp:
+                    type: string
+      tags:
+        - auth
+  /verify:
+    post:
+      operationId: AuthController_verify
+      summary: Verify OTP and return dev token
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpDto'
+      responses:
+        '200':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: string
+                    format: uuid
+                  candidate_id:
+                    type: string
+                    format: uuid
+                  candidate:
+                    type: object
+      tags:
+        - auth
+  /login/start:
+    post:
+      operationId: AuthController_loginStart
+      summary: Start login OTP flow
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                phone:
+                  type: string
+              required:
+                - phone
+      responses:
+        '200':
+          description: OTP issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  dev_otp:
+                    type: string
+      tags:
+        - auth
+  /login/verify:
+    post:
+      operationId: AuthController_loginVerify
+      summary: Verify login OTP and return token
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpDto'
+      responses:
+        '200':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: string
+                    format: uuid
+                  candidate_id:
+                    type: string
+                    format: uuid
+                  candidate:
+                    type: object
+      tags:
+        - auth
+  /agency/register-owner:
+    post:
+      operationId: AuthController_registerOwner
+      summary: Register agency owner (phone only). Dev returns dev_otp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                phone:
+                  type: string
+                full_name:
+                  type: string
+              required:
+                - phone
+                - full_name
+      responses:
+        '200':
+          description: OTP issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  dev_otp:
+                    type: string
+      tags:
+        - auth
+  /agency/verify-owner:
+    post:
+      operationId: AuthController_verifyOwner
+      summary: Verify owner OTP and return JWT token
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                phone:
+                  type: string
+                otp:
+                  type: string
+              required:
+                - phone
+                - otp
+      responses:
+        '200':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: string
+                    format: uuid
+      tags:
+        - auth
+  /agency/login/start-owner:
+    post:
+      operationId: AuthController_loginStartOwner
+      summary: Start login OTP for agency owner
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                phone:
+                  type: string
+              required:
+                - phone
+      responses:
+        '200':
+          description: OTP issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  dev_otp:
+                    type: string
+      tags:
+        - auth
+  /agency/login/verify-owner:
+    post:
+      operationId: AuthController_loginVerifyOwner
+      summary: Verify login OTP for agency owner
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                phone:
+                  type: string
+                otp:
+                  type: string
+              required:
+                - phone
+                - otp
+      responses:
+        '200':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: string
+                    format: uuid
+      tags:
+        - auth
+  /member/login:
+    post:
+      operationId: AuthController_memberLogin
+      summary: Agency member login with phone+password
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                phone:
+                  type: string
+                password:
+                  type: string
+              required:
+                - phone
+                - password
+      responses:
+        '200':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: string
+                    format: uuid
+                  agency_id:
+                    type: string
+                    format: uuid
+      tags:
+        - auth
+  /phone-change-requests:
+    post:
+      operationId: AuthController_requestPhoneChange
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
+  /phone-change-verifications:
+    post:
+      operationId: AuthController_verifyPhoneChange
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
+  /candidates/{id}:
+    get:
+      operationId: CandidateController_getCandidateProfile
+      summary: Get candidate profile by ID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Candidate profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProfileDto'
+      tags:
+        - candidates
+    put:
+      operationId: CandidateController_updateCandidateProfile
+      summary: Update candidate profile by ID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateUpdateDto'
+      responses:
+        '200':
+          description: Updated candidate profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProfileDto'
+      tags:
+        - candidates
+  /candidates:
+    post:
+      operationId: CandidateController_createCandidate
+      summary: Create a candidate
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateCreateDto'
+      responses:
+        '201':
+          description: Candidate created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateCreatedResponseDto'
+      tags:
+        - candidates
+  /candidates/{id}/jobs/{jobId}:
+    get:
+      operationId: CandidateController_getJobDetailsWithFitness
+      summary: Get job details with candidate-specific fitness score
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+        - name: jobId
+          required: true
+          in: path
+          description: Job Posting ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job details with fitness_score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateJobDetailsDto'
+      tags:
+        - candidates
+  /candidates/{id}/job-profiles:
+    put:
+      operationId: CandidateController_updateJobProfile
+      summary: Update the candidate job profile (auto-creates if not exists)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Partial update to job profile. Will create profile if none exists.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateJobProfileDto'
+      responses:
+        '200':
+          description: Job profile updated or created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddJobProfileResponseDto'
+      tags:
+        - candidates
+    get:
+      operationId: CandidateController_listJobProfiles
+      summary: List candidate job profiles (ordered by updated_at desc)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Candidate job profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CandidateJobProfileDto'
+      tags:
+        - candidates
+  /candidates/{id}/relevant-jobs:
+    get:
+      operationId: CandidateController_getRelevantJobs
+      summary: List relevant jobs for a candidate (fitness_score included by default)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+        - name: combineWith
+          required: false
+          in: query
+          description: AND|OR combination with preferences
+          schema:
+            enum:
+              - AND
+              - OR
+            type: string
+        - name: useCanonicalTitles
+          required: false
+          in: query
+          description: true|false
+          schema:
+            type: string
+        - name: includeScore
+          required: false
+          in: query
+          description: true|false (defaults to true)
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_min
+          required: false
+          in: query
+          description: Minimum salary amount
+          schema:
+            type: string
+        - name: salary_max
+          required: false
+          in: query
+          description: Maximum salary amount
+          schema:
+            type: string
+        - name: salary_currency
+          required: false
+          in: query
+          description: Salary currency code
+          schema:
+            type: string
+        - name: salary_source
+          required: false
+          in: query
+          description: base|converted
+          schema:
+            enum:
+              - base
+              - converted
+            type: string
+        - name: country
+          required: false
+          in: query
+          description: Single or multiple (CSV/array) country filter
+          schema: {}
+      responses:
+        '200':
+          description: Paginated relevant jobs with fitness_score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobsResponseDto'
+      tags:
+        - candidates
+  /candidates/{id}/relevant-jobs/grouped:
+    get:
+      operationId: CandidateController_getRelevantJobsGrouped
+      summary: Relevant jobs grouped by each preferred title (includes fitness_score)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+        - name: combineWith
+          required: false
+          in: query
+          schema:
+            enum:
+              - AND
+              - OR
+            type: string
+        - name: useCanonicalTitles
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: includeScore
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_min
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_max
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_currency
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_source
+          required: false
+          in: query
+          schema:
+            enum:
+              - base
+              - converted
+            type: string
+        - name: country
+          required: false
+          in: query
+          schema: {}
+      responses:
+        '200':
+          description: Grouped relevant jobs with fitness_score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupedJobsResponseDto'
+      tags:
+        - candidates
+  /candidates/{id}/relevant-jobs/by-title:
+    get:
+      operationId: CandidateController_getRelevantJobsByTitle
+      summary: >-
+        Relevant jobs for one preferred title (fitness_score included by
+        default)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+        - name: title
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: combineWith
+          required: false
+          in: query
+          schema:
+            enum:
+              - AND
+              - OR
+            type: string
+        - name: useCanonicalTitles
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: includeScore
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_min
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_max
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_currency
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: salary_source
+          required: false
+          in: query
+          schema:
+            enum:
+              - base
+              - converted
+            type: string
+        - name: country
+          required: false
+          in: query
+          schema: {}
+      responses:
+        '200':
+          description: Paginated relevant jobs for a single title with fitness_score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobsResponseDto'
+      tags:
+        - candidates
+  /candidates/{id}/interviews:
+    get:
+      operationId: CandidateController_listInterviews
+      summary: List interviews for a candidate
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+        - name: only_upcoming
+          required: false
+          in: query
+          description: >-
+            If true, returns only upcoming interviews (default: true). If false,
+            returns all interviews.
+          schema:
+            example: true
+            type: boolean
+        - name: order
+          required: false
+          in: query
+          description: >-
+            Order of interviews. "upcoming" orders by date ascending (closest
+            first), "recent" orders by date descending (most recent first).
+          schema:
+            enum:
+              - upcoming
+              - recent
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Page number for pagination (default: 1)'
+          schema:
+            example: 1
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: 'Number of items per page (default: 10, max: 100)'
+          schema:
+            example: 10
+            type: number
+      responses:
+        '200':
+          description: Paginated list of interviews
+          content:
+            application/json:
+              schema:
+                type: object
+      tags:
+        - candidates
+  /candidates/{id}/preferences:
+    get:
+      operationId: CandidateController_listPreferences
+      summary: List candidate preferences (id, title, priority)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ordered preferences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreferenceDto'
+      tags:
+        - candidates
+    post:
+      operationId: CandidateController_addPreference
+      summary: Add a preference (validated against active JobTitle)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPreferenceDto'
+      responses:
+        '201':
+          description: Preference added or moved to top
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreferenceDto'
+      tags:
+        - candidates
+    delete:
+      operationId: CandidateController_removePreference
+      summary: Remove a preference by title (idempotent)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemovePreferenceDto'
+      responses:
+        '200':
+          description: Updated preferences after removal
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreferenceDto'
+      tags:
+        - candidates
+  /candidates/{id}/preferences/order:
+    put:
+      operationId: CandidateController_reorderPreferences
+      summary: Reorder preferences by IDs (preferred) or titles
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Candidate ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderPreferencesDto'
+      responses:
+        '200':
+          description: Updated ordered preferences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreferenceDto'
+      tags:
+        - candidates
+  /countries:
+    get:
+      operationId: CountryController_list
+      summary: List all countries
+      description: Retrieve a list of all countries with their details
+      parameters:
+        - name: search
+          required: false
+          in: query
+          description: Search by country name or code
+          schema:
+            example: united
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CountryResponseDto'
+        '500':
+          description: Internal server error
+      tags:
+        - Countries
+  /countries/seedv1:
+    post:
+      operationId: CountryController_seedV1
+      summary: Seed countries
+      description: Seed the database with countries from a JSON file
+      parameters: []
+      responses:
+        '200':
+          description: Successfully seeded countries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeedCountriesResponseDto'
+        '400':
+          description: Invalid seed data or file not found
+        '500':
+          description: Internal server error during seeding
+      tags:
+        - Countries
+  /seed/seedSystem:
+    post:
+      operationId: SeedController_seedSystem
+      summary: Seed system with core data
+      description: >-
+        Idempotently seeds base reference data such as countries, job titles,
+        agencies, and a sample job posting for smoke testing. Safe to run
+        multiple times.
+      parameters: []
+      requestBody:
+        required: true
+        description: >-
+          Select which categories to seed. By default, countries and job titles
+          are enabled; agencies and sample_postings are disabled.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeedRequestDto'
+            examples:
+              defaultPrimaryOnly:
+                summary: Primary only (default behavior if body omitted)
+                value:
+                  countries: true
+                  job_titles: true
+                  agencies: false
+                  sample_postings: false
+              everything:
+                summary: All categories
+                value:
+                  countries: true
+                  job_titles: true
+                  agencies: true
+                  sample_postings: true
+              justJobs:
+                summary: Only sample job postings (assumes prereqs are seeded)
+                value:
+                  countries: false
+                  job_titles: false
+                  agencies: false
+                  sample_postings: true
+              devSetup:
+                summary: 'Dev: create postings per agency and tag them'
+                value:
+                  countries: true
+                  job_titles: true
+                  agencies: true
+                  sample_postings: false
+                  dev_agency_postings_with_tags: true
+      responses:
+        '200':
+          description: Seeding completed successfully with per-category counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeedCountsDto'
+              example:
+                countries:
+                  affected: 46
+                job_titles:
+                  affected: 51
+                agencies:
+                  created: 10
+                sample_postings:
+                  created: 1
+                dev_agency_postings_with_tags:
+                  created: 10
+                  tagged: 10
+      tags:
+        - Seed
+info:
+  title: Agency Service API
+  description: Public, Agency, and Candidate endpoints
+  version: 1.0.0
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    JobTitleDto:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        rank:
+          type: number
+        is_active:
+          type: boolean
+        difficulty:
+          type: object
+          nullable: true
+        skills_summary:
+          type: object
+          nullable: true
+        description:
+          type: object
+          nullable: true
+      required:
+        - id
+        - title
+        - rank
+        - is_active
+    JobTitleListResponseDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobTitleDto'
+        total:
+          type: number
+      required:
+        - data
+        - total
+    JobTitleSeedResponseDto:
+      type: object
+      properties:
+        source:
+          type: string
+        upserted:
+          type: number
+      required:
+        - source
+        - upserted
+    ApplicationAnalyticsDto:
+      type: object
+      properties:
+        total:
+          type: number
+          description: Total number of applications created by the candidate
+        active:
+          type: number
+          description: Number of active applications (non-terminal statuses)
+        by_status:
+          type: object
+          description: Counts per status for all workflow stages
+          additionalProperties:
+            type: number
+          example:
+            applied: 1
+            shortlisted: 0
+            interview_scheduled: 0
+            interview_rescheduled: 0
+            interview_passed: 0
+            interview_failed: 0
+            withdrawn: 0
+      required:
+        - total
+        - active
+        - by_status
+    CreateJobPostingWithTagsDto:
+      type: object
+      properties: {}
+    UpdateJobTagsDto:
+      type: object
+      properties: {}
+    RegisterCandidateDto:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: Ram Bahadur
+        phone:
+          type: string
+          example: '+9779812345678'
+      required:
+        - full_name
+        - phone
+    VerifyOtpDto:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: '+9779812345678'
+        otp:
+          type: string
+          example: '123456'
+      required:
+        - phone
+        - otp
+    CoordinatesDto:
+      type: object
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+      required:
+        - lat
+        - lng
+    AddressDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        coordinates:
+          $ref: '#/components/schemas/CoordinatesDto'
+        province:
+          type: string
+          nullable: true
+        district:
+          type: string
+          nullable: true
+        municipality:
+          type: string
+          nullable: true
+        ward:
+          type: string
+          nullable: true
+    CandidateProfileDto:
+      type: object
+      properties:
+        id:
+          type: string
+        full_name:
+          type: string
+        phone:
+          type: string
+          description: E.164 normalized
+        address:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/AddressDto'
+        passport_number:
+          type: object
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+        - id
+        - full_name
+        - phone
+        - is_active
+        - created_at
+        - updated_at
+    CandidateUpdateDto:
+      type: object
+      properties:
+        full_name:
+          type: string
+        is_active:
+          type: boolean
+        address:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/AddressDto'
+        passport_number:
+          type: object
+          nullable: true
+    SkillDto:
+      type: object
+      properties:
+        title:
+          type: string
+        duration_months:
+          type: number
+          nullable: true
+        years:
+          type: number
+          nullable: true
+        documents:
+          type: array
+          items:
+            type: string
+      required:
+        - title
+    EducationDto:
+      type: object
+      properties:
+        title:
+          type: string
+        institute:
+          type: string
+          nullable: true
+        degree:
+          type: string
+          nullable: true
+        document:
+          type: string
+          nullable: true
+      required:
+        - title
+    CandidateCreateDto:
+      type: object
+      properties:
+        full_name:
+          type: string
+        phone:
+          type: string
+          description: E.164 preferred
+        address:
+          $ref: '#/components/schemas/AddressDto'
+        passport_number:
+          type: string
+          nullable: true
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillDto'
+        education:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationDto'
+      required:
+        - full_name
+        - phone
+    CandidateCreatedResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+        - id
+    AgencyLiteDto:
+      type: object
+      properties:
+        name:
+          type: string
+        license_number:
+          type: string
+      required:
+        - name
+        - license_number
+    EmployerLiteDto:
+      type: object
+      properties:
+        company_name:
+          type: string
+        country:
+          type: string
+        city:
+          type: object
+          nullable: true
+      required:
+        - company_name
+        - country
+    ContractDto:
+      type: object
+      properties:
+        period_years:
+          type: object
+          nullable: true
+        renewable:
+          type: object
+          nullable: true
+        hours_per_day:
+          type: object
+          nullable: true
+        days_per_week:
+          type: object
+          nullable: true
+        overtime_policy:
+          type: object
+          nullable: true
+        weekly_off_days:
+          type: object
+          nullable: true
+        food:
+          type: object
+          nullable: true
+        accommodation:
+          type: object
+          nullable: true
+        transport:
+          type: object
+          nullable: true
+        annual_leave_days:
+          type: object
+          nullable: true
+    VacancyDto:
+      type: object
+      properties:
+        male:
+          type: object
+          nullable: true
+        female:
+          type: object
+          nullable: true
+        total:
+          type: object
+          nullable: true
+    SalaryConvDto:
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+      required:
+        - amount
+        - currency
+    PositionSalaryDto:
+      type: object
+      properties:
+        monthly_amount:
+          type: number
+        currency:
+          type: string
+        converted:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalaryConvDto'
+      required:
+        - monthly_amount
+        - currency
+    PositionOverridesDto:
+      type: object
+      properties:
+        hours_per_day:
+          type: object
+          nullable: true
+        days_per_week:
+          type: object
+          nullable: true
+        overtime_policy:
+          type: object
+          nullable: true
+        weekly_off_days:
+          type: object
+          nullable: true
+        food:
+          type: object
+          nullable: true
+        accommodation:
+          type: object
+          nullable: true
+        transport:
+          type: object
+          nullable: true
+    PositionDto:
+      type: object
+      properties:
+        title:
+          type: string
+        vacancies:
+          $ref: '#/components/schemas/VacancyDto'
+        salary:
+          $ref: '#/components/schemas/PositionSalaryDto'
+        overrides:
+          $ref: '#/components/schemas/PositionOverridesDto'
+      required:
+        - title
+        - vacancies
+        - salary
+        - overrides
+    ExpensesDto:
+      type: object
+      properties:
+        medical:
+          type: array
+          items:
+            type: array
+        insurance:
+          type: array
+          items:
+            type: array
+        travel:
+          type: array
+          items:
+            type: array
+        visa_permit:
+          type: array
+          items:
+            type: array
+        training:
+          type: array
+          items:
+            type: array
+        welfare_service:
+          type: array
+          items:
+            type: array
+    CandidateJobDetailsDto:
+      type: object
+      properties:
+        id:
+          type: string
+        posting_title:
+          type: string
+        country:
+          type: string
+        city:
+          type: object
+          nullable: true
+        announcement_type:
+          type: object
+          nullable: true
+        posting_date_ad:
+          type: object
+          nullable: true
+        notes:
+          type: object
+          nullable: true
+        agency:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/AgencyLiteDto'
+        employer:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/EmployerLiteDto'
+        contract:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/ContractDto'
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionDto'
+        skills:
+          type: array
+          items:
+            type: string
+        education_requirements:
+          type: array
+          items:
+            type: string
+        experience_requirements:
+          type: object
+          nullable: true
+        canonical_titles:
+          type: array
+          items:
+            type: string
+        expenses:
+          $ref: '#/components/schemas/ExpensesDto'
+        interview:
+          type: object
+          nullable: true
+        cutout_url:
+          type: object
+          nullable: true
+        fitness_score:
+          type: number
+          description: 0–100
+      required:
+        - id
+        - posting_title
+        - country
+        - positions
+    TrainingDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the training
+        provider:
+          type: string
+          description: Provider of the training
+        hours:
+          type: number
+          description: Duration of the training in hours
+          minimum: 0
+        certificate:
+          type: boolean
+          description: Indicates if a certificate was obtained
+      required:
+        - title
+    ExperienceDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Job title
+        employer:
+          type: string
+          description: Employer name
+        start_date_ad:
+          type: string
+          description: Start date in ISO format (YYYY-MM-DD)
+        end_date_ad:
+          type: string
+          description: End date in ISO format (YYYY-MM-DD); if null, currently working
+        months:
+          type: number
+          description: Duration in months
+          minimum: 0
+        description:
+          type: string
+          description: Description of responsibilities and achievements
+      required:
+        - title
+    JobProfileBlobDto:
+      type: object
+      properties:
+        summary:
+          type: string
+          description: Summary of the job profile
+        skills:
+          description: List of skills
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillDto'
+        education:
+          description: List of education qualifications
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationDto'
+        trainings:
+          description: List of trainings
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingDto'
+        experience:
+          description: List of work experiences
+          type: array
+          items:
+            $ref: '#/components/schemas/ExperienceDto'
+    UpdateJobProfileDto:
+      type: object
+      properties:
+        profile_blob:
+          description: Profile blob holds skills, education, trainings, experience
+          allOf:
+            - $ref: '#/components/schemas/JobProfileBlobDto'
+        label:
+          type: string
+          description: Label for the job profile (e.g., "Software Engineer Profile")
+    AddJobProfileResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+        - id
+    CandidateJobProfileDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        candidate_id:
+          type: string
+          format: uuid
+        profile_blob:
+          $ref: '#/components/schemas/JobProfileBlobDto'
+        label:
+          type: object
+          description: Optional label for this profile
+        created_at:
+          type: string
+          description: Creation timestamp (ISO string)
+        updated_at:
+          type: string
+          description: Last update timestamp (ISO string)
+      required:
+        - id
+        - candidate_id
+        - profile_blob
+        - created_at
+        - updated_at
+    SalaryConvertedDto:
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+      required:
+        - amount
+        - currency
+    SalarySummaryDto:
+      type: object
+      properties:
+        monthly_min:
+          type: object
+          nullable: true
+        monthly_max:
+          type: object
+          nullable: true
+        currency:
+          type: object
+          nullable: true
+        converted:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalaryConvertedDto'
+    CandidateJobCardDto:
+      type: object
+      properties:
+        id:
+          type: string
+        posting_title:
+          type: string
+        country:
+          type: string
+        city:
+          type: object
+          nullable: true
+        primary_titles:
+          type: array
+          items:
+            type: string
+        salary:
+          $ref: '#/components/schemas/SalarySummaryDto'
+        agency:
+          $ref: '#/components/schemas/AgencyLiteDto'
+        employer:
+          $ref: '#/components/schemas/EmployerLiteDto'
+        posting_date_ad:
+          type: object
+          nullable: true
+        cutout_url:
+          type: object
+          nullable: true
+        fitness_score:
+          type: number
+          description: 0–100
+      required:
+        - id
+        - posting_title
+        - country
+    PaginatedJobsResponseDto:
+      type: object
+      properties:
+        page:
+          type: number
+        limit:
+          type: number
+        total:
+          type: number
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateJobCardDto'
+      required:
+        - page
+        - limit
+        - total
+        - data
+    GroupedJobsGroupDto:
+      type: object
+      properties:
+        title:
+          type: string
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateJobCardDto'
+      required:
+        - title
+        - jobs
+    GroupedJobsResponseDto:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupedJobsGroupDto'
+      required:
+        - groups
+    PreferenceDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        priority:
+          type: number
+          description: 1-based priority; lower means higher priority
+          example: 1
+        job_title_id:
+          type: object
+          format: uuid
+          nullable: true
+          description: Linked job title id when available
+      required:
+        - id
+        - title
+        - priority
+        - job_title_id
+    AddPreferenceDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Job title string (must exist and be active in JobTitle)
+      required:
+        - title
+    RemovePreferenceDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Job title string to remove
+      required:
+        - title
+    ReorderPreferencesDto:
+      type: object
+      properties:
+        orderedIds:
+          description: Ordered list of preference row IDs. Preferred for drag-and-drop.
+          example:
+            - 3f0e3a82-6c8b-4c42-9b22-9d9f7c8aec01
+            - f6d09772-b0a2-4a54-9e8c-0f1b9d49c3d2
+          type: array
+          items:
+            type: string
+        orderedTitles:
+          description: >-
+            Fallback: ordered list of titles (must be a permutation of existing
+            titles).
+          example:
+            - Electrician
+            - Welder
+            - Plumber
+          type: array
+          items:
+            type: string
+    CountryResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the country
+          example: a3b5c8e2-1234-4f7a-9b0d-abcdef123456
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: US
+        country_name:
+          type: string
+          description: Full name of the country
+          example: United States
+        currency_code:
+          type: string
+          description: ISO 4217 currency code
+          example: USD
+        currency_name:
+          type: string
+          description: Full name of the currency
+          example: US Dollar
+        npr_multiplier:
+          type: string
+          description: Multiplier to convert to NPR (Nepalese Rupees)
+          example: '119.50'
+        created_at:
+          format: date-time
+          type: string
+          description: Date when the record was created
+        updated_at:
+          format: date-time
+          type: string
+          description: Date when the record was last updated
+          nullable: true
+      required:
+        - id
+        - country_code
+        - country_name
+        - currency_code
+        - currency_name
+        - npr_multiplier
+        - created_at
+        - updated_at
+    SeedCountriesResponseDto:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source file path of the seed data
+        upserted:
+          type: number
+          description: Number of records upserted
+      required:
+        - source
+        - upserted
+    SeedCountsDto:
+      type: object
+      properties:
+        countries:
+          type: object
+          nullable: true
+          description: Number of country rows upserted
+          example:
+            affected: 46
+        job_titles:
+          type: object
+          nullable: true
+          description: Number of job title rows upserted
+          example:
+            affected: 51
+        agencies:
+          type: object
+          nullable: true
+          description: Number of agencies created (skips existing by license)
+          example:
+            created: 10
+        sample_postings:
+          type: object
+          nullable: true
+          description: Number of sample postings created
+          example:
+            created: 1
+        dev_agency_postings_with_tags:
+          type: object
+          nullable: true
+          description: 'Dev: Number of postings created and tagged across seeded agencies'
+          example:
+            created: 10
+            tagged: 10
+    SeedRequestDto:
+      type: object
+      properties:
+        countries:
+          type: boolean
+          description: 'Seed countries (primary). Default: true'
+          default: true
+        job_titles:
+          type: boolean
+          description: 'Seed job titles (primary). Default: true'
+          default: true
+        agencies:
+          type: boolean
+          description: 'Seed agencies (secondary). Default: false'
+          default: false
+        sample_postings:
+          type: boolean
+          description: 'Seed sample job postings (secondary). Default: false'
+          default: false
+        dev_agency_postings_with_tags:
+          type: boolean
+          description: >-
+            Dev: create at least one posting per seeded agency and tag them for
+            frontend testing. Default: false
+          default: false

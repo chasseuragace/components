@@ -65,7 +65,7 @@ class CandidateRepositoryFake implements CandidateRepository {
     try {
       final body = CandidateUpdateDto(
         fullName: entity.fullName,
-        phone: entity.phone,
+      
         address: entity.address != null
             ? AddressDto(
                 name: entity.address!.name,
