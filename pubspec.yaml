@@ -39,12 +39,12 @@ dependencies:
   intl: ^0.20.2
   cached_network_image: ^3.4.1
   google_fonts: ^6.3.1
-  flutter_svg: ^2.2.0
+  flutter_svg: ^2.2.0                                     
   dartz:
   shared_preferences: ^2.2.3
   openapi: 
-    # path: '/Users/masovison/Downloads/dev_tools/package_form_open_api/openapi'
-    path: '/Users/ajaydahal/portal/agency_research/dev_tools/package_form_open_api/openapi'
+    path: '/Users/masovison/Downloads/dev_tools/package_form_open_api/openapi'
+    # path: '/Users/ajaydahal/portal/agency_research/dev_tools/package_form_open_api/openapi'
 
   dio: any
   sms_autofill: ^2.4.1

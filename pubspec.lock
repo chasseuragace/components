@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  copy_with_extension:
+    dependency: transitive
+    description:
+      name: copy_with_extension
+      sha256: "28b8a99384df46f5287ed87e249869fddedd299752ea83603800448e0523f00b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.1.0"
   cross_file:
     dependency: transitive
     description:
@@ -355,7 +363,7 @@ packages:
   openapi:
     dependency: "direct main"
     description:
-      path: "/Users/ajaydahal/portal/agency_research/dev_tools/package_form_open_api/openapi"
+      path: "/Users/masovison/Downloads/dev_tools/package_form_open_api/openapi"
       relative: false
     source: path
     version: "1.0.0"

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/onboarding_screen_1.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
@@ -390,6 +394,33 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
           name: 'Home V4 - View',
           builder: (BuildContext context) => const HomePageVariant5(),
         ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Notification Page Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Notification V1 - View',
+          builder: (BuildContext context) => const JobNotificationsPage(),
+        ),
+        VariantItem(
+          name: 'Notification V2 - View',
+          builder: (BuildContext context) => const JobNotificationsPage2(),
+        ),
+      ],
+    ),
+    VariantGroup(
+      title: 'Notification Detail Variants',
+      variants: <VariantItem>[
+        VariantItem(
+          name: 'Notification Detail V1 - View',
+          builder: (BuildContext context) =>
+              NotificationDetailPage(notification: notifications.first),
+        ),
+        // VariantItem(
+        //   name: 'Notification Detail V2 - View',
+        //   builder: (BuildContext context) => const NotificationDetailPage2(),
+        // ),
       ],
     ),
     VariantGroup(
