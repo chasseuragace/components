@@ -53,18 +53,24 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
             final existingExperiences = profile.profileBlob?.experience ?? [];
             if (existingExperiences.isNotEmpty) {
               final init = <String, dynamic>{};
+              final newForms = <WorkExperienceForm>[];
               for (var i = 0; i < existingExperiences.length; i++) {
                 final e = existingExperiences[i];
-                init['title_$i'] = e.title ?? '';
-                init['employer_$i'] = e.employer ?? '';
-                init['start_date_$i'] = e.startDateAd ?? '';
-                init['end_date_$i'] = e.endDateAd ?? '';
-                init['months_$i'] = e.months?.toString() ?? '';
-                init['description_$i'] = e.description ?? '';
+                final form = WorkExperienceForm();
+                // preload dates into form model too
+                form.startDate = e.startDateAd;
+                form.endDate = e.endDateAd;
+                newForms.add(form);
+                init['title_${form.id}'] = e.title ?? '';
+                init['employer_${form.id}'] = e.employer ?? '';
+                init['start_date_${form.id}'] = e.startDateAd ?? '';
+                init['end_date_${form.id}'] = e.endDateAd ?? '';
+                init['months_${form.id}'] = e.months?.toString() ?? '';
+                init['description_${form.id}'] = e.description ?? '';
               }
               setState(() {
-                experienceCount = existingExperiences.length;
-                experiences = List<WorkExperienceForm>.generate(experienceCount, (_) => WorkExperienceForm());
+                experienceCount = newForms.length;
+                experiences = newForms;
                 _initialValues = init;
                 _prefilled = true;
               });
@@ -112,26 +118,29 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
           padding: const EdgeInsets.all(20),
           itemCount: experienceCount,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                ExperienceCard(
-                  experience: experiences[index],
-                  index: index,
-                  showRemoveButton: experienceCount > 1,
-                  onRemove: () => _removeExperience(index),
-                  onSelectStartDate: () => _selectStartDate(context, index),
-                  onSelectEndDate: () => _selectEndDate(context, index),
-                ),
-                if (index == experienceCount - 1) ...[
-                  const SizedBox(height: 24),
-                  AddMoreButton(
-                    title: 'Add More Experience',
-                    color: const Color(0xFF4CAF50),
-                    onTap: _addExperience,
+            return KeyedSubtree(
+              key: experiences[index].widgetKey,
+              child: Column(
+                children: [
+                  ExperienceCard(
+                    experience: experiences[index],
+                    index: index,
+                    showRemoveButton: experienceCount > 1,
+                    onRemove: () => _removeExperience(index),
+                    onSelectStartDate: () => _selectStartDate(context, index),
+                    onSelectEndDate: () => _selectEndDate(context, index),
                   ),
+                  if (index == experienceCount - 1) ...[
+                    const SizedBox(height: 24),
+                    AddMoreButton(
+                      title: 'Add More Experience',
+                      color: const Color(0xFF4CAF50),
+                      onTap: _addExperience,
+                    ),
+                  ],
+                  const SizedBox(height: 20),
                 ],
-                const SizedBox(height: 20),
-              ],
+              ),
             );
           },
         ),
@@ -149,31 +158,10 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
   void _removeExperience(int index) {
     if (experienceCount > 1) {
       setState(() {
-        // Capture current values before removal
-        final current = _formKey.currentState?.value ?? <String, dynamic>{};
-
-        // Remove the ExperienceForm and compact the values after the removed index
+        // Save and remove; field names are ID-based and remain stable
+        _formKey.currentState?.save();
         experiences.removeAt(index);
-        final oldCount = experienceCount;
         experienceCount = experiences.length;
-
-        final newInit = <String, dynamic>{};
-        int newIdx = 0;
-        for (int oldIdx = 0; oldIdx < oldCount; oldIdx++) {
-          if (oldIdx == index) continue; // skip removed
-          newInit['title_$newIdx'] = (current['title_$oldIdx'] as String?) ?? '';
-          newInit['employer_$newIdx'] = (current['employer_$oldIdx'] as String?) ?? '';
-          newInit['start_date_$newIdx'] = (current['start_date_$oldIdx'] as String?) ?? '';
-          newInit['end_date_$newIdx'] = (current['end_date_$oldIdx'] as String?) ?? '';
-          newInit['months_$newIdx'] = (current['months_$oldIdx'] as String?) ?? '';
-          newInit['description_$newIdx'] = (current['description_$oldIdx'] as String?) ?? '';
-          newIdx++;
-        }
-        _initialValues = newInit;
-        // Patch updated values into the form so indices stay aligned
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _formKey.currentState?.patchValue(_initialValues);
-        });
       });
     }
   }
@@ -190,8 +178,9 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
       setState(() {
         experiences[index].startDate = formattedDate;
       });
-      // Update form field
-      _formKey.currentState?.fields['start_date_$index']?.didChange(formattedDate);
+      // Update form field (ID-based)
+      final id = experiences[index].id;
+      _formKey.currentState?.fields['start_date_$id']?.didChange(formattedDate);
     }
   }
 
@@ -207,8 +196,9 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
       setState(() {
         experiences[index].endDate = formattedDate;
       });
-      // Update form field
-      _formKey.currentState?.fields['end_date_$index']?.didChange(formattedDate);
+      // Update form field (ID-based)
+      final id = experiences[index].id;
+      _formKey.currentState?.fields['end_date_$id']?.didChange(formattedDate);
     }
   }
 
@@ -237,16 +227,16 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
       
       // Proceed with saving
       final values = _formKey.currentState!.value;
-      final List<Map<String, dynamic>> experienceItems = List.generate(experienceCount, (i) {
+      final List<Map<String, dynamic>> experienceItems = experiences.map((e) {
         return {
-          'title': (values['title_$i'] as String?)?.trim() ?? '',
-          'employer': (values['employer_$i'] as String?)?.trim() ?? '',
-          'start_date_ad': experiences[i].startDate ?? '',
-          'end_date_ad': experiences[i].endDate ?? '',
-          'months': int.tryParse((values['months_$i'] as String?)?.trim() ?? '') ?? 0,
-          'description': (values['description_$i'] as String?)?.trim() ?? '',
+          'title': (values['title_${e.id}'] as String?)?.trim() ?? '',
+          'employer': (values['employer_${e.id}'] as String?)?.trim() ?? '',
+          'start_date_ad': e.startDate ?? '',
+          'end_date_ad': e.endDate ?? '',
+          'months': int.tryParse((values['months_${e.id}'] as String?)?.trim() ?? '') ?? 0,
+          'description': (values['description_${e.id}'] as String?)?.trim() ?? '',
         };
-      });
+      }).toList();
 
       await ref.read(profileProvider.notifier).addExperience(experienceItems);
     }
@@ -328,7 +318,8 @@ class ExperienceCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           CustomFormBuilderTextField(
-            name: 'title_$index',
+            key: ValueKey('title_${experience.id}'),
+            name: 'title_${experience.id}',
             label: 'Job Title',
             hint: 'e.g. Software Engineer',
             icon: Icons.title,
@@ -337,7 +328,8 @@ class ExperienceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
-            name: 'employer_$index',
+            key: ValueKey('employer_${experience.id}'),
+            name: 'employer_${experience.id}',
             label: 'Employer',
             hint: 'e.g. Acme Inc',
             icon: Icons.business,
@@ -349,7 +341,8 @@ class ExperienceCard extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomDateField(
-                  name: 'start_date_$index',
+                  key: ValueKey('start_date_${experience.id}'),
+                  name: 'start_date_${experience.id}',
                   label: 'Start Date',
                   hint: 'Select start date',
                   icon: Icons.calendar_today,
@@ -359,7 +352,8 @@ class ExperienceCard extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: CustomDateField(
-                  name: 'end_date_$index',
+                  key: ValueKey('end_date_${experience.id}'),
+                  name: 'end_date_${experience.id}',
                   label: 'End Date',
                   hint: 'Select end date',
                   icon: Icons.calendar_today,
@@ -370,7 +364,8 @@ class ExperienceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
-            name: 'months_$index',
+            key: ValueKey('months_${experience.id}'),
+            name: 'months_${experience.id}',
             label: 'Duration (Months)',
             hint: 'e.g. 24',
             icon: Icons.schedule,
@@ -380,7 +375,8 @@ class ExperienceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
-            name: 'description_$index',
+            key: ValueKey('description_${experience.id}'),
+            name: 'description_${experience.id}',
             label: 'Description',
             hint: 'Responsibilities and achievements',
             icon: Icons.description,
@@ -393,6 +389,10 @@ class ExperienceCard extends StatelessWidget {
 }
 
 class WorkExperienceForm {
+  // Stable ID for field names
+  final String id = UniqueKey().toString();
   String? startDate; // Store as 'yyyy-MM-dd'
   String? endDate;   // Store as 'yyyy-MM-dd'
+  // Stable key for the list item to prevent state shift on deletion
+  final Key widgetKey = UniqueKey();
 }

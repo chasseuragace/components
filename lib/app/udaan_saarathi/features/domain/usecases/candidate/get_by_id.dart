@@ -4,13 +4,13 @@ import '../../repositories/candidate/repository.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 
-class GetCandidateByIdUseCase implements UseCase<CandidateEntity?, String> {
+class GetCandidateByIdUseCase implements UseCase<CandidateEntity?, NoParm> {
   final CandidateRepository repository;
 
   GetCandidateByIdUseCase(this.repository);
 
   @override
-  Future<Either<Failure, CandidateEntity?>> call(String id) async {
-    return  repository.getItemById(id);
+  Future<Either<Failure, CandidateEntity?>> call(NoParm param) async {
+    return  repository.getItemById();
   }
 }

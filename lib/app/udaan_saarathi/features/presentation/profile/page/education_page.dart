@@ -56,14 +56,17 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
             final existingEducations = profile.profileBlob?.education ?? [];
             if (existingEducations.isNotEmpty) {
               final init = <String, dynamic>{};
+              final newForms = <EducationForm>[];
               for (var i = 0; i < existingEducations.length; i++) {
                 final e = existingEducations[i];
-                init['degree_$i'] = e.degree ?? '';
-                init['institute_$i'] = e.institute ?? '';
+                final form = EducationForm();
+                newForms.add(form);
+                init['degree_${form.id}'] = e.degree ?? '';
+                init['institute_${form.id}'] = e.institute ?? '';
               }
               setState(() {
-                educationCount = existingEducations.length;
-                educations = List<EducationForm>.generate(educationCount, (_) => EducationForm());
+                educationCount = newForms.length;
+                educations = newForms;
                 _initialValues = init;
                 _prefilled = true;
               });
@@ -111,26 +114,29 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
           padding: const EdgeInsets.all(20),
           itemCount: educationCount,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                EducationCard(
-                  education: educations[index],
-                  index: index,
-                  showRemoveButton: educationCount > 1,
-                  onRemove: () => _removeEducation(index),
-                  onPickFile: () => _pickFile(index),
-                  onRemoveFile: () => _removeFile(index),
-                ),
-                if (index == educationCount - 1) ...[
-                  const SizedBox(height: 24),
-                  AddMoreButton(
-                    title: 'Add More Education',
-                    color: const Color(0xFFFF9800),
-                    onTap: _addEducation,
+            return KeyedSubtree(
+              key: educations[index].widgetKey,
+              child: Column(
+                children: [
+                  EducationCard(
+                    education: educations[index],
+                    index: index,
+                    showRemoveButton: educationCount > 1,
+                    onRemove: () => _removeEducation(index),
+                    onPickFile: () => _pickFile(index),
+                    onRemoveFile: () => _removeFile(index),
                   ),
+                  if (index == educationCount - 1) ...[
+                    const SizedBox(height: 24),
+                    AddMoreButton(
+                      title: 'Add More Education',
+                      color: const Color(0xFFFF9800),
+                      onTap: _addEducation,
+                    ),
+                  ],
+                  const SizedBox(height: 20),
                 ],
-                const SizedBox(height: 20),
-              ],
+              ),
             );
           },
         ),
@@ -148,27 +154,10 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
   void _removeEducation(int index) {
     if (educationCount > 1) {
       setState(() {
-        // Capture current values before removal
-        final current = _formKey.currentState?.value ?? <String, dynamic>{};
-
-        // Remove the EducationForm and compact the values after the removed index
+        // Save and simply remove; field names are ID-based and remain stable
+        _formKey.currentState?.save();
         educations.removeAt(index);
-        final oldCount = educationCount;
         educationCount = educations.length;
-
-        final newInit = <String, dynamic>{};
-        int newIdx = 0;
-        for (int oldIdx = 0; oldIdx < oldCount; oldIdx++) {
-          if (oldIdx == index) continue; // skip removed
-          newInit['degree_$newIdx'] = (current['degree_$oldIdx'] as String?) ?? '';
-          newInit['institute_$newIdx'] = (current['institute_$oldIdx'] as String?) ?? '';
-          newIdx++;
-        }
-        _initialValues = newInit;
-        // Patch updated values into the form so indices stay aligned
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _formKey.currentState?.patchValue(_initialValues);
-        });
       });
     }
   }
@@ -211,15 +200,15 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       // Read values from form state
       final values = _formKey.currentState!.value;
-      final List<Map<String, dynamic>> educationItems = List.generate(educationCount, (i) {
-        final degree = (values['degree_$i'] as String?)?.trim() ?? '';
-        final institute = (values['institute_$i'] as String?)?.trim() ?? '';
+      final List<Map<String, dynamic>> educationItems = educations.map((e) {
+        final degree = (values['degree_${e.id}'] as String?)?.trim() ?? '';
+        final institute = (values['institute_${e.id}'] as String?)?.trim() ?? '';
         return {
           'degree': degree,
           'institute': institute,
-          'document': educations[i].selectedFile?.path,
+          'document': e.selectedFile?.path,
         };
-      });
+      }).toList();
 
       print('Education data: $educationItems');
       await ref.read(profileProvider.notifier).addEducation(educationItems);
@@ -302,7 +291,8 @@ class EducationCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           CustomFormBuilderTextField(
-            name: 'degree_$index',
+            key: ValueKey('degree_${education.id}'),
+            name: 'degree_${education.id}',
             label: 'Degree',
             hint: 'e.g. Bachelor of Science',
             icon: Icons.school,
@@ -311,7 +301,8 @@ class EducationCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
-            name: 'institute_$index',
+            key: ValueKey('institute_${education.id}'),
+            name: 'institute_${education.id}',
             label: 'Institution',
             hint: 'e.g. University of Example',
             icon: Icons.location_city,
@@ -383,6 +374,10 @@ class FilePickerSection extends StatelessWidget {
 }
 
 class EducationForm {
+  // Stable ID for field names
+  final String id = UniqueKey().toString();
   PlatformFile? selectedFile;
   String? fileError;
+  // Stable key for the list item to prevent state shift on deletion
+  final Key widgetKey = UniqueKey();
 }

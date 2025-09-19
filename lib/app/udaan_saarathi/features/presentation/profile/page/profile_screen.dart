@@ -14,31 +14,22 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.settings, color: Colors.black),
-        //     onPressed: () {
-
-        //     },
-        //   ),
-        // ],
-      ),
+     
       body: SingleChildScrollView(
         child: Column(
           children: [
+           
             // Header Section with Profile Image and Basic Info
             Container(
               width: double.infinity,
               color: Colors.white,
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-              child: ProfileContentWidget(),
+              child: Column(
+                children: [
+                   SizedBox(height: kToolbarHeight,),
+                  ProfileContentWidget(),
+                ],
+              ),
             ),
 
             const SizedBox(height: 24),

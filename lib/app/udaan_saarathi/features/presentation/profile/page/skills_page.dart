@@ -56,16 +56,20 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
             final profile = profiles.first;
             final existingSkills = profile.profileBlob?.skills ?? [];
             if (existingSkills.isNotEmpty) {
+              // Create forms with stable IDs and map initial values by ID
+              final newForms = <SkillForm>[];
               final init = <String, dynamic>{};
               for (var i = 0; i < existingSkills.length; i++) {
                 final s = existingSkills[i];
-                init['title_$i'] = s.title ?? '';
-                init['duration_months_$i'] = s.durationMonths?.toString() ?? '';
-                init['years_$i'] = s.years?.toString() ?? '';
+                final form = SkillForm();
+                newForms.add(form);
+                init['title_${form.id}'] = s.title ?? '';
+                init['duration_months_${form.id}'] = s.durationMonths?.toString() ?? '';
+                init['years_${form.id}'] = s.years?.toString() ?? '';
               }
               setState(() {
-                skillsCount = existingSkills.length;
-                skills = List<SkillForm>.generate(skillsCount, (_) => SkillForm());
+                skills = newForms;
+                skillsCount = newForms.length;
                 _initialValues = init;
                 _prefilled = true;
               });
@@ -114,27 +118,30 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
           padding: const EdgeInsets.all(20),
           itemCount: skillsCount,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                SkillCard(
-                  skill: skills[index],
-                  index: index,
-                  showRemoveButton: skillsCount > 1,
-                  onRemove: () => _removeSkill(index),
-                  onPickDocuments: () => _pickDocuments(index),
-                  onRemoveDocument: (docIndex) =>
-                      _removeDocument(index, docIndex),
-                ),
-                if (index == skillsCount - 1) ...[
-                  const SizedBox(height: 24),
-                  AddMoreButton(
-                    title: 'Add More Skills',
-                    color: const Color(0xFF9C27B0),
-                    onTap: _addSkill,
+            return KeyedSubtree(
+              key: skills[index].widgetKey,
+              child: Column(
+                children: [
+                  SkillCard(
+                    skill: skills[index],
+                    index: index,
+                    showRemoveButton: skillsCount > 1,
+                    onRemove: () => _removeSkill(index),
+                    onPickDocuments: () => _pickDocuments(index),
+                    onRemoveDocument: (docIndex) =>
+                        _removeDocument(index, docIndex),
                   ),
+                  if (index == skillsCount - 1) ...[
+                    const SizedBox(height: 24),
+                    AddMoreButton(
+                      title: 'Add More Skills',
+                      color: const Color(0xFF9C27B0),
+                      onTap: _addSkill,
+                    ),
+                  ],
+                  const SizedBox(height: 20),
                 ],
-                const SizedBox(height: 20),
-              ],
+              ),
             );
           },
         ),
@@ -152,29 +159,11 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
   void _removeSkill(int index) {
     if (skillsCount > 1) {
       setState(() {
-        // Capture current values before removal
-        final current = _formKey.currentState?.value ?? <String, dynamic>{};
-
-        // Remove the SkillForm and compact the values after the removed index
+        // Save current values
+        _formKey.currentState?.save();
+        // Remove the item; remaining field names are unchanged because they use stable IDs
         skills.removeAt(index);
-        final oldCount = skillsCount;
         skillsCount = skills.length;
-
-        final newInit = <String, dynamic>{};
-        int newIdx = 0;
-        for (int oldIdx = 0; oldIdx < oldCount; oldIdx++) {
-          if (oldIdx == index) continue; // skip removed
-          newInit['title_$newIdx'] = (current['title_$oldIdx'] as String?) ?? '';
-          newInit['duration_months_$newIdx'] =
-              (current['duration_months_$oldIdx'] as String?) ?? '';
-          newInit['years_$newIdx'] = (current['years_$oldIdx'] as String?) ?? '';
-          newIdx++;
-        }
-        _initialValues = newInit;
-        // Patch updated values into the form so indices stay aligned
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _formKey.currentState?.patchValue(_initialValues);
-        });
       });
     }
   }
@@ -231,17 +220,17 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       // Read values from form state instead of controllers
       final values = _formKey.currentState!.value;
-      final List<Map<String, dynamic>> skillsData = List.generate(skillsCount, (i) {
-        final title = (values['title_$i'] as String?)?.trim() ?? '';
-        final durationStr = (values['duration_months_$i'] as String?)?.trim() ?? '';
-        final yearsStr = (values['years_$i'] as String?)?.trim() ?? '';
+      final List<Map<String, dynamic>> skillsData = skills.map((s) {
+        final title = (values['title_${s.id}'] as String?)?.trim() ?? '';
+        final durationStr = (values['duration_months_${s.id}'] as String?)?.trim() ?? '';
+        final yearsStr = (values['years_${s.id}'] as String?)?.trim() ?? '';
         return {
           'title': title,
           'duration_months': int.tryParse(durationStr) ?? 0,
           'years': int.tryParse(yearsStr) ?? 0,
-          'documents': skills[i].selectedDocuments.map((doc) => doc.path).toList(),
+          'documents': s.selectedDocuments.map((doc) => doc.path).toList(),
         };
-      });
+      }).toList();
 
       print('Skills data: $skillsData');
       await ref.read(profileProvider.notifier).addSkills(skillsData);
@@ -312,7 +301,8 @@ class SkillCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           CustomFormBuilderTextField(
-            name: 'title_$index',
+            key: ValueKey('title_${skill.id}'),
+            name: 'title_${skill.id}',
             label: 'Skill/Language Title',
             hint: 'e.g. JavaScript, English, Data Analysis',
             icon: Icons.star_outline,
@@ -324,7 +314,8 @@ class SkillCard extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomFormBuilderTextField(
-                  name: 'duration_months_$index',
+                  key: ValueKey('duration_months_${skill.id}'),
+                  name: 'duration_months_${skill.id}',
                   label: 'Duration (Months)',
                   hint: 'e.g. 24',
                   icon: Icons.schedule_outlined,
@@ -336,7 +327,8 @@ class SkillCard extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: CustomFormBuilderTextField(
-                  name: 'years_$index',
+                  key: ValueKey('years_${skill.id}'),
+                  name: 'years_${skill.id}',
                   label: 'Experience (Years)',
                   hint: 'e.g. 3',
                   icon: Icons.timeline_outlined,
@@ -624,6 +616,9 @@ class DocumentItem extends StatelessWidget {
 }
 
 class SkillForm {
+  // Stable ID for field names
+  final String id = UniqueKey().toString();
   List<PlatformFile> selectedDocuments = [];
   String? documentsError;
+  final Key widgetKey = UniqueKey();
 }

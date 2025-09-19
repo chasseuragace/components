@@ -19,7 +19,7 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_fetched) {
         _fetched = true;
-        ref.read(cand.getCandidateByIdProvider.notifier).getCandidateById('');
+        ref.read(cand.getCandidateByIdProvider.notifier).getCandidateById();
       }
     });
   }
@@ -28,7 +28,9 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
   Widget build(BuildContext context) {
     final candidateAsync = ref.watch(cand.getCandidateByIdProvider);
     final name = candidateAsync.asData?.value?.fullName ?? 'Your Name';
-
+ ref.listen<AsyncValue>(cand.updateCandidateProvider, (previous, next) {
+   ref.refresh(cand.getCandidateByIdProvider);
+ });
     return Column(
       children: [
         Stack(

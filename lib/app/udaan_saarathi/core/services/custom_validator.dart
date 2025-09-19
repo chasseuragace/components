@@ -60,9 +60,15 @@ class CustomValidator {
     if (input == null || input.trim().isEmpty) {
       return isRequired ? 'Phone is required.' : null;
     }
-
     // Normalize input
+    // Allow optional Nepal country code +977/977 e.g., +9779862146251 or 9779862146251
     input = input.trim();
+    if (input.startsWith('+')) {
+      input = input.substring(1);
+    }
+    if (input.startsWith('977')) {
+      input = input.substring(3);
+    }
 
     // Define regex patterns for each provider
     final ncellPattern = RegExp(r'^98[0-2][0-9]{7}$');

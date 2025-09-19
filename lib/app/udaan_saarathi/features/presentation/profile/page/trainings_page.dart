@@ -53,16 +53,19 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
             final existingTrainings = profile.profileBlob?.trainings ?? [];
             if (existingTrainings.isNotEmpty) {
               final init = <String, dynamic>{};
+              final newForms = <TrainingForm>[];
               for (var i = 0; i < existingTrainings.length; i++) {
                 final t = existingTrainings[i];
-                init['title_$i'] = t.title ?? '';
-                init['provider_$i'] = t.provider ?? '';
-                init['hours_$i'] = t.hours?.toString() ?? '';
-                init['certificate_$i'] = t.certificate ?? false;
+                final form = TrainingForm();
+                newForms.add(form);
+                init['title_${form.id}'] = t.title ?? '';
+                init['provider_${form.id}'] = t.provider ?? '';
+                init['hours_${form.id}'] = t.hours?.toString() ?? '';
+                init['certificate_${form.id}'] = t.certificate ?? false;
               }
               setState(() {
-                trainingCount = existingTrainings.length;
-                trainings = List<TrainingForm>.generate(trainingCount, (_) => TrainingForm());
+                trainingCount = newForms.length;
+                trainings = newForms;
                 _initialValues = init;
                 _prefilled = true;
               });
@@ -110,25 +113,28 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
           padding: const EdgeInsets.all(20),
           itemCount: trainingCount,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                TrainingCard(
-                  training: trainings[index],
-                  index: index,
-                  showRemoveButton: trainingCount > 1,
-                  onRemove: () => _removeTraining(index),
-                  onCertificateChanged: (value) => _updateCertificate(index, value),
-                ),
-                if (index == trainingCount - 1) ...[
-                  const SizedBox(height: 24),
-                  AddMoreButton(
-                    title: 'Add More Training',
-                    color: const Color(0xFF4CAF50),
-                    onTap: _addTraining,
+            return KeyedSubtree(
+              key: trainings[index].widgetKey,
+              child: Column(
+                children: [
+                  TrainingCard(
+                    training: trainings[index],
+                    index: index,
+                    showRemoveButton: trainingCount > 1,
+                    onRemove: () => _removeTraining(index),
+                    onCertificateChanged: (value) => _updateCertificate(index, value),
                   ),
+                  if (index == trainingCount - 1) ...[
+                    const SizedBox(height: 24),
+                    AddMoreButton(
+                      title: 'Add More Training',
+                      color: const Color(0xFF4CAF50),
+                      onTap: _addTraining,
+                    ),
+                  ],
+                  const SizedBox(height: 20),
                 ],
-                const SizedBox(height: 20),
-              ],
+              ),
             );
           },
         ),
@@ -146,29 +152,10 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
   void _removeTraining(int index) {
     if (trainingCount > 1) {
       setState(() {
-        // Capture current values before removal
-        final current = _formKey.currentState?.value ?? <String, dynamic>{};
-
-        // Remove the TrainingForm and compact the values after the removed index
+        // Save and remove; field names are ID-based and remain stable
+        _formKey.currentState?.save();
         trainings.removeAt(index);
-        final oldCount = trainingCount;
         trainingCount = trainings.length;
-
-        final newInit = <String, dynamic>{};
-        int newIdx = 0;
-        for (int oldIdx = 0; oldIdx < oldCount; oldIdx++) {
-          if (oldIdx == index) continue; // skip removed
-          newInit['title_$newIdx'] = (current['title_$oldIdx'] as String?) ?? '';
-          newInit['provider_$newIdx'] = (current['provider_$oldIdx'] as String?) ?? '';
-          newInit['hours_$newIdx'] = (current['hours_$oldIdx'] as String?) ?? '';
-          newInit['certificate_$newIdx'] = (current['certificate_$oldIdx'] as bool?) ?? false;
-          newIdx++;
-        }
-        _initialValues = newInit;
-        // Patch updated values into the form so indices stay aligned
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _formKey.currentState?.patchValue(_initialValues);
-        });
       });
     }
   }
@@ -179,7 +166,8 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
         trainings[index].certificate = value;
       });
       // Update form state
-      _formKey.currentState?.fields['certificate_$index']?.didChange(value);
+      final id = trainings[index].id;
+      _formKey.currentState?.fields['certificate_$id']?.didChange(value);
     }
   }
 
@@ -187,18 +175,18 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       // Read values from form state
       final values = _formKey.currentState!.value;
-      final List<Map<String, dynamic>> trainingsData = List.generate(trainingCount, (i) {
-        final title = (values['title_$i'] as String?)?.trim() ?? '';
-        final provider = (values['provider_$i'] as String?)?.trim() ?? '';
-        final hoursStr = (values['hours_$i'] as String?)?.trim() ?? '';
-        final certificate = (values['certificate_$i'] as bool?) ?? false;
+      final List<Map<String, dynamic>> trainingsData = trainings.map((t) {
+        final title = (values['title_${t.id}'] as String?)?.trim() ?? '';
+        final provider = (values['provider_${t.id}'] as String?)?.trim() ?? '';
+        final hoursStr = (values['hours_${t.id}'] as String?)?.trim() ?? '';
+        final certificate = (values['certificate_${t.id}'] as bool?) ?? t.certificate;
         return {
           'title': title,
           'provider': provider,
           'hours': int.tryParse(hoursStr) ?? 0,
           'certificate': certificate,
         };
-      });
+      }).toList();
 
       print('Training data: $trainingsData');
       await ref.read(profileProvider.notifier).addTrainings(trainingsData);
@@ -279,7 +267,8 @@ class TrainingCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           CustomFormBuilderTextField(
-            name: 'title_$index',
+            key: ValueKey('title_${training.id}'),
+            name: 'title_${training.id}',
             label: 'Training Title',
             hint: 'e.g. React Workshop',
             icon: Icons.title,
@@ -288,7 +277,8 @@ class TrainingCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
-            name: 'provider_$index',
+            key: ValueKey('provider_${training.id}'),
+            name: 'provider_${training.id}',
             label: 'Provider',
             hint: 'e.g. Coursera',
             icon: Icons.business,
@@ -297,7 +287,8 @@ class TrainingCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
-            name: 'hours_$index',
+            key: ValueKey('hours_${training.id}'),
+            name: 'hours_${training.id}',
             label: 'Duration (Hours)',
             hint: 'e.g. 40',
             icon: Icons.timelapse,
@@ -307,7 +298,8 @@ class TrainingCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FormBuilderCheckbox(
-            name: 'certificate_$index',
+            key: ValueKey('certificate_${training.id}'),
+            name: 'certificate_${training.id}',
             title: const Text('I received a certificate for this training'),
             onChanged: onCertificateChanged,
           ),
@@ -318,5 +310,9 @@ class TrainingCard extends StatelessWidget {
 }
 
 class TrainingForm {
+  // Stable ID for field names
+  final String id = UniqueKey().toString();
   bool certificate = false;
+  // Stable key for the list item to prevent state shift on deletion
+  final Key widgetKey = UniqueKey();
 }

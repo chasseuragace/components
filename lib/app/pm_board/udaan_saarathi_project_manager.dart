@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:variant_dashboard/app/pm_board/pm_board_app.dart';
+
+import 'package:variant_dashboard/app/pm_board/wrapper_widget.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
@@ -20,6 +21,28 @@ import '../variant_dashboard/features/variants/presentation/widgets/variant_prev
 var width2 = 375.0;
 final expansionStateProvider = StateProvider<bool>((ref) => false);
 
+/// KeepAlive helper to preserve widget state in scrollable views like PageView
+class KeepAlive extends StatefulWidget {
+  const KeepAlive({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<KeepAlive> createState() => _KeepAliveState();
+}
+
+class _KeepAliveState extends State<KeepAlive>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+}
+
 class UdaanSaarathiProjectManager extends StatelessWidget {
   const UdaanSaarathiProjectManager({super.key});
 
@@ -27,114 +50,43 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
   Widget build(BuildContext context) {
     var width3 = MediaQuery.of(context).size.width;
     var height2 = MediaQuery.of(context).size.height;
-    var other = 1.3;
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: SizedBox(
-          width: width3,
-          height: height2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Udaan Sarathi",
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              Text(
-                "Udaan Sarathi – Guiding Nepali Talent to Global Success.",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Expanded(
-                child: FittedBox(
-                  child: SizedBox(
-                    width: width3 * other,
-                    height: height2 * other,
-                    child: AnimatedSize(
-                      duration: Duration(milliseconds: 200),
-                      child: Row(
-                        children: [
-                          if (false)
-                            Consumer(
-                                child: PMBoardApp(),
-                                builder: (context, ref, child) {
-                                  return AnimatedContainer(
-                                    width: (ref.watch(expansionStateProvider)
-                                            ? 3
-                                            : 0) *
-                                        300,
-                                    duration: Duration(seconds: 1),
-                                    child: GestureDetector(
-                                        onDoubleTap: () {
-                                          ref
-                                              .read(expansionStateProvider
-                                                  .notifier)
-                                              .update((_) => !_);
-                                        },
-                                        child: child!),
-                                  );
-                                }),
-                          // mobile screen for udaansaarathi app
-                          // can set builder here
-                          // eg: shows using one of the hte existing variant page in use
+    var other = 1;
+    return WrapperWidget(width3: width3, height2: height2, other: other,child:pageView());
+  }
 
-                          Expanded(
-                            child: SizedBox(
-                              width: width3 ,
-                              height: height2,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    buildScreen(const SplashScreen()),
-                                    buildScreen(const OnboardingListPage()),
-                                    SizedBox(
-                                      width: width2,
-                                      child: PageView(
-                                        controller: PageController(
-                                            viewportFraction: .79),
-                                        clipBehavior: Clip.none,
-                                        scrollDirection: Axis.vertical,
-                                        // crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        // mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          buildScreen(const RegisterPage(),
-                                              wideMultifiler: 1),
-                                          buildScreen(const LoginPage()),
-                                        ]
-                                            .map((e) => Expanded(
-                                                child: FittedBox(child: e)))
-                                            .toList(),
-                                      ),
-                                    ),
-                                    buildScreen(const SetPreferenceScreen()),
-                                    buildScreen(const HomePageVariant1()),
-                                          buildScreen(
-                                        JobDetailPage(job: blueCollarJobQatar)),
-                                  
-                                    buildScreen(const ProfilePage()),
-                                      buildScreen(const JobsListPage()),
-                              
-                                  ].map((e) => e).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+  PageView pageView() {
+    return PageView(
+      controller: PageController(viewportFraction: .3),
+      
+      children: [
+         buildScreen(const ProfilePage()),
+        buildScreen(const SplashScreen()),
+        buildScreen(const OnboardingListPage()),
+        PageView(
+          controller: PageController(viewportFraction: .9),
+          clipBehavior: Clip.none,
+          padEnds: false,
+          scrollDirection: Axis.vertical,
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildScreen(const RegisterPage(), wideMultifiler: 1),
+            buildScreen(const LoginPage()),
+          ]
+              .map((e) => Expanded(child: FittedBox(child: e)))
+              .map((e) => KeepAlive(child: e))
+              .toList(),
         ),
-      ),
+        buildScreen(const SetPreferenceScreen()),
+        buildScreen(const HomePageVariant1()),
+        buildScreen(JobDetailPage(job: blueCollarJobQatar)),
+       
+        buildScreen(const JobsListPage()),
+      ].map((e) => KeepAlive(child: e)).toList(),
     );
   }
 
-  Widget buildScreen(udaanSaarathiApp, {int wideMultifiler = 1}) {
+  Widget buildScreen(Widget udaanSaarathiApp, {int wideMultifiler = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: Center(
@@ -161,3 +113,4 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
     );
   }
 }
+

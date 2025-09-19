@@ -25,13 +25,9 @@ class CandidateRepositoryImpl implements CandidateRepository {
   }
 
   @override
-  Future<Either<Failure, CandidateEntity?>> getItemById(String id) async {
-    try {
-      final remoteItem = await remoteDataSource.getItemById(id);
-      return right(remoteItem);
-    } catch (error) {
-      return left(ServerFailure());
-    }
+  Future<Either<Failure, CandidateEntity?>> getItemById() async {
+  throw
+   UnimplementedError();
   }
 
   @override

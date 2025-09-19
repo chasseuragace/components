@@ -8,6 +8,7 @@ abstract class CandidateEntity extends BaseEntity {
   final String? phone;
   final AddressEntity? address;
   final String? passportNumber;
+  final String? gender;
   final bool? isActive;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -19,6 +20,7 @@ abstract class CandidateEntity extends BaseEntity {
     this.phone,
     this.address,
     this.passportNumber,
+    this.gender,
     this.isActive,
     this.createdAt,
     this.updatedAt,

@@ -9,6 +9,7 @@ class CandidateModel extends CandidateEntity {
     super.phone,
     super.address,
     super.passportNumber,
+    super.gender,
     super.isActive,
     super.createdAt,
     super.updatedAt,
@@ -23,6 +24,7 @@ class CandidateModel extends CandidateEntity {
           ? AddressEntity.fromJson(json['address'] as Map<String, dynamic>)
           : null,
       passportNumber: json['passport_number'] as String?,
+      gender: json['gender'] as String?,
       isActive: json['is_active'] as bool?,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at'] as String) : null,
       updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at'] as String) : null,
@@ -37,6 +39,7 @@ class CandidateModel extends CandidateEntity {
       'phone': phone,
       'address': address?.toJson(),
       'passport_number': passportNumber,
+      'gender': gender,
       'is_active': isActive,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),

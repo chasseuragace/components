@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/profile/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/pages.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart' as cand;
 
 import '../providers/profile_provider.dart';
 import '../providers/providers.dart';
@@ -13,126 +14,180 @@ class ProfileCardsGroup extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context,ref) {
+  Widget build(BuildContext context, ref) {
     final data = ref.watch(getAllProfileProvider);
-    ref.listen(profileProvider, (p,n){
+    ref.listen(profileProvider, (p, n) {
       ref.refresh(getAllProfileProvider);
     });
-    return data.when(data: (data){
-      return   Column(
+    return data.when(data: (items) {
+      // Derive counts from the first profile entity (if available)
+      final first = items.isNotEmpty ? items.first : null;
+      final skillsCount = first?.profileBlob?.skills?.length ?? 0;
+      final educationCount = first?.profileBlob?.education?.length ?? 0;
+      final trainingsCount = first?.profileBlob?.trainings?.length ?? 0;
+      final experienceCount = first?.profileBlob?.experience?.length ?? 0;
+
+      // Personal Information completion count from Candidate profile
+      final candState = ref.watch(cand.getCandidateByIdProvider);
+      final candItem = candState.valueOrNull;
+      const personalTotal = 5; // full_name, phone, passport_number, gender, unified address
+      int personalCompleted = 0;
+      if (candItem != null) {
+        if ((candItem.fullName ?? '').toString().trim().isNotEmpty) personalCompleted++;
+        if ((candItem.phone ?? '').toString().trim().isNotEmpty) personalCompleted++;
+        if ((candItem.passportNumber ?? '').toString().trim().isNotEmpty) personalCompleted++;
+        if ((candItem.gender ?? '').toString().trim().isNotEmpty) personalCompleted++;
+        // Address treated as a single unified field
+        if (candItem.address != null &&
+            ((candItem.address!.name ?? '').toString().trim().isNotEmpty ||
+             candItem.address!.coordinates != null)) {
+          personalCompleted++;
+        }
+      }
+
+      return Column(
         children: [
-         if(false) Text(data.map((e)=>(e as ProfileModel).toJson() ).toString()),
-          body(context),
+          if (false)
+            Text(items.map((e) => (e as ProfileModel).toJson()).toString()),
+          body(
+            context,
+            skillsCount: skillsCount,
+            educationCount: educationCount,
+            trainingsCount: trainingsCount,
+            experienceCount: experienceCount,
+            personalCompleted: personalCompleted,
+            personalTotal: personalTotal,
+          ),
         ],
       );
-    }, error: (error,st){
+    }, error: (error, st) {
       return GestureDetector(
-        onTap: (){
+        onTap: () {
           ref.refresh(getAllProfileProvider);
         },
-        child: Text("$error\n$st"));
-    }, loading: (){
+        child: Text("$error\n$st"),
+      );
+    }, loading: () {
       return Text("ss");
     });
   }
 
-  Column body(BuildContext context) {
+  Column body(BuildContext context,
+      {required int skillsCount,
+      required int educationCount,
+      required int trainingsCount,
+      required int experienceCount,
+      required int personalCompleted,
+      required int personalTotal}) {
+    final progress = personalTotal == 0 ? 0.0 : (personalCompleted / personalTotal).clamp(0, 1).toDouble();
     return Column(
-    children: [
-      _ProfileMenuItem(
-        icon: Icons.person,
-        title: "Personal Information",
-        subtitle: "Update your personal details",
-        iconColor: Colors.blue,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PersonalInfoFormPage(),
+      children: [
+        _ProfileMenuItem(
+          icon: Icons.person,
+          title: "Personal Information ($personalCompleted/$personalTotal)",
+          subtitle: "Update your personal details",
+          iconColor: Colors.blue,
+          trailingWidget: SizedBox(
+            width: 72,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 6,
+                backgroundColor: Colors.grey[200],
+                color: Colors.blue,
+              ),
             ),
-          );
-        },
-      ),
-      _ProfileMenuItem(
-        icon: Icons.work,
-        title: "Work Experience",
-        subtitle: "Manage your work history",
-        iconColor: Colors.green,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const WorkExperienceFormPage(),
-            ),
-          );
-        },
-      ),
-      _ProfileMenuItem(
-        icon: Icons.school,
-        title: "Education",
-        subtitle: "Add your qualifications",
-        iconColor: Colors.orange,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const EducationFormPage(),
-            ),
-          );
-        },
-      ),
-      _ProfileMenuItem(
-        icon: Icons.school,
-        title: "Training",
-        subtitle: "Add your trainings",
-        iconColor: Colors.teal,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const TrainingsFormPage(),
-            ),
-          );
-        },
-      ),
-      _ProfileMenuItem(
-        icon: Icons.language,
-        title: "Languages & Skills",
-        subtitle: "Showcase your abilities",
-        iconColor: Colors.purple,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SkillsFormPage(),
-            ),
-          );
-        },
-      ),
-      // _ProfileMenuItem(
-      //   icon: Icons.card_membership,
-      //   title: "Licenses & Certifications",
-      //   subtitle: "Professional credentials",
-      //   iconColor: Colors.teal,
-      //   onTap: () {},
-      // ),
-      _ProfileMenuItem(
-        icon: Icons.settings,
-        title: "Settings",
-        subtitle: "Privacy and preferences",
-        iconColor: Colors.grey,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SettingsScreen1(),
-            ),
-          );
-        },
-        showDivider: false,
-      ),
-    ],
-  );
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PersonalInfoFormPage(),
+              ),
+            );
+          },
+        ),
+        _ProfileMenuItem(
+          icon: Icons.work,
+          title: "Work Experience ($experienceCount)",
+          subtitle: "Manage your work history",
+          iconColor: Colors.green,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WorkExperienceFormPage(),
+              ),
+            );
+          },
+        ),
+        _ProfileMenuItem(
+          icon: Icons.school,
+          title: "Education ($educationCount)",
+          subtitle: "Add your qualifications",
+          iconColor: Colors.orange,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EducationFormPage(),
+              ),
+            );
+          },
+        ),
+        _ProfileMenuItem(
+          icon: Icons.school,
+          title: "Training ($trainingsCount)",
+          subtitle: "Add your trainings",
+          iconColor: Colors.teal,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const TrainingsFormPage(),
+              ),
+            );
+          },
+        ),
+        _ProfileMenuItem(
+          icon: Icons.language,
+          title: "Languages & Skills ($skillsCount)",
+          subtitle: "Showcase your abilities",
+          iconColor: Colors.purple,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SkillsFormPage(),
+              ),
+            );
+          },
+        ),
+        // _ProfileMenuItem(
+        //   icon: Icons.card_membership,
+        //   title: "Licenses & Certifications",
+        //   subtitle: "Professional credentials",
+        //   iconColor: Colors.teal,
+        //   onTap: () {},
+        // ),
+        _ProfileMenuItem(
+          icon: Icons.settings,
+          title: "Settings",
+          subtitle: "Privacy and preferences",
+          iconColor: Colors.grey,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SettingsScreen1(),
+              ),
+            );
+          },
+          showDivider: false,
+        ),
+      ],
+    );
   }
 }
 
@@ -143,6 +198,7 @@ class _ProfileMenuItem extends StatelessWidget {
   final Color iconColor;
   final VoidCallback onTap;
   final bool showDivider;
+  final Widget? trailingWidget;
 
   const _ProfileMenuItem({
     required this.icon,
@@ -151,6 +207,7 @@ class _ProfileMenuItem extends StatelessWidget {
     required this.iconColor,
     required this.onTap,
     this.showDivider = true,
+    this.trailingWidget,
   });
 
   @override
@@ -182,7 +239,7 @@ class _ProfileMenuItem extends StatelessWidget {
             subtitle,
             style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
-          trailing: Icon(
+          trailing: trailingWidget ?? Icon(
             Icons.arrow_forward_ios,
             size: 16,
             color: Colors.grey[400],

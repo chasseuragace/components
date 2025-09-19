@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/address.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
@@ -23,11 +22,170 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
   bool _prefilled = false;
   Map<String, dynamic> _initialValues = {};
   String? _gender;
+  AddressEntity? _selectedAddress;
 
   @override
   void dispose() {
     _dobController.dispose();
     super.dispose();
+  }
+
+  // Formats AddressEntity into a human-readable single-line string
+  String _formatAddress(AddressEntity? address) {
+    if (address == null) return '';
+    final parts = <String>[];
+    if ((address.name ?? '').trim().isNotEmpty) parts.add(address.name!.trim());
+    if ((address.ward ?? '').trim().isNotEmpty) parts.add('Ward ${address.ward!.trim()}');
+    if ((address.municipality ?? '').trim().isNotEmpty) parts.add(address.municipality!.trim());
+    if ((address.district ?? '').trim().isNotEmpty) parts.add(address.district!.trim());
+    if ((address.province ?? '').trim().isNotEmpty) parts.add(address.province!.trim());
+    return parts.join(', ');
+  }
+
+  // Opens a fake location picker (full height) with a search bar and live filtering
+  Future<void> _openFakeLocationPicker() async {
+    final options = <AddressEntity>[
+      AddressEntity(
+        name: 'Thamel, Kathmandu',
+        coordinates: const CoordinatesEntity(lat: 27.7154, lng: 85.3123),
+        province: 'Bagmati',
+        district: 'Kathmandu',
+        municipality: 'Kathmandu Metropolitan City',
+        ward: '26',
+      ),
+      AddressEntity(
+        name: 'Lakeside, Pokhara',
+        coordinates: const CoordinatesEntity(lat: 28.2096, lng: 83.9856),
+        province: 'Gandaki',
+        district: 'Kaski',
+        municipality: 'Pokhara Metropolitan City',
+        ward: '6',
+      ),
+      AddressEntity(
+        name: 'Biratnagar Bazaar',
+        coordinates: const CoordinatesEntity(lat: 26.4525, lng: 87.2718),
+        province: 'Koshi',
+        district: 'Morang',
+        municipality: 'Biratnagar Metropolitan City',
+        ward: '8',
+      ),
+      AddressEntity(
+        name: 'Butwal Bazar',
+        coordinates: const CoordinatesEntity(lat: 27.7000, lng: 83.4500),
+        province: 'Lumbini',
+        district: 'Rupandehi',
+        municipality: 'Butwal Sub-Metropolitan City',
+        ward: '11',
+      ),
+    ];
+
+    final picked = await showModalBottomSheet<AddressEntity>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        final searchController = TextEditingController();
+        List<AddressEntity> filtered = List<AddressEntity>.from(options);
+        return StatefulBuilder(
+          builder: (ctx, setModalState) {
+            void applyFilter(String q) {
+              final query = q.toLowerCase();
+              filtered = options.where((a) {
+                final name = (a.name ?? '').toLowerCase();
+                final mun = (a.municipality ?? '').toLowerCase();
+                final dist = (a.district ?? '').toLowerCase();
+                final prov = (a.province ?? '').toLowerCase();
+                return name.contains(query) || mun.contains(query) || dist.contains(query) || prov.contains(query);
+              }).toList();
+              setModalState(() {});
+            }
+
+            return SafeArea(
+              child: SizedBox(
+                height: MediaQuery.of(ctx).size.height * 0.95,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Pick location',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(ctx).pop(),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: applyFilter,
+                        decoration: InputDecoration(
+                          hintText: 'Search province, district, municipality or place',
+                          prefixIcon: const Icon(Icons.search),
+                          filled: true,
+                          fillColor: Colors.grey[50],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Color(0xFF2196F3), width: 2),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        itemCount: filtered.length,
+                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        itemBuilder: (_, i) {
+                          final addr = filtered[i];
+                          return ListTile(
+                            leading: const Icon(Icons.place_outlined, color: Colors.blueGrey),
+                            title: Text(addr.name ?? 'Unknown'),
+                            subtitle: Text(_formatAddress(addr)),
+                            onTap: () => Navigator.of(ctx).pop(addr),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedAddress = picked;
+        _initialValues['address_display'] = _formatAddress(picked);
+      });
+      // Ensure form reflects new address display value
+      _formKey.currentState?.patchValue({'address_display': _initialValues['address_display']});
+    }
   }
 
   @override
@@ -48,7 +206,7 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
     if (!_prefilled) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || _prefilled) return;
-        ref.read(cand.getCandidateByIdProvider.notifier).getCandidateById('');
+        ref.read(cand.getCandidateByIdProvider.notifier).getCandidateById();
       });
     }
 
@@ -59,13 +217,13 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
           'full_name': item.fullName ?? '',
           'phone': item.phone ?? '',
           'passport_number': item.passportNumber ?? '',
-          'address_name': item.address?.name ?? '',
-          'address_lat': item.address?.coordinates?.lat?.toString() ?? '',
-          'address_lng': item.address?.coordinates?.lng?.toString() ?? '',
+          'gender': item.gender ?? '',
+          'address_display': _formatAddress(item.address),
         };
         setState(() {
           _initialValues = init;
           _prefilled = true;
+          _selectedAddress = item.address;
         });
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _formKey.currentState?.patchValue(_initialValues);
@@ -106,9 +264,26 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                   label: 'Phone',
                   hint: 'e.g. +977 9841000000',
                   icon: Icons.phone,
+
                   keyboardType: TextInputType.phone,
                   validator: (value) =>
                       CustomValidator.phoneValidator(value),
+                ),
+                const SizedBox(height: 16),
+                // Gender (required) - Choice chips in a row (custom styled)
+                CustomChoiceChipsField<String>(
+                  
+                  name: 'gender',
+                  label: 'Gender',
+
+                  icon: Icons.wc_outlined,
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? 'Please select gender'
+                      : null,
+                  options: const [
+                    FormBuilderChipOption(value: 'Male', child: Text('Male')),
+                    FormBuilderChipOption(value: 'Female', child: Text('Female')),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 // Passport Number
@@ -119,37 +294,18 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                   icon: Icons.badge_outlined,
                 ),
                 const SizedBox(height: 16),
-                // Address (name)
+                // Unified Address as a read-only styled field that opens picker
                 CustomFormBuilderTextField(
-                  name: 'address_name',
-                  label: 'Address Name',
-                  hint: 'e.g. Kathmandu',
+                  name: 'address_display',
+                  label: 'Address',
+                  hint: 'Pick your address',
                   icon: Icons.location_on_outlined,
-                ),
-                const SizedBox(height: 16),
-                // Address Coordinates
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomFormBuilderTextField(
-                        name: 'address_lat',
-                        label: 'Latitude',
-                        hint: 'e.g. 27.7172',
-                        icon: Icons.map_outlined,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: CustomFormBuilderTextField(
-                        name: 'address_lng',
-                        label: 'Longitude',
-                        hint: 'e.g. 85.3240',
-                        icon: Icons.map_outlined,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                  ],
+                  readOnly: true,
+                  onTap: _openFakeLocationPicker,
+                  suffixIcon: const Icon(Icons.place_outlined),
+                  validator: (v) => (_selectedAddress == null)
+                      ? 'Please pick address'
+                      : null,
                 ),
               ],
             ),
@@ -176,18 +332,8 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
   void _savePersonalInfo() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final v = _formKey.currentState!.value;
-      // Build typed address entity
-      AddressEntity? address;
-      final lat = double.tryParse((v['address_lat'] ?? '').toString());
-      final lng = double.tryParse((v['address_lng'] ?? '').toString());
-      if ((v['address_name'] ?? '').toString().isNotEmpty || (lat != null && lng != null)) {
-        address = AddressEntity(
-          name: v['address_name'],
-          coordinates: (lat != null && lng != null)
-              ? CoordinatesEntity(lat: lat, lng: lng)
-              : null,
-        );
-      }
+      // Use unified selected address (picked via fake location picker)
+      final AddressEntity? address = _selectedAddress;
 
       final model = CandidateModel(
         id: '', // repo uses stored candidate id
@@ -195,6 +341,7 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
         fullName: v['full_name'],
         phone: v['phone'],
         passportNumber: v['passport_number'],
+        gender: (v['gender'] as String?)?.trim().isEmpty == true ? null : v['gender'] as String?,
         address: address,
       );
 

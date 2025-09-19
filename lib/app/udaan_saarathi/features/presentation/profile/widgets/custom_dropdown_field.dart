@@ -1,53 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-class CustomFormBuilderTextField extends StatelessWidget {
+class CustomFormBuilderDropdown<T> extends StatelessWidget {
   final String name;
   final String label;
-  final String hint;
   final IconData icon;
-  final TextInputType? keyboardType;
-  final int maxLines;
-  final String? Function(String?)? validator;
-  final TextEditingController? controller;
-  final bool readOnly;
-  final VoidCallback? onTap;
-  final Widget? suffixIcon;
+  final List<DropdownMenuItem<T>> items;
+  final String? Function(T?)? validator;
+  final T? initialValue;
+  final void Function(T?)? onChanged;
 
-  const CustomFormBuilderTextField({
+  const CustomFormBuilderDropdown({
     super.key,
     required this.name,
     required this.label,
-    required this.hint,
     required this.icon,
-    this.keyboardType,
-    this.maxLines = 1,
+    required this.items,
     this.validator,
-    this.controller,
-    this.readOnly = false,
-    this.onTap,
-    this.suffixIcon,
+    this.initialValue,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderTextField(
+    return FormBuilderDropdown<T>(
       name: name,
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
+      initialValue: initialValue,
       validator: validator,
-      readOnly: readOnly,
-      onTap: onTap,
+      onChanged: onChanged,
       style: const TextStyle(
         fontSize: 16,
         color: Colors.black87,
       ),
       decoration: InputDecoration(
         labelText: label,
-        hintText: hint,
         prefixIcon: Icon(icon, color: Colors.grey[600], size: 20),
-        suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.grey[50],
         border: OutlineInputBorder(
@@ -75,13 +62,9 @@ class CustomFormBuilderTextField extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        hintStyle: TextStyle(
-          color: Colors.grey[500],
-          fontSize: 14,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
+      items: items,
     );
   }
 }

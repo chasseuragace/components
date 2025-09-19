@@ -19,12 +19,13 @@ class GetAllCandidateNotifier extends AsyncNotifier<List<CandidateEntity>> {
 class GetCandidateByIdNotifier extends AsyncNotifier<CandidateEntity?> {
   @override
   Future<CandidateEntity?> build() async {
+    getCandidateById();
     return null; // Initially null, call getCandidateById when needed
   }
 
-  Future<void> getCandidateById(String id) async {
+  Future<void> getCandidateById() async {
     state = const AsyncValue.loading();
-    final result = await ref.read(getCandidateByIdUseCaseProvider)(id);
+    final result = await ref.read(getCandidateByIdUseCaseProvider)(NoParm());
     state = result.fold(
       (failure) => AsyncValue.error(failure, StackTrace.current),
       (item) => AsyncValue.data(item),
@@ -51,8 +52,8 @@ class AddCandidateNotifier extends AsyncNotifier {
 
 class UpdateCandidateNotifier extends AsyncNotifier {
   @override
-  Future<void> build() async {
-    return;
+  build()  {
+   
   }
 
   Future<void> updateCandidate(CandidateEntity item) async {

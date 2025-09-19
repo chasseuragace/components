@@ -33,10 +33,10 @@ class CandidateRepositoryFake implements CandidateRepository {
   }
 
   @override
-  Future<Either<Failure, CandidateEntity?>> getItemById(String id) async {
+  Future<Either<Failure, CandidateEntity?>> getItemById() async {
     try {
       // Prefer provided id; otherwise use stored candidate id
-      final candidateId = id.isNotEmpty ? id : (await _storage.getCandidateId()) ?? '';
+      final candidateId =  (await _storage.getCandidateId()) ?? '';
       if (candidateId.isEmpty) {
         return left(ServerFailure());
       }
