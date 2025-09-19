@@ -99,6 +99,7 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
         });
       }
     });
+    
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(

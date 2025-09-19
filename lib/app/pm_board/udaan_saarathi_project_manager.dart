@@ -27,7 +27,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
   Widget build(BuildContext context) {
     var width3 = MediaQuery.of(context).size.width;
     var height2 = MediaQuery.of(context).size.height;
-    var other = 1.9;
+    var other = 1.3;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(18.0),
@@ -80,7 +80,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
 
                           Expanded(
                             child: SizedBox(
-                              width: width3 * 4,
+                              width: width3 ,
                               height: height2,
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
@@ -110,10 +110,12 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
                                     ),
                                     buildScreen(const SetPreferenceScreen()),
                                     buildScreen(const HomePageVariant1()),
-                                    buildScreen(const JobsListPage()),
+                                          buildScreen(
+                                        JobDetailPage(job: blueCollarJobQatar)),
+                                  
                                     buildScreen(const ProfilePage()),
-                                    buildScreen(
-                                        JobDetailPage(job: blueCollarJobQatar))
+                                      buildScreen(const JobsListPage()),
+                              
                                   ].map((e) => e).toList(),
                                 ),
                               ),

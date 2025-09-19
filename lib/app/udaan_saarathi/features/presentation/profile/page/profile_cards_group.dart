@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/profile/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/pages.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
 
+import '../providers/profile_provider.dart';
 import '../providers/providers.dart';
 
 class ProfileCardsGroup extends ConsumerWidget {
@@ -15,10 +15,13 @@ class ProfileCardsGroup extends ConsumerWidget {
   @override
   Widget build(BuildContext context,ref) {
     final data = ref.watch(getAllProfileProvider);
+    ref.listen(profileProvider, (p,n){
+      ref.refresh(getAllProfileProvider);
+    });
     return data.when(data: (data){
       return   Column(
         children: [
-          Text(data.map((e)=>(e as ProfileModel).toJson() ).toString()),
+         if(false) Text(data.map((e)=>(e as ProfileModel).toJson() ).toString()),
           body(context),
         ],
       );
@@ -31,7 +34,6 @@ class ProfileCardsGroup extends ConsumerWidget {
     }, loading: (){
       return Text("ss");
     });
-   ;
   }
 
   Column body(BuildContext context) {

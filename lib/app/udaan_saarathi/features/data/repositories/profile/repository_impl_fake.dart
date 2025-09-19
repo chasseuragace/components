@@ -91,6 +91,17 @@ class ProfileRepositoryFake implements ProfileRepository {
       }
       final jobProfileDto = AddJobProfileDto(
           profileBlob: JobProfileBlobDto(
+            // education: entity.profileBlob?.trainings?.map((training)=> EducationDto(
+            //   title: training.title??'',
+            // degree: training.,
+
+            // )).toList(),
+            // trainings: entity.profileBlob?.trainings?.map((training)=> TrainingDto(
+            //   title: training.title??'',
+            //   certificate: training.certificate,
+            //   hours: training.hours,
+            //   provider: training.provider,
+            // )).toList(),
               skills: entity.profileBlob?.skills?.map((skill) => 
                   SkillDto(
                     title: skill.title ?? '',
