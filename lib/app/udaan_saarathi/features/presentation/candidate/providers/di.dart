@@ -7,6 +7,7 @@ import '../../../domain/usecases/candidate/add.dart';
 import '../../../domain/usecases/candidate/update.dart';
 import '../../../domain/usecases/candidate/delete.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/repositories/auth/token_storage.dart';
 
 final getAllCandidateUseCaseProvider = Provider<GetAllCandidateUseCase>((ref) {
   return GetAllCandidateUseCase(ref.watch(rCandidateRepositoryProvider));
@@ -31,7 +32,8 @@ final deleteCandidateUseCaseProvider = Provider<DeleteCandidateUseCase>((ref) {
 final rCandidateRepositoryProvider = Provider((ref) {
   final local = ref.read(localDataCandidateSourceProvider);
   final remote = ref.read(remoteDataCandidateSourceProvider);
-  return CandidateRepositoryFake(localDataSource: local, remoteDataSource: remote);
+  final storage = ref.read(tokenStorageProvider);
+  return CandidateRepositoryFake(localDataSource: local, remoteDataSource: remote, storage: storage);
 });
 
 final localDataCandidateSourceProvider = Provider<CandidateLocalDataSource>((ref) {

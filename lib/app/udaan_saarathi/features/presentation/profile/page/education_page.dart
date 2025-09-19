@@ -1,32 +1,246 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
 
-// Import your custom form field
-// import 'custom_form_builder_text_field.dart';
+import 'skills_page.dart' hide DocumentPickerButton;
 
-class EducationFormPage extends StatefulWidget {
+class EducationFormPage extends ConsumerStatefulWidget {
   const EducationFormPage({super.key});
 
   @override
-  State<EducationFormPage> createState() => _EducationFormPageState();
+  ConsumerState<EducationFormPage> createState() => _EducationFormPageState();
 }
 
-// Reusable Education Card widget
+class _EducationFormPageState extends ConsumerState<EducationFormPage> {
+  final _formKey = GlobalKey<FormBuilderState>();
+  List<EducationForm> educations = [EducationForm()];
+  int educationCount = 1;
+  bool _prefilled = false;
+  Map<String, dynamic> _initialValues = {};
+
+  @override
+  Widget build(BuildContext context) {
+    // Listen for add/update status to show snackbars and navigate
+    ref.listen<AsyncValue<ProfileState>>(profileProvider, (previous, next) {
+      next.whenData((state) {
+        switch (state.status) {
+          case ResponseStates.success:
+            CustomSnackbar.showSuccessSnackbar(context, state.message!);
+            Navigator.pop(context);
+            break;
+          case ResponseStates.failure:
+            CustomSnackbar.showFailureSnackbar(context, state.errorMessage!);
+            break;
+          case ResponseStates.loading:
+          case ResponseStates.initial:
+            break;
+        }
+      });
+    });
+
+    // Prefill educations from existing profile data once via FormBuilder.initialValue
+    final profilesAsync = ref.watch(getAllProfileProvider);
+    profilesAsync.whenData((profiles) {
+      if (!_prefilled) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || _prefilled) return;
+          if (profiles.isNotEmpty) {
+            final profile = profiles.first;
+            final existingEducations = profile.profileBlob?.education ?? [];
+            if (existingEducations.isNotEmpty) {
+              final init = <String, dynamic>{};
+              for (var i = 0; i < existingEducations.length; i++) {
+                final e = existingEducations[i];
+                init['degree_$i'] = e.degree ?? '';
+                init['institute_$i'] = e.institute ?? '';
+              }
+              setState(() {
+                educationCount = existingEducations.length;
+                educations = List<EducationForm>.generate(educationCount, (_) => EducationForm());
+                _initialValues = init;
+                _prefilled = true;
+              });
+              // Ensure FormBuilder fields receive values after build
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _formKey.currentState?.patchValue(_initialValues);
+              });
+            } else {
+              setState(() {
+                educationCount = 1;
+                educations = [EducationForm()];
+                _initialValues = {};
+                _prefilled = true;
+              });
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _formKey.currentState?.patchValue(_initialValues);
+              });
+            }
+          } else {
+            setState(() {
+              educationCount = 1;
+              educations = [EducationForm()];
+              _initialValues = {};
+              _prefilled = true;
+            });
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _formKey.currentState?.patchValue(_initialValues);
+            });
+          }
+        });
+      }
+    });
+    
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: CustomAppBar(
+        title: 'Education',
+        onSave: _saveEducations,
+        isLoading: ref.watch(profileProvider).isLoading,
+      ),
+      body: FormBuilder(
+        key: _formKey,
+        initialValue: _initialValues,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(20),
+          itemCount: educationCount,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                EducationCard(
+                  education: educations[index],
+                  index: index,
+                  showRemoveButton: educationCount > 1,
+                  onRemove: () => _removeEducation(index),
+                  onPickFile: () => _pickFile(index),
+                  onRemoveFile: () => _removeFile(index),
+                ),
+                if (index == educationCount - 1) ...[
+                  const SizedBox(height: 24),
+                  AddMoreButton(
+                    title: 'Add More Education',
+                    color: const Color(0xFFFF9800),
+                    onTap: _addEducation,
+                  ),
+                ],
+                const SizedBox(height: 20),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _addEducation() {
+    setState(() {
+      educations.add(EducationForm());
+      educationCount = educations.length;
+    });
+  }
+
+  void _removeEducation(int index) {
+    if (educationCount > 1) {
+      setState(() {
+        // Capture current values before removal
+        final current = _formKey.currentState?.value ?? <String, dynamic>{};
+
+        // Remove the EducationForm and compact the values after the removed index
+        educations.removeAt(index);
+        final oldCount = educationCount;
+        educationCount = educations.length;
+
+        final newInit = <String, dynamic>{};
+        int newIdx = 0;
+        for (int oldIdx = 0; oldIdx < oldCount; oldIdx++) {
+          if (oldIdx == index) continue; // skip removed
+          newInit['degree_$newIdx'] = (current['degree_$oldIdx'] as String?) ?? '';
+          newInit['institute_$newIdx'] = (current['institute_$oldIdx'] as String?) ?? '';
+          newIdx++;
+        }
+        _initialValues = newInit;
+        // Patch updated values into the form so indices stay aligned
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _formKey.currentState?.patchValue(_initialValues);
+        });
+      });
+    }
+  }
+
+  Future<void> _pickFile(int index) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+      );
+
+      if (result != null) {
+        PlatformFile file = result.files.first;
+        if (file.size <= 5 * 1024 * 1024) { // 5MB limit
+          setState(() {
+            educations[index].selectedFile = file;
+            educations[index].fileError = null;
+          });
+        } else {
+          setState(() {
+            educations[index].fileError = 'File too large (max 5MB)';
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        educations[index].fileError = 'Error selecting file';
+      });
+    }
+  }
+
+  void _removeFile(int index) {
+    setState(() {
+      educations[index].selectedFile = null;
+      educations[index].fileError = null;
+    });
+  }
+
+  void _saveEducations() async {
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      // Read values from form state
+      final values = _formKey.currentState!.value;
+      final List<Map<String, dynamic>> educationItems = List.generate(educationCount, (i) {
+        final degree = (values['degree_$i'] as String?)?.trim() ?? '';
+        final institute = (values['institute_$i'] as String?)?.trim() ?? '';
+        return {
+          'degree': degree,
+          'institute': institute,
+          'document': educations[i].selectedFile?.path,
+        };
+      });
+
+      print('Education data: $educationItems');
+      await ref.read(profileProvider.notifier).addEducation(educationItems);
+    }
+  }
+}
+
 class EducationCard extends StatelessWidget {
+  final EducationForm education;
   final int index;
-  final EducationForm form;
-  final VoidCallback? onRemove;
+  final bool showRemoveButton;
+  final VoidCallback onRemove;
   final VoidCallback onPickFile;
   final VoidCallback onRemoveFile;
 
   const EducationCard({
     super.key,
+    required this.education,
     required this.index,
-    required this.form,
-    this.onRemove,
+    required this.showRemoveButton,
+    required this.onRemove,
     required this.onPickFile,
     required this.onRemoveFile,
   });
@@ -73,7 +287,7 @@ class EducationCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              if (onRemove != null)
+              if (showRemoveButton)
                 IconButton(
                   onPressed: onRemove,
                   icon: Icon(
@@ -88,40 +302,28 @@ class EducationCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           CustomFormBuilderTextField(
-            name: 'title_$index',
-            controller: form.titleController,
-            label: 'Title/Course Name',
-            hint: 'e.g. Bachelor of Computer Science',
-            icon: Icons.title_outlined,
-            validator: (value) =>
-                CustomValidator.nameValidator(type: 'Course Title'),
+            name: 'degree_$index',
+            label: 'Degree',
+            hint: 'e.g. Bachelor of Science',
+            icon: Icons.school,
+            validator: (value) => CustomValidator.nameValidator(
+                type: 'Degree', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
             name: 'institute_$index',
-            controller: form.instituteController,
-            label: 'Institute/University',
-            hint: 'e.g. Harvard University',
-            icon: Icons.account_balance_outlined,
-            validator: (value) =>
-                CustomValidator.nameValidator(type: 'Institute'),
+            label: 'Institution',
+            hint: 'e.g. University of Example',
+            icon: Icons.location_city,
+            validator: (value) => CustomValidator.nameValidator(
+                type: 'Institution', input: value),
           ),
           const SizedBox(height: 16),
-          CustomFormBuilderTextField(
-            name: 'degree_$index',
-            controller: form.degreeController,
-            label: 'Degree/Qualification',
-            hint: 'e.g. Bachelor\'s Degree',
-            icon: Icons.military_tech_outlined,
-            validator: (value) => CustomValidator.nameValidator(type: 'Degree'),
-          ),
-          const SizedBox(height: 16),
-          FilePickerField(
-            title: 'Document/Certificate',
-            selectedFile: form.selectedFile,
-            errorText: form.fileError,
-            onPick: onPickFile,
-            onRemove: onRemoveFile,
+          FilePickerSection(
+            selectedFile: education.selectedFile,
+            fileError: education.fileError,
+            onPickFile: onPickFile,
+            onRemoveFile: onRemoveFile,
           ),
         ],
       ),
@@ -129,32 +331,18 @@ class EducationCard extends StatelessWidget {
   }
 }
 
-// Top-level utility to format file sizes for display
-String formatFileSize(int bytes) {
-  if (bytes < 1024) {
-    return '$bytes B';
-  } else if (bytes < 1024 * 1024) {
-    return '${(bytes / 1024).toStringAsFixed(1)} KB';
-  } else {
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-  }
-}
-
-// Reusable File Picker field widget
-class FilePickerField extends StatelessWidget {
-  final String title;
+class FilePickerSection extends StatelessWidget {
   final PlatformFile? selectedFile;
-  final String? errorText;
-  final VoidCallback onPick;
-  final VoidCallback onRemove;
+  final String? fileError;
+  final VoidCallback onPickFile;
+  final VoidCallback onRemoveFile;
 
-  const FilePickerField({
+  const FilePickerSection({
     super.key,
-    required this.title,
     required this.selectedFile,
-    required this.errorText,
-    required this.onPick,
-    required this.onRemove,
+    required this.fileError,
+    required this.onPickFile,
+    required this.onRemoveFile,
   });
 
   @override
@@ -163,7 +351,7 @@ class FilePickerField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
+          'Degree Certificate',
           style: TextStyle(
             color: Colors.grey[700],
             fontSize: 14,
@@ -171,84 +359,18 @@ class FilePickerField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
+        DocumentPickerButton(onTap: onPickFile),
+        if (selectedFile != null) ...[
+          const SizedBox(height: 12),
+          DocumentItem(
+            document: selectedFile!,
+            onRemove: onRemoveFile,
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onPick,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.attach_file_outlined,
-                      color: Colors.grey[600],
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            selectedFile != null
-                                ? selectedFile!.name
-                                : 'Select document or certificate',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: selectedFile != null
-                                  ? Colors.black87
-                                  : Colors.grey[500],
-                              fontWeight: selectedFile != null
-                                  ? FontWeight.w500
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                          if (selectedFile != null)
-                            Text(
-                              formatFileSize(selectedFile!.size),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    if (selectedFile != null)
-                      IconButton(
-                        onPressed: onRemove,
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.grey[600],
-                          size: 18,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      )
-                    else
-                      Icon(
-                        Icons.upload_file_outlined,
-                        color: Colors.grey[600],
-                        size: 20,
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        if (errorText != null) ...[
+        ],
+        if (fileError != null) ...[
           const SizedBox(height: 4),
           Text(
-            errorText!,
+            fileError!,
             style: TextStyle(
               color: Colors.red[400],
               fontSize: 12,
@@ -260,171 +382,7 @@ class FilePickerField extends StatelessWidget {
   }
 }
 
-class _EducationFormPageState extends State<EducationFormPage> {
-  final _formKey = GlobalKey<FormBuilderState>();
-  List<EducationForm> educations = [EducationForm()];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: CustomAppBar(
-        title: 'Education',
-        onSave: _saveEducations,
-      ),
-      body: FormBuilder(
-        key: _formKey,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(20),
-          itemCount: educations.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                EducationCard(
-                  index: index,
-                  form: educations[index],
-                  onRemove: educations.length > 1
-                      ? () => _removeEducation(index)
-                      : null,
-                  onPickFile: () => _pickFile(index),
-                  onRemoveFile: () => _removeFile(index),
-                ),
-                if (index == educations.length - 1) ...[
-                  const SizedBox(height: 24),
-                  AddMoreButton(
-                    title: 'Add More Education',
-                    color: const Color(0xFFFF9800),
-                    onTap: _addEducation,
-                  ),
-                ],
-                const SizedBox(height: 20),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  void _addEducation() {
-    setState(() {
-      educations.add(EducationForm());
-    });
-  }
-
-  void _removeEducation(int index) {
-    if (educations.length > 1) {
-      setState(() {
-        educations[index].dispose();
-        educations.removeAt(index);
-      });
-    }
-  }
-
-  Future<void> _pickFile(int index) async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
-        allowMultiple: false,
-      );
-
-      if (result != null && result.files.isNotEmpty) {
-        PlatformFile file = result.files.first;
-
-        // Check file size (limit to 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          setState(() {
-            educations[index].fileError = 'File size should be less than 5MB';
-          });
-          return;
-        }
-
-        setState(() {
-          educations[index].selectedFile = file;
-          educations[index].fileError = null;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        educations[index].fileError = 'Error selecting file';
-      });
-    }
-  }
-
-  void _removeFile(int index) {
-    setState(() {
-      educations[index].selectedFile = null;
-      educations[index].fileError = null;
-    });
-  }
-
-  void _saveEducations() {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      // Validate that all required files are selected (optional)
-      bool hasFileErrors = false;
-      for (int i = 0; i < educations.length; i++) {
-        if (educations[i].selectedFile == null) {
-          setState(() {
-            educations[i].fileError = 'Please select a document';
-          });
-          hasFileErrors = true;
-        }
-      }
-
-      if (hasFileErrors) {
-        return;
-      }
-
-      // Process the data
-      List<Map<String, dynamic>> educationData = educations
-          .map((edu) => {
-                'title': edu.titleController.text,
-                'institute': edu.instituteController.text,
-                'degree': edu.degreeController.text,
-                'document': edu.selectedFile?.path ??
-                    '', // You might want to upload the file and store the URL
-              })
-          .toList();
-
-      print('Education data: $educationData');
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Education details saved successfully!'),
-          backgroundColor: Colors.green[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
-
-      // Navigate back
-      Navigator.pop(context);
-    }
-  }
-
-  @override
-  void dispose() {
-    for (var education in educations) {
-      education.dispose();
-    }
-    super.dispose();
-  }
-}
-
 class EducationForm {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController instituteController = TextEditingController();
-  final TextEditingController degreeController = TextEditingController();
   PlatformFile? selectedFile;
   String? fileError;
-
-  void dispose() {
-    titleController.dispose();
-    instituteController.dispose();
-    degreeController.dispose();
-  }
 }

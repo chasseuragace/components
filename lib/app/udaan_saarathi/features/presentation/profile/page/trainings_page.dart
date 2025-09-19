@@ -1,44 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
 
-class TrainingsFormPage extends StatefulWidget {
+class TrainingsFormPage extends ConsumerStatefulWidget {
   const TrainingsFormPage({super.key});
 
   @override
-  State<TrainingsFormPage> createState() => _TrainingsFormPageState();
+  ConsumerState<TrainingsFormPage> createState() => _TrainingsFormPageState();
 }
 
-class _TrainingsFormPageState extends State<TrainingsFormPage> {
+class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   List<TrainingForm> trainings = [TrainingForm()];
+  int trainingCount = 1;
+  bool _prefilled = false;
+  Map<String, dynamic> _initialValues = {};
 
   @override
   Widget build(BuildContext context) {
+    // Listen for add/update status to show snackbars and navigate
+    ref.listen<AsyncValue<ProfileState>>(profileProvider, (previous, next) {
+      next.whenData((state) {
+        switch (state.status) {
+          case ResponseStates.success:
+            CustomSnackbar.showSuccessSnackbar(context, state.message!);
+            Navigator.pop(context);
+            break;
+          case ResponseStates.failure:
+            CustomSnackbar.showFailureSnackbar(context, state.errorMessage!);
+            break;
+          case ResponseStates.loading:
+          case ResponseStates.initial:
+            break;
+        }
+      });
+    });
+
+    // Prefill trainings from existing profile data once via FormBuilder.initialValue
+    final profilesAsync = ref.watch(getAllProfileProvider);
+    profilesAsync.whenData((profiles) {
+      if (!_prefilled) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || _prefilled) return;
+          if (profiles.isNotEmpty) {
+            final profile = profiles.first;
+            final existingTrainings = profile.profileBlob?.trainings ?? [];
+            if (existingTrainings.isNotEmpty) {
+              final init = <String, dynamic>{};
+              for (var i = 0; i < existingTrainings.length; i++) {
+                final t = existingTrainings[i];
+                init['title_$i'] = t.title ?? '';
+                init['provider_$i'] = t.provider ?? '';
+                init['hours_$i'] = t.hours?.toString() ?? '';
+                init['certificate_$i'] = t.certificate ?? false;
+              }
+              setState(() {
+                trainingCount = existingTrainings.length;
+                trainings = List<TrainingForm>.generate(trainingCount, (_) => TrainingForm());
+                _initialValues = init;
+                _prefilled = true;
+              });
+              // Ensure FormBuilder fields receive values after build
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _formKey.currentState?.patchValue(_initialValues);
+              });
+            } else {
+              setState(() {
+                trainingCount = 1;
+                trainings = [TrainingForm()];
+                _initialValues = {};
+                _prefilled = true;
+              });
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _formKey.currentState?.patchValue(_initialValues);
+              });
+            }
+          } else {
+            setState(() {
+              trainingCount = 1;
+              trainings = [TrainingForm()];
+              _initialValues = {};
+              _prefilled = true;
+            });
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _formKey.currentState?.patchValue(_initialValues);
+            });
+          }
+        });
+      }
+    });
+    
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
         title: 'Trainings',
         onSave: _saveTrainings,
+        isLoading: ref.watch(profileProvider).isLoading,
       ),
       body: FormBuilder(
         key: _formKey,
+        initialValue: _initialValues,
         child: ListView.builder(
           padding: const EdgeInsets.all(20),
-          itemCount: trainings.length,
+          itemCount: trainingCount,
           itemBuilder: (context, index) {
             return Column(
               children: [
                 TrainingCard(
                   training: trainings[index],
                   index: index,
-                  showRemoveButton: trainings.length > 1,
+                  showRemoveButton: trainingCount > 1,
                   onRemove: () => _removeTraining(index),
-                  onCertificateChanged: (value) =>
-                      _updateCertificate(index, value),
+                  onCertificateChanged: (value) => _updateCertificate(index, value),
                 ),
-                if (index == trainings.length - 1) ...[
+                if (index == trainingCount - 1) ...[
                   const SizedBox(height: 24),
                   AddMoreButton(
                     title: 'Add More Training',
@@ -58,61 +139,70 @@ class _TrainingsFormPageState extends State<TrainingsFormPage> {
   void _addTraining() {
     setState(() {
       trainings.add(TrainingForm());
+      trainingCount = trainings.length;
     });
   }
 
   void _removeTraining(int index) {
-    if (trainings.length > 1) {
+    if (trainingCount > 1) {
       setState(() {
-        trainings[index].dispose();
+        // Capture current values before removal
+        final current = _formKey.currentState?.value ?? <String, dynamic>{};
+
+        // Remove the TrainingForm and compact the values after the removed index
         trainings.removeAt(index);
+        final oldCount = trainingCount;
+        trainingCount = trainings.length;
+
+        final newInit = <String, dynamic>{};
+        int newIdx = 0;
+        for (int oldIdx = 0; oldIdx < oldCount; oldIdx++) {
+          if (oldIdx == index) continue; // skip removed
+          newInit['title_$newIdx'] = (current['title_$oldIdx'] as String?) ?? '';
+          newInit['provider_$newIdx'] = (current['provider_$oldIdx'] as String?) ?? '';
+          newInit['hours_$newIdx'] = (current['hours_$oldIdx'] as String?) ?? '';
+          newInit['certificate_$newIdx'] = (current['certificate_$oldIdx'] as bool?) ?? false;
+          newIdx++;
+        }
+        _initialValues = newInit;
+        // Patch updated values into the form so indices stay aligned
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _formKey.currentState?.patchValue(_initialValues);
+        });
       });
     }
   }
 
-  void _updateCertificate(int index, bool value) {
-    setState(() {
-      trainings[index].hasCertificate = value;
-    });
+  void _updateCertificate(int index, bool? value) {
+    if (value != null) {
+      setState(() {
+        trainings[index].certificate = value;
+      });
+      // Update form state
+      _formKey.currentState?.fields['certificate_$index']?.didChange(value);
+    }
   }
 
-  void _saveTrainings() {
+  void _saveTrainings() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      // Process the data
-      List<Map<String, dynamic>> trainingsData = trainings
-          .map((training) => {
-                'title': training.titleController.text,
-                'provider': training.providerController.text,
-                'hours': int.tryParse(training.hoursController.text) ?? 0,
-                'certificate': training.hasCertificate,
-              })
-          .toList();
+      // Read values from form state
+      final values = _formKey.currentState!.value;
+      final List<Map<String, dynamic>> trainingsData = List.generate(trainingCount, (i) {
+        final title = (values['title_$i'] as String?)?.trim() ?? '';
+        final provider = (values['provider_$i'] as String?)?.trim() ?? '';
+        final hoursStr = (values['hours_$i'] as String?)?.trim() ?? '';
+        final certificate = (values['certificate_$i'] as bool?) ?? false;
+        return {
+          'title': title,
+          'provider': provider,
+          'hours': int.tryParse(hoursStr) ?? 0,
+          'certificate': certificate,
+        };
+      });
 
-      print('Trainings data: $trainingsData');
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Training details saved successfully!'),
-          backgroundColor: Colors.green[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
-
-      // Navigate back
-      Navigator.pop(context);
+      print('Training data: $trainingsData');
+      await ref.read(profileProvider.notifier).addTrainings(trainingsData);
     }
-  }
-
-  @override
-  void dispose() {
-    for (var training in trainings) {
-      training.dispose();
-    }
-    super.dispose();
   }
 }
 
@@ -121,7 +211,7 @@ class TrainingCard extends StatelessWidget {
   final int index;
   final bool showRemoveButton;
   final VoidCallback onRemove;
-  final Function(bool) onCertificateChanged;
+  final ValueChanged<bool?> onCertificateChanged;
 
   const TrainingCard({
     super.key,
@@ -150,45 +240,75 @@ class TrainingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TrainingCardHeader(
-            index: index,
-            showRemoveButton: showRemoveButton,
-            onRemove: onRemove,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CAF50).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.school_outlined,
+                  color: Color(0xFF4CAF50),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Training ${index + 1}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const Spacer(),
+              if (showRemoveButton)
+                IconButton(
+                  onPressed: onRemove,
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: Colors.red[400],
+                    size: 20,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+            ],
           ),
           const SizedBox(height: 24),
           CustomFormBuilderTextField(
             name: 'title_$index',
-            controller: training.titleController,
             label: 'Training Title',
-            hint: 'e.g. Advanced Flutter Development',
-            icon: Icons.school_outlined,
-            validator: (value) =>
-                CustomValidator.nameValidator(type: 'Training Title'),
+            hint: 'e.g. React Workshop',
+            icon: Icons.title,
+            validator: (value) => CustomValidator.nameValidator(
+                type: 'Training Title', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
             name: 'provider_$index',
-            controller: training.providerController,
-            label: 'Training Provider',
-            hint: 'e.g. Google, Coursera, Udemy',
-            icon: Icons.business_outlined,
-            validator: (value) =>
-                CustomValidator.nameValidator(type: 'Training Provider'),
+            label: 'Provider',
+            hint: 'e.g. Coursera',
+            icon: Icons.business,
+            validator: (value) => CustomValidator.nameValidator(
+                type: 'Provider', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
             name: 'hours_$index',
-            controller: training.hoursController,
             label: 'Duration (Hours)',
             hint: 'e.g. 40',
-            icon: Icons.access_time_outlined,
+            icon: Icons.timelapse,
             keyboardType: TextInputType.number,
-            validator: (value) =>
-                CustomValidator.nameValidator(type: 'Duration'),
+            validator: (value) => CustomValidator.nameValidator(
+                type: 'Duration', input: value),
           ),
           const SizedBox(height: 16),
-          CertificateToggle(
-            hasCertificate: training.hasCertificate,
+          FormBuilderCheckbox(
+            name: 'certificate_$index',
+            title: const Text('I received a certificate for this training'),
             onChanged: onCertificateChanged,
           ),
         ],
@@ -197,156 +317,6 @@ class TrainingCard extends StatelessWidget {
   }
 }
 
-class TrainingCardHeader extends StatelessWidget {
-  final int index;
-  final bool showRemoveButton;
-  final VoidCallback onRemove;
-
-  const TrainingCardHeader({
-    super.key,
-    required this.index,
-    required this.showRemoveButton,
-    required this.onRemove,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.trending_up_outlined,
-            color: Color(0xFF4CAF50),
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'Training ${index + 1}',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const Spacer(),
-        if (showRemoveButton)
-          IconButton(
-            onPressed: onRemove,
-            icon: Icon(
-              Icons.delete_outline,
-              color: Colors.red[400],
-              size: 20,
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-      ],
-    );
-  }
-}
-
-class CertificateToggle extends StatelessWidget {
-  final bool hasCertificate;
-  final Function(bool) onChanged;
-
-  const CertificateToggle({
-    super.key,
-    required this.hasCertificate,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.card_membership_outlined,
-            color: Colors.grey[600],
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Certificate Available',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                Text(
-                  'Did you receive a certificate for this training?',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          CertificateSwitch(
-            value: hasCertificate,
-            onChanged: onChanged,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CertificateSwitch extends StatelessWidget {
-  final bool value;
-  final Function(bool) onChanged;
-
-  const CertificateSwitch({
-    super.key,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.scale(
-      scale: 0.9,
-      child: Switch(
-        value: value,
-        onChanged: onChanged,
-        activeColor: const Color(0xFF4CAF50),
-        activeTrackColor: const Color(0xFF4CAF50).withValues(alpha: 0.3),
-        inactiveThumbColor: Colors.grey[400],
-        inactiveTrackColor: Colors.grey[300],
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-    );
-  }
-}
-
 class TrainingForm {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController providerController = TextEditingController();
-  final TextEditingController hoursController = TextEditingController();
-  bool hasCertificate = false;
-
-  void dispose() {
-    titleController.dispose();
-    providerController.dispose();
-    hoursController.dispose();
-  }
+  bool certificate = false;
 }

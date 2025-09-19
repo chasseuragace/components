@@ -1,45 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/address.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
+// Swap to candidate providers
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart' as cand;
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/candidate/model.dart';
 
-class PersonalInfoFormPage extends StatefulWidget {
+class PersonalInfoFormPage extends ConsumerStatefulWidget {
   const PersonalInfoFormPage({super.key});
 
   @override
-  State<PersonalInfoFormPage> createState() => _PersonalInfoFormPageState();
+  ConsumerState<PersonalInfoFormPage> createState() => _PersonalInfoFormPageState();
 }
 
-class _PersonalInfoFormPageState extends State<PersonalInfoFormPage> {
+class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-
-  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-
-  String? _gender; // Male / Female / Other
-  int? _age;
+  bool _prefilled = false;
+  Map<String, dynamic> _initialValues = {};
+  String? _gender;
 
   @override
   void dispose() {
-    _fullNameController.dispose();
     _dobController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Listen for candidate update status
+    ref.listen<AsyncValue>(cand.updateCandidateProvider, (previous, next) {
+      if (next.isLoading) return;
+      if (next.hasError) {
+        CustomSnackbar.showFailureSnackbar(context, next.error.toString());
+      } else if (previous?.isLoading == true && next.hasValue) {
+        CustomSnackbar.showSuccessSnackbar(context, 'Profile updated');
+        Navigator.pop(context);
+      }
+    });
+
+    // Trigger fetch of candidate profile once (repo uses stored candidate_id)
+    final candState = ref.watch(cand.getCandidateByIdProvider);
+    if (!_prefilled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _prefilled) return;
+        ref.read(cand.getCandidateByIdProvider.notifier).getCandidateById('');
+      });
+    }
+
+    // Prefill personal info from candidate profile
+    candState.whenData((item) {
+      if (!_prefilled && item != null) {
+        final init = <String, dynamic>{
+          'full_name': item.fullName ?? '',
+          'phone': item.phone ?? '',
+          'passport_number': item.passportNumber ?? '',
+          'address_name': item.address?.name ?? '',
+          'address_lat': item.address?.coordinates?.lat?.toString() ?? '',
+          'address_lng': item.address?.coordinates?.lng?.toString() ?? '',
+        };
+        setState(() {
+          _initialValues = init;
+          _prefilled = true;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _formKey.currentState?.patchValue(_initialValues);
+        });
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
         title: 'Personal Information',
         onSave: _savePersonalInfo,
+        isLoading: ref.watch(cand.updateCandidateProvider).isLoading,
       ),
       body: FormBuilder(
         key: _formKey,
+        initialValue: _initialValues,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -50,162 +93,128 @@ class _PersonalInfoFormPageState extends State<PersonalInfoFormPage> {
                 // Full Name
                 CustomFormBuilderTextField(
                   name: 'full_name',
-                  controller: _fullNameController,
                   label: 'Full Name',
-                  hint: 'e.g. Emma Phillips',
-                  icon: Icons.person_outline,
-                  validator: (value) {
-                    return CustomValidator.nameValidator(type: 'Full Name');
-                  },
+                  hint: 'e.g. John Doe',
+                  icon: Icons.person,
+                  validator: (value) =>
+                      CustomValidator.nameValidator(input: value, type: 'Full Name'),
                 ),
                 const SizedBox(height: 16),
-
-                // Date of Birth
-                CustomDateField(
-                  name: 'dob',
-                  controller: _dobController,
-                  label: 'Date of Birth',
-                  hint: 'YYYY-MM-DD',
-                  icon: Icons.cake_outlined,
-                  onTap: _selectDob,
-                ),
-                if (_age != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    'Age: $_age years',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 16),
-
-                // Gender
-                _GenderDropdown(
-                  value: _gender,
-                  onChanged: (val) => setState(() => _gender = val),
-                ),
-                const SizedBox(height: 16),
-
-                // Phone Number
+                // Phone
                 CustomFormBuilderTextField(
                   name: 'phone',
-                  controller: _phoneController,
-                  label: 'Phone Number',
-                  hint: 'e.g. +1 415 555 0101',
-                  icon: Icons.phone_outlined,
+                  label: 'Phone',
+                  hint: 'e.g. +977 9841000000',
+                  icon: Icons.phone,
                   keyboardType: TextInputType.phone,
-                  validator: (value) => CustomValidator.phoneValidator(value),
+                  validator: (value) =>
+                      CustomValidator.phoneValidator(value),
                 ),
                 const SizedBox(height: 16),
-
-                // Email
+                // Passport Number
                 CustomFormBuilderTextField(
-                  name: 'email',
-                  controller: _emailController,
-                  label: 'Email Address',
-                  hint: 'e.g. emma@example.com',
-                  icon: Icons.alternate_email,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) => CustomValidator.emailValidator(value),
+                  name: 'passport_number',
+                  label: 'Passport Number',
+                  hint: 'e.g. P1234567',
+                  icon: Icons.badge_outlined,
+                ),
+                const SizedBox(height: 16),
+                // Address (name)
+                CustomFormBuilderTextField(
+                  name: 'address_name',
+                  label: 'Address Name',
+                  hint: 'e.g. Kathmandu',
+                  icon: Icons.location_on_outlined,
+                ),
+                const SizedBox(height: 16),
+                // Address Coordinates
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFormBuilderTextField(
+                        name: 'address_lat',
+                        label: 'Latitude',
+                        hint: 'e.g. 27.7172',
+                        icon: Icons.map_outlined,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomFormBuilderTextField(
+                        name: 'address_lng',
+                        label: 'Longitude',
+                        hint: 'e.g. 85.3240',
+                        icon: Icons.map_outlined,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-
-            const SizedBox(height: 24),
-            // Optional: Submit button (AppBar already has Save)
-            // ElevatedButton(
-            //   onPressed: _savePersonalInfo,
-            //   child: const Text('Save'),
-            // ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _selectDob() async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000, 1, 1),
+      initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF2196F3),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black87,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
-
     if (picked != null) {
-      _dobController.text =
-          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-      setState(() => _age = _calculateAge(picked));
+      setState(() {
+        _dobController.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
     }
   }
 
-  int _calculateAge(DateTime dob) {
-    final now = DateTime.now();
-    int age = now.year - dob.year;
-    if (now.month < dob.month ||
-        (now.month == dob.month && now.day < dob.day)) {
-      age--;
-    }
-    return age;
-  }
-
-  void _savePersonalInfo() {
+  void _savePersonalInfo() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final data = {
-        'full_name': _fullNameController.text.trim(),
-        'dob': _dobController.text.trim(),
-        'age': _age,
-        'gender': _gender,
-        'phone': _phoneController.text.trim(),
-        'email': _emailController.text.trim(),
-      };
+      final v = _formKey.currentState!.value;
+      // Build typed address entity
+      AddressEntity? address;
+      final lat = double.tryParse((v['address_lat'] ?? '').toString());
+      final lng = double.tryParse((v['address_lng'] ?? '').toString());
+      if ((v['address_name'] ?? '').toString().isNotEmpty || (lat != null && lng != null)) {
+        address = AddressEntity(
+          name: v['address_name'],
+          coordinates: (lat != null && lng != null)
+              ? CoordinatesEntity(lat: lat, lng: lng)
+              : null,
+        );
+      }
 
-      // For now, just print. Hook this to your backend/store as needed.
-      // ignore: avoid_print
-      print('Personal info: $data');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Personal information saved!'),
-          backgroundColor: Colors.green[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
+      final model = CandidateModel(
+        id: '', // repo uses stored candidate id
+        rawJson: {},
+        fullName: v['full_name'],
+        phone: v['phone'],
+        passportNumber: v['passport_number'],
+        address: address,
       );
 
-      Navigator.pop(context);
+      await ref.read(cand.updateCandidateProvider.notifier).updateCandidate(model);
     }
   }
 }
 
-// Generic section card used to group related fields with a header
 class SectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final List<Widget> children;
+  final bool showDivider;
 
   const SectionCard({
     super.key,
     required this.title,
     required this.icon,
     required this.children,
+    this.showDivider = true,
   });
 
   @override
@@ -216,7 +225,7 @@ class SectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(4),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -228,14 +237,7 @@ class SectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2196F3).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: const Color(0xFF2196F3), size: 20),
-              ),
+              Icon(icon, color: Colors.blue, size: 20),
               const SizedBox(width: 12),
               Text(
                 title,
@@ -251,59 +253,6 @@ class SectionCard extends StatelessWidget {
           ...children,
         ],
       ),
-    );
-  }
-}
-
-class _GenderDropdown extends StatelessWidget {
-  final String? value;
-  final ValueChanged<String?> onChanged;
-
-  const _GenderDropdown({
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Gender',
-          style: TextStyle(
-            color: Colors.grey[700],
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              hint: Text(
-                'Select gender',
-                style: TextStyle(color: Colors.grey[500]),
-              ),
-              icon: Icon(Icons.keyboard_arrow_down_rounded,
-                  color: Colors.grey[600]),
-              items: const [
-                DropdownMenuItem(value: 'Male', child: Text('Male')),
-                DropdownMenuItem(value: 'Female', child: Text('Female')),
-                DropdownMenuItem(value: 'Other', child: Text('Other')),
-              ],
-              onChanged: onChanged,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

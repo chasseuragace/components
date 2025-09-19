@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
 
 // Import your custom form field
 // import 'custom_form_builder_text_field.dart';
@@ -244,7 +244,7 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
       });
 
       print('Skills data: $skillsData');
-      await ref.read(profileProvider.notifier).addProfileBlob(skillsData);
+      await ref.read(profileProvider.notifier).addSkills(skillsData);
 
       // Show success message
       // ScaffoldMessenger.of(context).showSnackBar(

@@ -60,7 +60,7 @@ class ProfileRepositoryFake implements ProfileRepository {
       ProfileEntity data = ProfileModel.fromJson(profileData.toJson());
       return right([data]);
     } catch (error) {
-      print(error);
+      print('Error getting all items: $error');
       return left(ServerFailure());
     }
 
@@ -84,38 +84,61 @@ class ProfileRepositoryFake implements ProfileRepository {
   @override
   Future<Either<Failure, Unit>> addItem(ProfileEntity entity) async {
     try {
-      // Simulate delay
       final candidateId = await _storage.getCandidateId();
-      if (candidateId == null) {
-        return left(ServerFailure());
-      }
-      final jobProfileDto = AddJobProfileDto(
-          profileBlob: JobProfileBlobDto(
-            // education: entity.profileBlob?.trainings?.map((training)=> EducationDto(
-            //   title: training.title??'',
-            // degree: training.,
-
-            // )).toList(),
-            // trainings: entity.profileBlob?.trainings?.map((training)=> TrainingDto(
-            //   title: training.title??'',
-            //   certificate: training.certificate,
-            //   hours: training.hours,
-            //   provider: training.provider,
-            // )).toList(),
-              skills: entity.profileBlob?.skills?.map((skill) => 
-                  SkillDto(
+      if (candidateId == null) return left(ServerFailure());
+      
+      final jobProfileDto = UpdateJobProfileDto(
+        profileBlob: JobProfileBlobDto(
+          education: entity.profileBlob?.education
+              ?.map((education) => EducationDto(
+                    degree: education.degree ?? '',
+                    institute: education.institute,
+                    title: education.title ?? '',
+                  ))
+              .toList(),
+          trainings: entity.profileBlob?.trainings
+              ?.map((training) => TrainingDto(
+                    title: training.title ?? '',
+                    provider: training.provider,
+                    hours: training.hours,
+                    certificate: training.certificate,
+                  ))
+              .toList(),
+          skills: entity.profileBlob?.skills
+              ?.map((skill) => SkillDto(
                     title: skill.title ?? '',
                     durationMonths: skill.durationMonths,
                     years: skill.years,
                     documents: skill.documents,
-                  )).toList() ?? []));
-      // i want to implemet api here, which is called by usecase
-      await _api.candidateControllerAddJobProfile(
-          id: candidateId, addJobProfileDto: jobProfileDto);
-      // No actual data operation in fake implementation
+                  ))
+              .toList(),
+          experience: entity.profileBlob?.experience
+              ?.map((exp) => ExperienceDto(
+                    title: exp.title ?? '',
+                    employer: exp.employer,
+                    startDateAd: exp.startDateAd,
+                    endDateAd: exp.endDateAd,
+                    months: exp.months,
+                    description: exp.description,
+                  ))
+              .toList() ,
+        ),
+      );
+      
+      final response = await _api.candidateControllerUpdateJobProfile(
+        id: candidateId,
+        updateJobProfileDto: jobProfileDto,
+      );
+      
+      // Validate response status with null safety
+      if (response.statusCode == null || response.statusCode! < 200 || response.statusCode! >= 300) {
+        print('Failed to add job profile: ${response.statusMessage}');
+        return left(ServerFailure());
+      }
+      
       return right(unit);
     } catch (error) {
-      print("error: $error");
+      print('Error adding job profile: $error');
       return left(ServerFailure());
     }
   }
@@ -129,6 +152,7 @@ class ProfileRepositoryFake implements ProfileRepository {
       // No actual data operation in fake implementation
       return right(unit);
     } catch (error) {
+      print('Error updating item: $error');
       return left(ServerFailure());
     }
   }
@@ -142,6 +166,7 @@ class ProfileRepositoryFake implements ProfileRepository {
       // No actual data operation in fake implementation
       return right(unit);
     } catch (error) {
+      print('Error deleting item: $error');
       return left(ServerFailure());
     }
   }
