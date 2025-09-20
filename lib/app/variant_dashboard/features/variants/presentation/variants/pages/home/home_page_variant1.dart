@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_controller.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/dashboard_header.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_section.dart';
@@ -187,134 +188,6 @@ class DashboardAnalytics {
     required this.totalApplications,
     required this.interviewsScheduled,
   });
-}
-
-// ENHANCED UI COMPONENTS
-
-class DashboardHeader extends ConsumerWidget {
-  // Changed to ConsumerWidget
-  const DashboardHeader({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Added WidgetRef ref
-    final dashboardData = ref.watch(
-      jobDashboardDataProvider,
-    ); // Access data via ref
-    final candidate = dashboardData.candidate;
-    final analytics = dashboardData.analytics;
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child:
-                        Greetings( analytics: analytics),
-                  ),
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.2),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
-                        width: 2,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.person_rounded,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24.0),
-              // Quick Stats Row
-              Row(
-                children: [
-                  _buildQuickStat(
-                    'Applications',
-                    analytics.totalApplications.toString(),
-                    Icons.send_rounded,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickStat(
-                    'Shortlists',
-                    analytics.countriesDistribution.length.toString(),
-                    Icons.list_alt,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickStat(
-                    'Interviews',
-                    analytics.interviewsScheduled.toString(),
-                    Icons.event_rounded,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickStat(String label, String value, IconData icon) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.white.withOpacity(0.8),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-String getGreeting() {
-  final hour = DateTime.now().hour;
-  if (hour < 12) return 'Morning';
-  if (hour < 17) return 'Afternoon';
-  return 'Evening';
 }
 
 // class JobPostingCard extends StatelessWidget {

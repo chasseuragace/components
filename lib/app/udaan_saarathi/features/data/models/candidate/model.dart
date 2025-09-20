@@ -46,3 +46,29 @@ class CandidateModel extends CandidateEntity {
     };
   }
 }
+
+class CandidateStatisticsModel extends CandidateStatisticsEntity {
+  CandidateStatisticsModel({
+    required super.total,
+    required super.active,
+    required super.byStatus,
+    required super.rawJson,
+  });
+
+  factory CandidateStatisticsModel.fromJson(Map<String, dynamic> json) {
+    return CandidateStatisticsModel(
+      total: json['total'] as int,
+      active: json['active'] as int,
+      byStatus: ByStatus.fromJson(json['by_status'] as Map<String, dynamic>),
+      rawJson: json,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'total': total,
+      'active': active,
+      'by_status': byStatus.toJson(),
+    };
+  }
+}

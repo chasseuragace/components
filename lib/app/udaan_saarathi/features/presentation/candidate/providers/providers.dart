@@ -32,6 +32,22 @@ class GetCandidateByIdNotifier extends AsyncNotifier<CandidateEntity?> {
     );
   }
 }
+class GetCandidateAnalyticsByIdNotifier extends AsyncNotifier<CandidateStatisticsEntity?> {
+  @override
+  Future<CandidateStatisticsEntity?> build() async {
+    getCandidateById();
+    return null; // Initially null, call getCandidateById when needed
+  }
+
+  Future<void> getCandidateById() async {
+    state = const AsyncValue.loading();
+    final result = await ref.read(getCandidateAnalyticsByIdUseCaseProvider)(NoParm());
+    state = result.fold(
+      (failure) => AsyncValue.error(failure, StackTrace.current),
+      (item) => AsyncValue.data(item),
+    );
+  }
+}
 
 class AddCandidateNotifier extends AsyncNotifier {
   @override
@@ -100,6 +116,9 @@ final getAllCandidateProvider = AsyncNotifierProvider<GetAllCandidateNotifier, L
 
 final getCandidateByIdProvider = AsyncNotifierProvider<GetCandidateByIdNotifier, CandidateEntity?>(() {
   return GetCandidateByIdNotifier();
+});
+final getCandidatAnalytocseByIdProvider = AsyncNotifierProvider<GetCandidateAnalyticsByIdNotifier, CandidateStatisticsEntity?>(() {
+  return GetCandidateAnalyticsByIdNotifier();
 });
 
 final addCandidateProvider = AsyncNotifierProvider<AddCandidateNotifier, void>(() {

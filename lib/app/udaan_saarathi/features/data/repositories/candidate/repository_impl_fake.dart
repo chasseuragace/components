@@ -11,6 +11,7 @@ import '../auth/token_storage.dart';
 
 class CandidateRepositoryFake implements CandidateRepository {
   final CandidatesApi api = ApiConfig.client().getCandidatesApi();
+  final ApplicationsApi applicationApi = ApiConfig.client().getApplicationsApi();
   final CandidateLocalDataSource localDataSource;
   final CandidateRemoteDataSource remoteDataSource;
   final TokenStorage _storage;
@@ -44,6 +45,23 @@ class CandidateRepositoryFake implements CandidateRepository {
       final dto = res.data;
       if (dto == null) return right(null);
       final model = CandidateModel.fromJson(dto.toJson());
+      return right(model);
+    } catch (error) {
+      return left(ServerFailure());
+    }
+  }
+  @override
+  Future<Either<Failure, CandidateStatisticsModel?>> getCandidateAnalytycs() async {
+    try {
+      // Prefer provided id; otherwise use stored candidate id
+      final candidateId =  (await _storage.getCandidateId()) ?? '';
+      if (candidateId.isEmpty) {
+        return left(ServerFailure());
+      }
+      final res = await applicationApi.applicationControllerAnalytics(id: candidateId);
+      final dto = res.data;
+      if (dto == null) return right(null);
+      final model = CandidateStatisticsModel.fromJson(dto.toJson());
       return right(model);
     } catch (error) {
       return left(ServerFailure());

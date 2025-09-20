@@ -1,3 +1,5 @@
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/candidate/get_candidate_analytics.dart';
+
 import '../../../data/datasources/candidate/local_data_source.dart';
 import '../../../data/datasources/candidate/remote_data_source.dart';
 import '../../../data/repositories/candidate/repository_impl_fake.dart';
@@ -15,6 +17,9 @@ final getAllCandidateUseCaseProvider = Provider<GetAllCandidateUseCase>((ref) {
 
 final getCandidateByIdUseCaseProvider = Provider<GetCandidateByIdUseCase>((ref) {
   return GetCandidateByIdUseCase(ref.watch(rCandidateRepositoryProvider));
+});
+final getCandidateAnalyticsByIdUseCaseProvider = Provider<GetCandidateAnalytics>((ref) {
+  return GetCandidateAnalytics(ref.watch(rCandidateRepositoryProvider));
 });
 
 final addCandidateUseCaseProvider = Provider<AddCandidateUseCase>((ref) {

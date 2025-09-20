@@ -59,6 +59,12 @@ class CandidateRepositoryImpl implements CandidateRepository {
       return left(ServerFailure());
     }
   }
+  
+  @override
+  Future<Either<Failure, CandidateStatisticsEntity?>> getCandidateAnalytycs() {
+    // TODO: implement getCandidateAnalytycs
+    throw UnimplementedError();
+  }
 }
 extension model on CandidateEntity {
   CandidateModel toModel() {
