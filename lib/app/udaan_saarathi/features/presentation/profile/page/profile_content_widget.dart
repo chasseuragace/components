@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart' as cand;
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
+    as cand;
 
 class ProfileContentWidget extends ConsumerStatefulWidget {
   const ProfileContentWidget({super.key});
 
   @override
-  ConsumerState<ProfileContentWidget> createState() => _ProfileContentWidgetState();
+  ConsumerState<ProfileContentWidget> createState() =>
+      _ProfileContentWidgetState();
 }
 
 class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
@@ -27,10 +29,9 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
   @override
   Widget build(BuildContext context) {
     final candidateAsync = ref.watch(cand.getCandidateByIdProvider);
-    final name = candidateAsync.asData?.value?.fullName ?? 'Your Name';
- ref.listen<AsyncValue>(cand.updateCandidateProvider, (previous, next) {
-   ref.refresh(cand.getCandidateByIdProvider);
- });
+    ref.listen<AsyncValue>(cand.updateCandidateProvider, (previous, next) {
+      ref.refresh(cand.getCandidateByIdProvider);
+    });
     return Column(
       children: [
         Stack(
@@ -74,41 +75,82 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
           ],
         ),
         const SizedBox(height: 20),
-        Text(
-          name,
-          style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+        candidateAsync.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: CircularProgressIndicator(),
           ),
-        ),
-        const SizedBox(height: 6),
-        const Text(
-          "Software Developer",
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 4,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.green.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Text(
-            "Available for hire",
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.green,
-              fontWeight: FontWeight.w600,
+          error: (err, st) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              'Failed to load profile',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.red),
             ),
           ),
+          data: (candidate) {
+            final displayName = candidate?.fullName ?? 'Your Name';
+            final phone = candidate?.phone;
+            final address = candidate?.address;
+
+            String? addressText;
+            if (address != null) {
+              final parts = <String>[];
+              if ((address.name ?? '').trim().isNotEmpty) parts.add(address.name!.trim());
+              if ((address.municipality ?? '').trim().isNotEmpty) parts.add(address.municipality!.trim());
+              if ((address.district ?? '').trim().isNotEmpty) parts.add(address.district!.trim());
+              if ((address.province ?? '').trim().isNotEmpty) parts.add(address.province!.trim());
+              if ((address.ward ?? '').trim().isNotEmpty) parts.add('Ward ${address.ward!.trim()}');
+              addressText = parts.isNotEmpty ? parts.join(', ') : null;
+            }
+
+            return Column(
+              children: [
+                Text(
+                  displayName,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                if (phone != null && phone.trim().isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.phone, size: 16, color: Colors.grey),
+                      const SizedBox(width: 6),
+                      Text(
+                        phone,
+                        style: const TextStyle(fontSize: 14, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ],
+                if (addressText != null) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          addressText,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            );
+          },
         ),
       ],
     );
