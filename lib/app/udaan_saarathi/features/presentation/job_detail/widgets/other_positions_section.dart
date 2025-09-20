@@ -3,7 +3,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 class OtherPositionsSection extends StatelessWidget {
-  final JobPosting job;
+  final MobileJobEntity job;
   const OtherPositionsSection({super.key, required this.job});
 
   @override

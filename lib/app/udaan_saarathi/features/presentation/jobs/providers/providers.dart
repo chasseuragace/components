@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
 
@@ -28,9 +30,11 @@ class GetGroupedJobListings extends AsyncNotifier<GroupedJobsEntity> {
   }
 }
 
-class GetJobsByIdNotifier extends AsyncNotifier<JobsEntity?> {
+class GetJobsByIdNotifier extends AsyncNotifier<MobileJobEntity?> {
   @override
-  Future<JobsEntity?> build() async {
+ build() async {
+ 
+  
     return null; // Initially null
   }
 
@@ -39,7 +43,7 @@ class GetJobsByIdNotifier extends AsyncNotifier<JobsEntity?> {
     final result = await ref.read(getJobsByIdUseCaseProvider)(id);
     state =  result.fold(
       (failure) => AsyncValue.error(failure,StackTrace.current),
-      (item) => AsyncValue.data(null),
+      (item) => AsyncValue.data(item),
     );
   }
 }
@@ -112,7 +116,7 @@ final getGroupedJobsProvider = AsyncNotifierProvider<GetGroupedJobListings, Grou
   return GetGroupedJobListings();
 });
 
-final getJobsByIdProvider = AsyncNotifierProvider<GetJobsByIdNotifier, JobsEntity?>(() {
+final getJobsByIdProvider = AsyncNotifierProvider<GetJobsByIdNotifier, MobileJobEntity?>(() {
   return GetJobsByIdNotifier();
 });
 

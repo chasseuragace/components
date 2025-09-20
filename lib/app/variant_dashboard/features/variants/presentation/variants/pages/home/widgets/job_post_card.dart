@@ -5,7 +5,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
 class JobPostingCard extends StatefulWidget {
-  final JobPosting posting;
+  final MobileJobEntity posting;
 
   const JobPostingCard({super.key, required this.posting});
 
@@ -99,7 +99,7 @@ class _JobPostingCardState extends State<JobPostingCard> {
                 const SizedBox(width: 12.0),
                 _buildInfoChip(
                   Icons.work_history_rounded,
-                  widget.posting.contractTerms['type'] ?? 'Contract',
+                  widget.posting.contractTerms.type ?? 'Contract',
                 ),
               ],
             ),
@@ -451,7 +451,7 @@ class _JobPostingCardState extends State<JobPostingCard> {
     return DateFormat.yMMMd().format(date);
   }
 
-  void _showJobDetails(BuildContext context, JobPosting posting) {
+  void _showJobDetails(BuildContext context, MobileJobEntity posting) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -462,7 +462,7 @@ class _JobPostingCardState extends State<JobPostingCard> {
     );
   }
 
-  void _applyToJob(BuildContext context, JobPosting posting) {
+  void _applyToJob(BuildContext context, MobileJobEntity posting) {
     showDialog(
       context: context,
       builder: (context) => ApplyJobDialog(posting: posting),

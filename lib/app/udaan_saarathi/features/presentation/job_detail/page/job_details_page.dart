@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart' show getJobsByIdProvider;
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
-class JobDetailPage extends StatefulWidget {
-  final JobPosting job;
+final selectedJobIdProvider = StateProvider<String?>((ref)=>null);
+class JobDetailPage extends ConsumerStatefulWidget {
+  final MobileJobEntity job;
 
   const JobDetailPage({super.key, required this.job});
 
   @override
-  State<JobDetailPage> createState() => _JobDetailPageState();
+  ConsumerState<JobDetailPage> createState() => _JobDetailPageState();
 }
 
-class _JobDetailPageState extends State<JobDetailPage> {
+class _JobDetailPageState extends ConsumerState<JobDetailPage> {
   bool isSaved = false;
 
   @override
   Widget build(BuildContext context) {
     final job = widget.job;
+
+final jobdataprovider =ref.watch(getJobsByIdProvider);
+
 
     return Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
@@ -59,81 +67,94 @@ class _JobDetailPageState extends State<JobDetailPage> {
             // ),
           ],
         ),
-        body: Column(children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Content
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        JobTitleSection(job: job),
-                        const SizedBox(height: 24),
-                        CompanyDetailsSection(job: job),
-                        const SizedBox(height: 24),
-                        // Quick Info Cards
-                        // QuickInfoSection(job: job),
-                        // const SizedBox(height: 24),
+        body: 
+        jobdataprovider.when(data: (MobileJobEntity? data) { 
+    
+      return  body(data !);
+     }, error: (Object error, StackTrace stackTrace) { 
+      return Text("error : $error\n$stackTrace");
+      }, loading: () {  
+        return Text("loading");
+      })
+       );
+  }
 
-                        // Job Overview
-                        JobOverviewSection(job: job),
-                        const SizedBox(height: 24),
-                        OtherPositionsSection(job: job),
-                        const SizedBox(height: 24),
+  Column body(MobileJobEntity job) {
+    return Column(children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      JobTitleSection(job: job),
+                      const SizedBox(height: 24),
+                      CompanyDetailsSection(job: job),
+                      const SizedBox(height: 24),
+                      // Quick Info Cards
+                      // QuickInfoSection(job: job),
+                      // const SizedBox(height: 24),
 
-                        // Contract & Employment Details
-                        ContractDetailsSection(job: job),
-                        const SizedBox(height: 24),
-                        FacilitiesSection(job: job),
-                        const SizedBox(height: 24),
+                      // Job Overview
+                      JobOverviewSection(job: job),
+                      const SizedBox(height: 24),
+                      OtherPositionsSection(job: job),
+                      const SizedBox(height: 24),
 
-                        // Salary Information
-                        SalarySection(job: job),
-                        const SizedBox(height: 24),
-                        RequirementsSection(job: job),
-                        // Requirements
-                        // LegacyRequirementsSection(allRequirements: job.positions.expand((p) => p.requirements).toList()),
-                        const SizedBox(height: 24),
-                        const JobImageSection(),
-                        const SizedBox(height: 24),
-                        CompanyPolicySection(job: job),
-                        const SizedBox(height: 24),
+                      // Contract & Employment Details
+                      ContractDetailsSection(job: job),
+                      const SizedBox(height: 24),
+                      FacilitiesSection(job: job),
+                      const SizedBox(height: 24),
 
-                        // Other Positions
-                        // if (job['otherPositions'] != null &&
-                        //     (job['otherPositions'] as List).isNotEmpty)
-                        //   OtherPositionsSection(job: job),
-                        AgencySection(job: job),
-                        const SizedBox(height: 24),
-                        // Action Buttons
-                        //remove this if using bottom action buttonsgh
-                        const ActionButtons(),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
+                      // Salary Information
+                      SalarySection(job: job),
+                      const SizedBox(height: 24),
+                      RequirementsSection(job: job),
+                      // Requirements
+                      // LegacyRequirementsSection(allRequirements: job.positions.expand((p) => p.requirements).toList()),
+                      const SizedBox(height: 24),
+                      const JobImageSection(),
+                      const SizedBox(height: 24),
+                      CompanyPolicySection(job: job),
+                      const SizedBox(height: 24),
+
+                      // Other Positions
+                      // if (job['otherPositions'] != null &&
+                      //     (job['otherPositions'] as List).isNotEmpty)
+                      //   OtherPositionsSection(job: job),
+                      AgencySection(job: job),
+                      const SizedBox(height: 24),
+                      // Action Buttons
+                      //remove this if using bottom action buttonsgh
+                      const ActionButtons(),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+        ),
 
-          // use this if required instead of action buttons
-          BottomActionButtons(
-            onApply: () {
-              // your apply logic
-            },
-            onContact: () {
-              // your contact logic
-            },
-            onWebView: () {
-              // your webview logic
-            },
-          )
-        ]));
+        // use this if required instead of action buttons
+        BottomActionButtons(
+          onApply: () {
+            // your apply logic
+          },
+          onContact: () {
+            // your contact logic
+          },
+          onWebView: () {
+            // your webview logic
+          },
+        )
+      ]);
   }
 }
 // Quick Info Section with cards

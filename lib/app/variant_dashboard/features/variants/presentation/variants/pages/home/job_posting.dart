@@ -1,6 +1,10 @@
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
-class JobPosting {
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
+
+import 'domain/entities/home_screen_entity.dart';
+import 'home_page_variant1.dart';
+
+class MobileJobEntity {
   final String id;
   final String postingTitle;
   final String country;
@@ -9,7 +13,7 @@ class JobPosting {
   final String employer;
   final List<JobPosition> positions;
   final String description;
-  final Map<String, dynamic> contractTerms;
+  final ContractTerms contractTerms;
   final bool isActive;
   final DateTime postedDate;
   final String? preferencePriority;
@@ -25,7 +29,7 @@ class JobPosting {
   final String? convertedSalary;
   final int? applications;
   final String? policy;
-  JobPosting({
+  MobileJobEntity({
     required this.id,
     required this.postingTitle,
     required this.country,

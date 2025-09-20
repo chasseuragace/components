@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 class FacilitiesSection extends StatelessWidget {
-  final JobPosting job;
+  final MobileJobEntity job;
   const FacilitiesSection({super.key, required this.job});
 
   @override

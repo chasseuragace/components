@@ -3,7 +3,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 class JobTitleSection extends StatelessWidget {
-  final JobPosting job;
+  final MobileJobEntity job;
   const JobTitleSection({super.key, required this.job});
 
   @override

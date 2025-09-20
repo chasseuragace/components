@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
@@ -49,7 +50,7 @@ class RecommendedJobsSection extends ConsumerWidget {
           ...jobsState.when(data: (grouped) {
             // Render groups with their jobs mapped to JobPosting
             return grouped.groups.expand<Widget>((group) {
-              final List<JobPosting> postings = group.jobs
+              final List<MobileJobEntity> postings = group.jobs
                   .map((j) => JobPostingMapper.fromGroupJob(j))
                   .toList(growable: false);
 
@@ -92,7 +93,7 @@ class RecommendedJobsSection extends ConsumerWidget {
 
 
 class _GroupPostingsPager extends StatefulWidget {
-  final List<JobPosting> postings;
+  final List<MobileJobEntity> postings;
 
   const _GroupPostingsPager({required this.postings});
 
@@ -144,7 +145,16 @@ class _GroupPostingsPagerState extends State<_GroupPostingsPager> {
                 padding: EdgeInsets.only(
                   right: index == widget.postings.length - 1 ? 0 : 12,
                 ),
-                child: JobPostingCard(posting: p),
+                child: Consumer(
+                  builder: (context,ref,_) {
+                    return GestureDetector(
+                      onTap: (){
+                        ref.read(selectedJobIdProvider.notifier).update((cb)=>p.id);
+                        ref.read(getJobsByIdProvider.notifier).getJobsById(p.id);
+                      },
+                      child: JobPostingCard(posting: p));
+                  }
+                ),
               );
             },
           ),

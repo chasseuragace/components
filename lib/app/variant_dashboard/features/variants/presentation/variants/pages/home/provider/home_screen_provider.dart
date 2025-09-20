@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
@@ -13,7 +14,7 @@ class HomeScreenProvider extends ChangeNotifier {
   final Candidate _candidate;
   final List<CandidatePreference> _preferences;
   final List<JobProfile> _jobProfiles;
-  final List<JobPosting> _recommendedJobs;
+  final List<MobileJobEntity> _recommendedJobs;
   final List<Application> _applications;
   final DashboardAnalytics _analytics;
   JobFilters _currentFilters;
@@ -57,7 +58,7 @@ class HomeScreenProvider extends ChangeNotifier {
         ),
       ],
       _recommendedJobs = [
-        JobPosting(
+        MobileJobEntity(
           id: 'post_001',
           postingTitle: 'Hospitality Staff Recruitment - Multiple Roles',
           country: 'Qatar',
@@ -66,7 +67,7 @@ class HomeScreenProvider extends ChangeNotifier {
           employer: 'Doha Grand Hotel',
           description:
               'Hiring skilled hospitality staff for hotel operations and customer service.',
-          contractTerms: {'duration': '2 years', 'type': 'Full-time'},
+          contractTerms: ContractTerms(duration: '2 years', type: 'Full-time'),
           postedDate: DateTime.now().subtract(const Duration(days: 2)),
           preferenceText: 'Hospitality',
           positions: [
@@ -91,7 +92,7 @@ class HomeScreenProvider extends ChangeNotifier {
             ),
           ],
         ),
-        JobPosting(
+        MobileJobEntity(
           id: 'post_002',
           postingTitle: 'Skilled Labor Recruitment - Construction Projects',
           country: 'UAE',
@@ -100,7 +101,7 @@ class HomeScreenProvider extends ChangeNotifier {
           employer: 'Dubai Infrastructure Corp.',
           description:
               'Looking for experienced workers for large-scale construction projects.',
-          contractTerms: {'duration': '3 years', 'type': 'Contract'},
+          contractTerms: ContractTerms(duration: '3 years', type: 'Contract'),
           postedDate: DateTime.now().subtract(const Duration(days: 1)),
           preferenceText: 'Construction Worker',
 
@@ -133,7 +134,7 @@ class HomeScreenProvider extends ChangeNotifier {
           id: 'app_001',
           candidateId: 'cand_001',
           postingId: 'post_001',
-          posting: JobPosting(
+          posting: MobileJobEntity(
             id: 'post_003',
             postingTitle: 'Hospitality Staff Recruitment - Multiple Roles',
             country: 'Qatar',
@@ -142,7 +143,7 @@ class HomeScreenProvider extends ChangeNotifier {
             employer: 'Doha Grand Hotel',
             description:
                 'Hiring skilled hospitality staff for hotel operations and customer service.',
-            contractTerms: {'duration': '1 year', 'type': 'Full-time'},
+            contractTerms: ContractTerms(duration: '1 year', type: 'Full-time'),
             postedDate: DateTime.now().subtract(Duration(days: 7)),
             preferenceText: 'Electrician',
 
@@ -199,7 +200,7 @@ class HomeScreenProvider extends ChangeNotifier {
   Candidate get candidate => _candidate;
   List<CandidatePreference> get preferences => _preferences;
   List<JobProfile> get jobProfiles => _jobProfiles;
-  List<JobPosting> get recommendedJobs => _recommendedJobs;
+  List<MobileJobEntity> get recommendedJobs => _recommendedJobs;
   List<Application> get applications => _applications;
   DashboardAnalytics get analytics => _analytics;
   JobFilters get currentFilters => _currentFilters;

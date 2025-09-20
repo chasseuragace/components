@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page.dart';
@@ -52,7 +53,7 @@ const job = {
   'matchPercentage': 95,
 };
 
-JobPosting blueCollarJobQatar = JobPosting(
+MobileJobEntity blueCollarJobQatar = MobileJobEntity(
   id: 'post_2001',
   postingTitle: 'Hospitality & Maintenance Staff - Multiple Openings',
   country: 'Qatar',
@@ -93,7 +94,7 @@ JobPosting blueCollarJobQatar = JobPosting(
   ],
   description:
       'We are hiring hospitality and maintenance staff for hotels and service apartments in Doha. Openings available for waiters, cleaners, and drivers. Food, accommodation, and transportation are provided by the company.',
-  contractTerms: {'duration': '2 years', 'type': 'Full-time'},
+  contractTerms: ContractTerms(duration: '2 years', type: 'Full-time'),
   isActive: true,
   postedDate: DateTime.now().subtract(Duration(days: 1)),
   preferencePriority: '1',

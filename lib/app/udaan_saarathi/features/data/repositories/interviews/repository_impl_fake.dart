@@ -43,6 +43,7 @@ final api =ApiConfig.client().getCandidatesApi();
 
       return right(pagination);
     } catch (error) {
+
       return left(ServerFailure());
     }
   }
@@ -72,7 +73,9 @@ final api =ApiConfig.client().getCandidatesApi();
 
       final match = models.firstWhere((m) => m.id == id, orElse: () => throw 'Not found');
       return right(match);
-    } catch (error) {
+    } catch (error,s) {
+      print(error);
+      print(s);
       return left(ServerFailure());
     }
   }

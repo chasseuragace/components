@@ -3,7 +3,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 class JobDetailScreen1 extends StatefulWidget {
-  final JobPosting job;
+  final MobileJobEntity job;
 
   const JobDetailScreen1({super.key, required this.job});
 
@@ -165,7 +165,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   }
 
   // Quick Info Section with cards
-  Widget _buildQuickInfoSection(JobPosting job) {
+  Widget _buildQuickInfoSection(MobileJobEntity job) {
     return Row(
       children: [
         Expanded(
@@ -292,7 +292,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   }
 
   // Job Overview Section
-  Widget _buildJobOverviewSection(JobPosting job) {
+  Widget _buildJobOverviewSection(MobileJobEntity job) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -404,7 +404,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   }
 
   // Contract & Employment Details
-  Widget _buildContractDetailsSection(JobPosting job) {
+  Widget _buildContractDetailsSection(MobileJobEntity job) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -570,7 +570,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   //     ),
   //   );
   // }
-  Widget _buildFacilitiesSection(JobPosting job) {
+  Widget _buildFacilitiesSection(MobileJobEntity job) {
     final facilities =
         //  job.facilities?.isNotEmpty == true
         //     ? job.facilities
@@ -646,7 +646,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   }
 
   // Salary Section
-  Widget _buildSalarySection(JobPosting job) {
+  Widget _buildSalarySection(MobileJobEntity job) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -801,7 +801,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
     );
   }
 
-  Widget _buildRequirementSection(JobPosting job) {
+  Widget _buildRequirementSection(MobileJobEntity job) {
     final requirements = job.positions as List<dynamic>? ??
         [
           'Bachelor\'s degree in relevant field',
@@ -998,7 +998,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   // }
 
   // Other Positions Section
-  Widget _buildOtherPositionsSection(JobPosting job) {
+  Widget _buildOtherPositionsSection(MobileJobEntity job) {
     //TODO
     final otherPositions = job.positions;
 
@@ -1165,7 +1165,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
     );
   }
 
-  Widget _buildJobImageSection(JobPosting job) {
+  Widget _buildJobImageSection(MobileJobEntity job) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -1233,7 +1233,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   }
 
   // Section 9: Company Policy - Clean Typography
-  Widget _buildCompanyPolicySection(JobPosting job) {
+  Widget _buildCompanyPolicySection(MobileJobEntity job) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -1276,7 +1276,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
     );
   }
 
-  Widget _buildAgencySection(JobPosting job) {
+  Widget _buildAgencySection(MobileJobEntity job) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(

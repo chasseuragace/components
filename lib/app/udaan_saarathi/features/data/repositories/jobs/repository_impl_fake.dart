@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:openapi/openapi.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/grouped_jobs_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
 
 import '../../../../core/config/api_config.dart';
@@ -287,15 +289,17 @@ class JobsRepositoryFake implements JobsRepository {
   }
 
   @override
-  Future<Either<Failure, JobsEntity?>> getItemById(String id) async {
+  Future<Either<Failure, MobileJobEntity>> getItemById(String id) async {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-      final remoteItem = jobPostings.firstWhere((item) => item.id == id,
-          orElse: () => throw "Not found");
-      return right(remoteItem);
-    } catch (error) {
+    final data=  await  _api.candidateControllerGetJobMobile(id:  (await storage.getCandidateId())!, jobId: id);
+     print(data.data!.toJson());
+      return right(MobileJobModel.fromJson(data.data!.toJson()));
+    } catch (error,s) {
+       print(error);
+      print(s);
       return left(ServerFailure());
     }
   }

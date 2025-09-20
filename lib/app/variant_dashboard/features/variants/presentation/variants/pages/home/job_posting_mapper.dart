@@ -1,3 +1,4 @@
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart' show JobPosition; // For JobPosition
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
@@ -6,21 +7,21 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 /// into UI models (JobPosting, JobPosition) expected by widgets like JobPostingCard.
 class JobPostingMapper {
   /// Map an entire GroupedJobsEntity -> List<JobPosting> (flatten all groups)
-  static List<JobPosting> fromGroupedJobs(GroupedJobsEntity entity) {
+  static List<MobileJobEntity> fromGroupedJobs(GroupedJobsEntity entity) {
     return entity.groups
         .expand((group) => fromJobGroup(group))
         .toList(growable: false);
   }
 
   /// Map a group (JobGroupEntity) -> List<JobPosting>
-  static List<JobPosting> fromJobGroup(JobGroupEntity group) {
+  static List<MobileJobEntity> fromJobGroup(JobGroupEntity group) {
     return group.jobs
         .map((job) => fromGroupJob(job))
         .toList(growable: false);
   }
 
   /// Core mapping: GroupJobEntity -> JobPosting
-  static JobPosting fromGroupJob(GroupJobEntity job) {
+  static MobileJobEntity fromGroupJob(GroupJobEntity job) {
     final positions = _positionsFromPrimaryTitles(job);
 
     final baseSalaryStr = _formatBaseSalary(job.salary);
@@ -32,7 +33,7 @@ class JobPostingMapper {
     // Match percentage from fitnessScore if available
     final matchPct = job.fitnessScore > 0 ? '${job.fitnessScore}%' : null;
 
-    return JobPosting(
+    return MobileJobEntity(
       id: job.id,
       postingTitle: job.postingTitle,
       country: job.country,
@@ -118,9 +119,9 @@ class JobPostingMapper {
     return parts.join(' • ');
   }
 
-  static Map<String, dynamic> _buildContractTerms() {
+  static ContractTerms _buildContractTerms() {
     // Backend contract data not present; leave empty so UI falls back to defaults
-    return <String, dynamic>{};
+    return ContractTerms(duration: '', type: '');
   }
 
   static String _composeLocation(GroupJobEntity job) {

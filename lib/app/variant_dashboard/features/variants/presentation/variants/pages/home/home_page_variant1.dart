@@ -85,7 +85,7 @@ class Application {
   final String id;
   final String candidateId;
   final String postingId;
-  final JobPosting posting;
+  final MobileJobEntity posting;
   final ApplicationStatus status;
   final String? note;
   final List<ApplicationHistory> history;
@@ -501,7 +501,7 @@ class DashboardAnalytics {
 // }
 
 class JobDetailsModal extends StatelessWidget {
-  final JobPosting posting;
+  final MobileJobEntity posting;
 
   const JobDetailsModal({super.key, required this.posting});
 
@@ -554,11 +554,11 @@ class JobDetailsModal extends StatelessWidget {
                     ),
                     _buildDetailRow(
                       'Contract Type',
-                      posting.contractTerms['type'] ?? 'Not specified',
+                      posting.contractTerms.type ?? 'Not specified',
                     ),
                     _buildDetailRow(
                       'Duration',
-                      posting.contractTerms['duration'] ?? 'Not specified',
+                      posting.contractTerms.duration ?? 'Not specified',
                     ),
                     _buildDetailRow('Posted', _formatDate(posting.postedDate)),
                   ]),
@@ -763,7 +763,7 @@ class JobDetailsModal extends StatelessWidget {
     return DateFormat.yMMMd().format(date);
   }
 
-  void _applyToJob(BuildContext context, JobPosting posting) {
+  void _applyToJob(BuildContext context, MobileJobEntity posting) {
     showDialog(
       context: context,
       builder: (context) => ApplyJobDialog(posting: posting),
@@ -773,7 +773,7 @@ class JobDetailsModal extends StatelessWidget {
 
 class ApplyJobDialog extends ConsumerStatefulWidget {
   // Changed to ConsumerStatefulWidget
-  final JobPosting posting;
+  final MobileJobEntity posting;
 
   const ApplyJobDialog({super.key, required this.posting});
 
