@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:variant_dashboard/app/pm_board/wrapper_widget.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
@@ -59,7 +60,8 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
       controller: PageController(viewportFraction: .3),
       
       children: [
-         buildScreen(const ProfilePage()),
+         buildScreen( InterviewsListPage()),
+      if(!false)...  [ buildScreen(const ProfilePage()),
         buildScreen(const SplashScreen()),
         buildScreen(const OnboardingListPage()),
         PageView(
@@ -81,7 +83,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
         buildScreen(const HomePageVariant1()),
         buildScreen(JobDetailPage(job: blueCollarJobQatar)),
        
-        buildScreen(const JobsListPage()),
+        buildScreen(const JobsListPage()),]
       ].map((e) => KeepAlive(child: e)).toList(),
     );
   }

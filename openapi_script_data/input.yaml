@@ -61,7 +61,11 @@ paths:
               type: string
       responses:
         '200':
-          description: ''
+          description: Paginated interviews
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInterviewsDto'
       tags:
         - interviews
   /job-titles:
@@ -1470,7 +1474,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/PaginatedInterviewsDto'
       tags:
         - candidates
   /candidates/{id}/preferences:
@@ -1700,6 +1704,174 @@ tags: []
 servers: []
 components:
   schemas:
+    InterviewScheduleDto:
+      type: object
+      properties:
+        date_ad:
+          type: string
+          format: date
+          nullable: true
+          description: AD date (ISO string yyyy-mm-dd)
+        date_bs:
+          type: string
+          nullable: true
+          description: BS date (yyyy-mm-dd in BS)
+        time:
+          type: string
+          nullable: true
+          description: Time (HH:MM[:SS])
+    ApplicationLiteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+      required:
+        - id
+        - status
+    PostingLiteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        posting_title:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+          nullable: true
+          example: Kathmandu
+      required:
+        - id
+        - posting_title
+        - country
+    AgencyLiteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        license_number:
+          type: string
+        phones:
+          nullable: true
+          type: array
+          items:
+            type: string
+        emails:
+          nullable: true
+          type: array
+          items:
+            type: string
+        website:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+        - license_number
+    EmployerLiteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        company_name:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+          nullable: true
+          example: Dubai
+      required:
+        - id
+        - company_name
+        - country
+    InterviewExpenseDto:
+      type: object
+      properties:
+        expense_type:
+          type: string
+        who_pays:
+          type: string
+        is_free:
+          type: boolean
+        amount:
+          type: number
+        currency:
+          type: string
+        refundable:
+          type: boolean
+        notes:
+          type: string
+      required:
+        - expense_type
+        - who_pays
+        - is_free
+        - refundable
+    InterviewEnrichedDto:
+      type: object
+      properties:
+        id:
+          type: string
+        schedule:
+          $ref: '#/components/schemas/InterviewScheduleDto'
+        location:
+          type: string
+          nullable: true
+        contact_person:
+          type: string
+          nullable: true
+        required_documents:
+          nullable: true
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+          nullable: true
+        application:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/ApplicationLiteDto'
+        posting:
+          $ref: '#/components/schemas/PostingLiteDto'
+        agency:
+          $ref: '#/components/schemas/AgencyLiteDto'
+        employer:
+          $ref: '#/components/schemas/EmployerLiteDto'
+        expenses:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterviewExpenseDto'
+      required:
+        - id
+        - schedule
+        - posting
+        - agency
+        - employer
+        - expenses
+    PaginatedInterviewsDto:
+      type: object
+      properties:
+        page:
+          type: number
+        limit:
+          type: number
+        total:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterviewEnrichedDto'
+      required:
+        - page
+        - limit
+        - total
+        - items
     JobTitleDto:
       type: object
       properties:
@@ -1944,29 +2116,6 @@ components:
           format: uuid
       required:
         - id
-    AgencyLiteDto:
-      type: object
-      properties:
-        name:
-          type: string
-        license_number:
-          type: string
-      required:
-        - name
-        - license_number
-    EmployerLiteDto:
-      type: object
-      properties:
-        company_name:
-          type: string
-        country:
-          type: string
-        city:
-          type: object
-          nullable: true
-      required:
-        - company_name
-        - country
     ContractDto:
       type: object
       properties:
@@ -2297,18 +2446,41 @@ components:
       type: object
       properties:
         monthly_min:
-          type: object
+          type: number
           nullable: true
         monthly_max:
-          type: object
+          type: number
           nullable: true
         currency:
-          type: object
+          type: string
           nullable: true
         converted:
           type: array
           items:
             $ref: '#/components/schemas/SalaryConvertedDto'
+    CardAgencyLiteDto:
+      type: object
+      properties:
+        name:
+          type: string
+        license_number:
+          type: string
+      required:
+        - name
+        - license_number
+    CardEmployerLiteDto:
+      type: object
+      properties:
+        company_name:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+          nullable: true
+      required:
+        - company_name
+        - country
     CandidateJobCardDto:
       type: object
       properties:
@@ -2319,7 +2491,7 @@ components:
         country:
           type: string
         city:
-          type: object
+          type: string
           nullable: true
         primary_titles:
           type: array
@@ -2328,14 +2500,14 @@ components:
         salary:
           $ref: '#/components/schemas/SalarySummaryDto'
         agency:
-          $ref: '#/components/schemas/AgencyLiteDto'
+          $ref: '#/components/schemas/CardAgencyLiteDto'
         employer:
-          $ref: '#/components/schemas/EmployerLiteDto'
+          $ref: '#/components/schemas/CardEmployerLiteDto'
         posting_date_ad:
-          type: object
+          type: string
           nullable: true
         cutout_url:
-          type: object
+          type: string
           nullable: true
         fitness_score:
           type: number
