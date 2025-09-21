@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/config/api_config.dart';
 import '../../../../core/errors/failures.dart';
@@ -7,6 +6,7 @@ import '../../../domain/repositories/applicaitons/repository.dart';
 import '../../datasources/applicaitons/local_data_source.dart';
 import '../../datasources/applicaitons/remote_data_source.dart';
 import '../../models/applicaitons/model.dart';
+import 'package:openapi/openapi.dart';
 // Fake data for Applicaitonss
       final remoteItems = [
         ApplicaitonsModel(
@@ -75,19 +75,20 @@ final api = ApiConfig.client().getApplicationsApi();
   Future<Either<Failure, Unit>> addItem(ApplicaitonsEntity entity) async {
     try {
       // This is the job application method - apply for a job
-      final applicationData = {
-        'candidate_id': entity.id, // Assuming entity.id is candidate_id
-        'job_posting_id': entity.rawJson['job_posting_id'], // Job ID from rawJson
-        'note': entity.rawJson['note'] ?? 'Applied via mobile app',
-        'updatedBy': 'candidate-mobile-app',
-      };
+      final applyJobDto = ApplyJobDto(
+        candidateId: entity.id, // Assuming entity.id is candidate_id
+        jobPostingId: entity.rawJson['job_posting_id'], // Job ID from rawJson
+        note: entity.rawJson['note'] ?? 'Applied via mobile app',
+        updatedBy: 'candidate-mobile-app',
+      );
       
       final response = await api.applicationControllerApply(
-        body: jsonEncode(applicationData), // Convert to JSON string
+        applyJobDto: applyJobDto, // Send proper DTO
       );
       
       print('✅ Job application submitted successfully');
       print('📋 Response: ${response.statusCode}');
+      print('📋 Application ID: ${response.data?.id}');
       
       return right(unit);
     } catch (error) {
