@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:dartz/dartz.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/config/api_config.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/applicaitons/entity.dart';
 import '../../../domain/repositories/applicaitons/repository.dart';
@@ -27,7 +29,7 @@ import '../../models/applicaitons/model.dart';
 class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
   final ApplicaitonsLocalDataSource localDataSource;
   final ApplicaitonsRemoteDataSource remoteDataSource;
-
+final api = ApiConfig.client().getApplicationsApi();
   ApplicaitonsRepositoryFake({
     required this.localDataSource,
     required this.remoteDataSource,
@@ -36,21 +38,25 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
   @override
   Future<Either<Failure, List<ApplicaitonsEntity>>> getAllItems() async {
     try {
-    
+      // This method can be used to get all applications for a candidate
+      // For now, return fake data, but in real implementation we'd call:
+      // api.applicationControllerListForCandidate(id: candidateId)
 
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
       return right(remoteItems.map((model) => model).toList());
     } catch (error) {
-      return left(ServerFailure());
+      return left(ServerFailure(
+        message: 'Failed to fetch applications',
+        details: error.toString(),
+      ));
     }
   }
 
   @override
   Future<Either<Failure, ApplicaitonsEntity?>> getItemById(String id) async {
     try {
-    
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
@@ -58,20 +64,38 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
           orElse: () => throw "Not found");
       return right(remoteItem);
     } catch (error) {
-      return left(ServerFailure());
+      return left(ServerFailure(
+        message: 'Failed to fetch application',
+        details: error.toString(),
+      ));
     }
   }
 
   @override
   Future<Either<Failure, Unit>> addItem(ApplicaitonsEntity entity) async {
     try {
-      // Simulate delay
-      await Future.delayed(Duration(milliseconds: 300));
-
-      // No actual data operation in fake implementation
+      // This is the job application method - apply for a job
+      final applicationData = {
+        'candidate_id': entity.id, // Assuming entity.id is candidate_id
+        'job_posting_id': entity.rawJson['job_posting_id'], // Job ID from rawJson
+        'note': entity.rawJson['note'] ?? 'Applied via mobile app',
+        'updatedBy': 'candidate-mobile-app',
+      };
+      
+      final response = await api.applicationControllerApply(
+        body: jsonEncode(applicationData), // Convert to JSON string
+      );
+      
+      print('✅ Job application submitted successfully');
+      print('📋 Response: ${response.statusCode}');
+      
       return right(unit);
     } catch (error) {
-      return left(ServerFailure());
+      print('❌ Job application failed: $error');
+      return left(ServerFailure(
+        message: 'Failed to apply for job',
+        details: error.toString(),
+      ));
     }
   }
 

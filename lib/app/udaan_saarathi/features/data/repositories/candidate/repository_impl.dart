@@ -20,7 +20,10 @@ class CandidateRepositoryImpl implements CandidateRepository {
       final remoteItems = await remoteDataSource.getAllItems();
       return right(remoteItems);
     } catch (error) {
-      return left(ServerFailure());
+      return left(ServerFailure(
+        message: 'Failed to get all candidates',
+        details: error.toString(),
+      ));
     }
   }
 
@@ -36,7 +39,10 @@ class CandidateRepositoryImpl implements CandidateRepository {
       await remoteDataSource.addItem((entity as CandidateModel));
       return right(unit);
     } catch (error) {
-      return left(ServerFailure());
+      return left(ServerFailure(
+        message: 'Failed to add candidate',
+        details: 'Entity: ${entity.toString()}, Error: ${error.toString()}',
+      ));
     }
   }
 
@@ -46,7 +52,10 @@ class CandidateRepositoryImpl implements CandidateRepository {
       await remoteDataSource.updateItem((entity as CandidateModel));
       return right(unit);
     } catch (error) {
-      return left(ServerFailure());
+      return left(ServerFailure(
+        message: 'Failed to update candidate',
+        details: 'Entity: ${entity.toString()}, Error: ${error.toString()}',
+      ));
     }
   }
 
@@ -56,7 +65,10 @@ class CandidateRepositoryImpl implements CandidateRepository {
       await remoteDataSource.deleteItem(id);
       return right(unit);
     } catch (error) {
-      return left(ServerFailure());
+      return left(ServerFailure(
+        message: 'Failed to delete candidate',
+        details: 'ID: $id, Error: ${error.toString()}',
+      ));
     }
   }
   

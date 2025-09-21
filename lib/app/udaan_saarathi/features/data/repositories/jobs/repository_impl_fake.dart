@@ -346,12 +346,47 @@ class JobsRepositoryFake implements JobsRepository {
   @override
   Future<Either<Failure, GroupedJobsEntity>> getGroupedJobs() async {
     try {
-      final data = await _api.candidateControllerGetRelevantJobsGrouped(
-          id: (await storage.getCandidateId())!);
+      final candidateId = await storage.getCandidateId();
+      print('🔍 Attempting to fetch grouped relevant jobs for candidate ID: $candidateId');
+      
+      if (candidateId == null || candidateId.isEmpty) {
+        print('❌ No candidate ID found in storage for grouped jobs');
+        return left(ServerFailure(
+          message: 'No candidate ID available for grouped jobs',
+          details: 'Candidate ID is required to fetch grouped jobs but was not found in storage',
+        ));
+      }
 
-      return right(GroupedJobsModel.fromJson(data.data!.toJson()));
-    } catch (e) {
-      return left(ServerFailure());
+      print('📡 Making API call to fetch grouped relevant jobs...');
+      final data = await _api.candidateControllerGetRelevantJobsGrouped(id: candidateId);
+      print('📡 Grouped jobs API response status: ${data.statusCode}');
+
+      if (data.data == null) {
+        print('⚠️ Grouped jobs API returned null data');
+        return left(ServerFailure(
+          message: 'No grouped jobs data received',
+          details: 'API returned null data for grouped jobs',
+        ));
+      }
+
+      print('✅ Successfully fetched grouped relevant jobs data');
+      final groupedJobs = GroupedJobsModel.fromJson(data.data!.toJson());
+      
+      // Log summary of what was fetched
+      int totalJobs = 0;
+      for (final group in groupedJobs.groups) {
+        totalJobs += group.jobs.length;
+      }
+      print('📊 Fetched ${groupedJobs.groups.length} job groups with $totalJobs total jobs');
+      
+      return right(groupedJobs);
+    } catch (error, stackTrace) {
+      print('❌ Error fetching grouped relevant jobs: $error');
+      print('📚 Stack trace: $stackTrace');
+      return left(ServerFailure(
+        message: 'Failed to fetch grouped relevant jobs',
+        details: 'Error: ${error.toString()}',
+      ));
     }
   }
 

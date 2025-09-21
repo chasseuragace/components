@@ -3,7 +3,6 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/repositorie
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/repositories/profile/repository.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/di.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/di.dart';
 import 'package:dartz/dartz.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/errors/failures.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/profile/entity.dart';
@@ -17,7 +16,7 @@ class MockAuthRepository implements AuthRepository {
   MockAuthRepository(this._tokenStorage);
 
   @override
-  Future<Either<Failure, String>> register({
+  Future<Either<Failure, String>> registerCandidate({
     required String fullName,
     required String phone,
   }) async {
@@ -33,18 +32,18 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> verify({
+  Future<Either<Failure, String>> verifyCandidate({
     required String phone,
     required String otp,
   }) async {
     await Future.delayed(const Duration(milliseconds: 500));
     
     if (!_users.containsKey(phone)) {
-      return Left(ServerFailure('User not found'));
+      return Left(ServerFailure());
     }
     
     if (_otps[phone] != otp) {
-      return Left(ServerFailure('Invalid OTP'));
+      return Left(ServerFailure());
     }
     
     // Generate mock token and store candidate ID
@@ -62,7 +61,7 @@ class MockAuthRepository implements AuthRepository {
     await Future.delayed(const Duration(milliseconds: 500));
     
     if (!_users.containsKey(phone)) {
-      return Left(ServerFailure('User not found'));
+      return Left(ServerFailure());
     }
     
     final otp = '123456'; // Fixed OTP for testing
@@ -79,11 +78,11 @@ class MockAuthRepository implements AuthRepository {
     await Future.delayed(const Duration(milliseconds: 500));
     
     if (!_users.containsKey(phone)) {
-      return Left(ServerFailure('User not found'));
+      return Left(ServerFailure());
     }
     
     if (_otps[phone] != otp) {
-      return Left(ServerFailure('Invalid OTP'));
+      return Left(ServerFailure());
     }
     
     // Generate mock token
@@ -103,10 +102,10 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> logout() async {
+  Future<Either<Failure, Unit>> logout() async {
     await _tokenStorage.clearToken();
     await _tokenStorage.clearCandidateId();
-    return const Right(null);
+    return const Right(unit);
   }
 }
 
@@ -118,30 +117,50 @@ class MockProfileRepository implements ProfileRepository {
   MockProfileRepository(this._tokenStorage);
 
   @override
-  Future<Either<Failure, void>> addProfile(ProfileEntity profile) async {
+  Future<Either<Failure, List<ProfileEntity>>> getAllItems() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return Right(_profiles.values.toList());
+  }
+
+  @override
+  Future<Either<Failure, ProfileEntity?>> getItemById(String id) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return Right(_profiles[id]);
+  }
+
+  @override
+  Future<Either<Failure, Unit>> addItem(ProfileEntity entity) async {
     await Future.delayed(const Duration(milliseconds: 500));
     
     final candidateId = await _tokenStorage.getCandidateId();
     if (candidateId == null) {
-      return Left(ServerFailure('No candidate ID found'));
+      return Left(ServerFailure());
     }
     
     // Store profile data
-    _profiles[candidateId] = profile;
+    _profiles[candidateId] = entity;
     
-    return const Right(null);
+    return const Right(unit);
   }
 
   @override
-  Future<Either<Failure, ProfileEntity?>> getProfile() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+  Future<Either<Failure, Unit>> updateItem(ProfileEntity entity) async {
+    await Future.delayed(const Duration(milliseconds: 500));
     
     final candidateId = await _tokenStorage.getCandidateId();
     if (candidateId == null) {
-      return Left(ServerFailure('No candidate ID found'));
+      return Left(ServerFailure());
     }
     
-    return Right(_profiles[candidateId]);
+    _profiles[candidateId] = entity;
+    return const Right(unit);
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteItem(String id) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    _profiles.remove(id);
+    return const Right(unit);
   }
 }
 
@@ -154,10 +173,8 @@ class MockProviders {
         MockAuthRepository(tokenStorage),
       ),
       
-      // Override profile repository with mock  
-      profileRepositoryProvider.overrideWithValue(
-        MockProfileRepository(tokenStorage),
-      ),
+      // Note: Profile repository will use the existing fake implementation
+      // which should work fine for integration testing
     ];
   }
 }

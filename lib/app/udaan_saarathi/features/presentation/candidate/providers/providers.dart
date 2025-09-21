@@ -23,7 +23,7 @@ class GetCandidateByIdNotifier extends AsyncNotifier<CandidateEntity?> {
     return null; // Initially null, call getCandidateById when needed
   }
 
-  Future<void> getCandidateById() async {
+  Future<CandidateEntity?> getCandidateById() async {
     state = const AsyncValue.loading();
     final result = await ref.read(getCandidateByIdUseCaseProvider)(NoParm());
     state = result.fold(
@@ -102,11 +102,11 @@ class DeleteCandidateNotifier extends AsyncNotifier {
 
 Exception _mapFailureToException(Failure failure) {
   if (failure is ServerFailure) {
-    return Exception('Server failure');
+    return Exception('Server failure: ${failure.message}. Details: ${failure.details}');
   } else if (failure is CacheFailure) {
-    return Exception('Cache failure');
+    return Exception('Cache failure: ${failure.message}. Details: ${failure.details}');
   } else {
-    return Exception('Unexpected error');
+    return Exception('Unexpected error: ${failure.message}. Details: ${failure.details}');
   }
 }
 
