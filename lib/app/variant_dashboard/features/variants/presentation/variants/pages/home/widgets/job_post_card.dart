@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
@@ -173,9 +174,8 @@ class _JobPostingCardState extends State<JobPostingCard> {
                     widget.posting.isActive ? 'Active' : 'Closed',
                     style: TextStyle(
                       fontSize: 12,
-                      color: widget.posting.isActive
-                          ? Colors.green
-                          : Colors.grey,
+                      color:
+                          widget.posting.isActive ? Colors.green : Colors.grey,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -196,7 +196,13 @@ class _JobPostingCardState extends State<JobPostingCard> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextButton(
-                      onPressed: () => _showJobDetails(context, widget.posting),
+                      onPressed: () =>
+                          //  _showJobDetails(context, widget.posting),
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      JobDetailPage(job: widget.posting))),
                       child: Text(
                         'View Details',
                         style: TextStyle(

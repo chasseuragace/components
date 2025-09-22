@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
 
@@ -9,12 +8,12 @@ class ApiConfig {
   /// logs errors with stack traces. You can also pass an optional extra
   /// interceptor (e.g. auth header injector) if needed.
   static Openapi client({String? basePath, Interceptor? extraInterceptor}) {
-    final dio = Dio(BaseOptions(baseUrl: basePath ?? 'http://localhost:3000'));
+    final dio = Dio(
+        BaseOptions(baseUrl: basePath ?? 'https://dev.kaha.com.np/job-portal'));
 
     // Logging interceptor: request + response + errors
     dio.interceptors.add(LogInterceptor(
       request: true,
-      
       requestHeader: true,
       requestBody: true,
       responseHeader: false,
@@ -32,7 +31,9 @@ class ApiConfig {
       dio.interceptors.add(extraInterceptor);
     }
 
-    return Openapi(dio: dio, basePathOverride: basePath ?? 'http://localhost:3000');
+    return Openapi(
+        dio: dio,
+        basePathOverride: basePath ?? 'https://dev.kaha.com.np/job-portal');
   }
 
   /// Builds an OpenAPI client with a Dio interceptor that injects candidateId

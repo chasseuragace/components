@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/Interviews/model.dart'
     as interviews_model;
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
 class InterviewCard extends StatelessWidget {
   final Application application;
@@ -15,28 +16,46 @@ class InterviewCard extends StatelessWidget {
     final interview = application.interviewDetail!;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title Section
           Row(
             children: [
-              Icon(Icons.event_rounded, color: Colors.white, size: 24),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4F7DF9).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.event_rounded,
+                  color: const Color(0xFF4F7DF9),
+                  size: 20,
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   application.posting.postingTitle,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A1A),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -44,59 +63,75 @@ class InterviewCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+
+          const SizedBox(height: 16),
+          Divider(color: Colors.grey.shade200, height: 1),
+          const SizedBox(height: 16),
+
+          // Schedule Section
           Row(
             children: [
               Icon(
                 Icons.schedule_rounded,
-                color: Colors.white.withOpacity(0.8),
-                size: 16,
+                color: Colors.grey.shade600,
+                size: 18,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Text(
-                DateFormat(
-                  'MMM dd, yyyy • hh:mm a',
-                ).format(interview.scheduledAt),
+                DateFormat('MMM dd, yyyy • hh:mm a')
+                    .format(interview.scheduledAt),
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+
+          const SizedBox(height: 12),
+
+          // Location Section
           Row(
             children: [
               Icon(
                 Icons.location_on_rounded,
-                color: Colors.white.withOpacity(0.8),
-                size: 16,
+                color: Colors.grey.shade600,
+                size: 18,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   interview.location,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ],
           ),
+
+          // Notes Section
           if (interview.notes != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
+            Divider(color: Colors.grey.shade200, height: 1),
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(12),
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.grey.shade50,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
               ),
               child: Text(
                 interview.notes!,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 13,
+                  color: Colors.grey.shade700,
+                  height: 1.4,
                 ),
               ),
             ),
@@ -136,7 +171,7 @@ class InterviewCardFromModel extends StatelessWidget {
   String _formatDate(DateTime? dt) {
     if (dt == null) return 'Schedule TBD';
     return DateFormat('MMM dd, yyyy • hh:mm a').format(dt);
-    }
+  }
 
   String _locationText(interviews_model.InterviewsModel m) {
     final loc = m.location;
@@ -150,10 +185,24 @@ class InterviewCardFromModel extends StatelessWidget {
     return null;
   }
 
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'interview_scheduled':
+        return const Color(0xFF2563EB);
+      case 'interview_completed':
+        return const Color(0xFF059669);
+      case 'interview_cancelled':
+        return const Color(0xFFDC2626);
+      default:
+        return const Color(0xFF6B7280);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheduledAt = _parseScheduledAt(interview);
-    final title = interview.posting?.postingTitle ?? 'Interview ${interview.id}';
+    final title =
+        interview.posting?.postingTitle ?? 'Interview ${interview.id}';
     final location = _locationText(interview);
     final notes = _notesText(interview);
     final status = interview.application?.status;
@@ -165,60 +214,94 @@ class InterviewCardFromModel extends StatelessWidget {
     final expenses = interview.expenses ?? const [];
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header Section
           Row(
             children: [
-              Icon(Icons.event_rounded, color: Colors.white, size: 24),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4F7DF9).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.event_rounded,
+                  color: const Color(0xFF4F7DF9),
+                  size: 20,
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A1A),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (showFullData && status != null && status.trim().isNotEmpty) ...[
-                const SizedBox(width: 8),
+              if (showFullData &&
+                  status != null &&
+                  status.trim().isNotEmpty) ...[
+                const SizedBox(width: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: Colors.white.withOpacity(0.25)),
+                    color: _getStatusColor(status).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _getStatusColor(status).withOpacity(0.3),
+                    ),
                   ),
                   child: Text(
                     status.replaceAll('_', ' ').toUpperCase(),
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: _getStatusColor(status),
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ]
             ],
           ),
-          const SizedBox(height: 12),
-          if (showFullData && (company != null || city != null || country != null)) ...[
+
+          const SizedBox(height: 16),
+          Divider(color: Colors.grey.shade200, height: 1),
+          const SizedBox(height: 16),
+
+          // Company Info Section
+          if (showFullData &&
+              (company != null || city != null || country != null)) ...[
             Row(
               children: [
                 Icon(
                   Icons.apartment_rounded,
-                  color: Colors.white.withOpacity(0.8),
-                  size: 16,
+                  color: Colors.grey.shade600,
+                  size: 18,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     [
@@ -227,8 +310,9 @@ class InterviewCardFromModel extends StatelessWidget {
                       if (country != null && country.trim().isNotEmpty) country,
                     ].join(' • '),
                     style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -236,128 +320,170 @@ class InterviewCardFromModel extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
           ],
+
+          // Schedule Section
           Row(
             children: [
               Icon(
                 Icons.schedule_rounded,
-                color: Colors.white.withOpacity(0.8),
-                size: 16,
+                color: Colors.grey.shade600,
+                size: 18,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Text(
                 _formatDate(scheduledAt),
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+
+          const SizedBox(height: 12),
+
+          // Location Section
           Row(
             children: [
               Icon(
                 Icons.location_on_rounded,
-                color: Colors.white.withOpacity(0.8),
-                size: 16,
+                color: Colors.grey.shade600,
+                size: 18,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   location,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ],
           ),
+
+          // Contact Person Section
           if (showFullData && contact != null && contact.trim().isNotEmpty) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Icon(
                   Icons.person_rounded,
-                  color: Colors.white.withOpacity(0.8),
-                  size: 16,
+                  color: Colors.grey.shade600,
+                  size: 18,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     contact,
                     style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ],
             ),
           ],
+
+          // Documents Section
           if (showFullData && docs.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 6,
-              runSpacing: -6,
+            const SizedBox(height: 16),
+            Divider(color: Colors.grey.shade200, height: 1),
+            const SizedBox(height: 16),
+            Row(
               children: [
-                ...docs.take(3).map((d) => Chip(
-                      label: Text(d, style: const TextStyle(fontSize: 11)),
-                      backgroundColor: Colors.black.withOpacity(0.15),
-                      labelStyle: const TextStyle(color: Colors.white),
-                      side: BorderSide.none,
-                      visualDensity: VisualDensity.compact,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                Icon(
+                  Icons.description_rounded,
+                  color: Colors.grey.shade600,
+                  size: 18,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Required Documents',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ...docs.take(3).map((d) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardColor,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Text(
+                        d,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     )),
                 if (docs.length > 3)
-                  Chip(
-                    label: Text('+${docs.length - 3} more', style: const TextStyle(fontSize: 11)),
-                    backgroundColor: Colors.white.withOpacity(0.15),
-                    labelStyle: const TextStyle(color: Colors.white),
-                    side: BorderSide.none,
-                    visualDensity: VisualDensity.compact,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Text(
+                      '+${docs.length - 3} more',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
               ],
             ),
           ],
-          if (showFullData && notes != null) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                notes,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white.withOpacity(0.9),
-                ),
-              ),
-            ),
-          ],
+
+          // Expenses Section
           if (showFullData && expenses.isNotEmpty) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
+            Divider(color: Colors.grey.shade200, height: 1),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Icon(
                   Icons.receipt_long_rounded,
-                  size: 16,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.grey.shade600,
+                  size: 18,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  '${expenses.length} expense${expenses.length == 1 ? '' : 's'}',
-                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.9)),
-                )
+                  'Expenses (${expenses.length})',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 6),
-            ...expenses.map((e) {
+            const SizedBox(height: 12),
+            ...expenses.take(3).map((e) {
               final type = e.expenseType ?? 'Expense';
               final payer = e.whoPays ?? '-';
               final isFree = e.isFree == true;
@@ -367,40 +493,59 @@ class InterviewCardFromModel extends StatelessWidget {
                   : ((e.amount != null && e.currency != null)
                       ? '${e.amount} ${e.currency}'
                       : (e.amount != null ? e.amount.toString() : '-'));
-              return Padding(
-                padding: const EdgeInsets.only(left: 24, bottom: 4),
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.cardColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.7),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
-                        '$type • $payer • $amountStr',
-                        style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.9)),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            type,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '$payer • $amountStr',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     if (refundable)
                       Container(
-                        margin: const EdgeInsets.only(left: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: Colors.white.withOpacity(0.25)),
+                          color: const Color(0xFF059669).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFF059669).withOpacity(0.3),
+                          ),
                         ),
                         child: const Text(
                           'REFUNDABLE',
-                          style: TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF059669),
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                   ],
@@ -409,12 +554,64 @@ class InterviewCardFromModel extends StatelessWidget {
             }),
             if (expenses.length > 3)
               Padding(
-                padding: const EdgeInsets.only(left: 24, top: 2),
+                padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  '+${expenses.length - 3} more',
-                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.8)),
+                  '+${expenses.length - 3} more expenses',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
+          ],
+
+          // Notes Section
+          if (notes != null) ...[
+            const SizedBox(height: 16),
+            Divider(color: Colors.grey.shade200, height: 1),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.cardColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.note_rounded,
+                        color: Colors.grey.shade600,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Notes',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    notes,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade700,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ],
       ),
@@ -442,11 +639,9 @@ class DummyInterviewCardPreview extends StatelessWidget {
         'CV',
         'Academic Certificates'
       ],
-      'notes': 'Bring original documents and arrive 10 mins early.',
-      'application': {
-        'id': 'app_789',
-        'status': 'interview_scheduled'
-      },
+      'notes':
+          'Bring original documents and arrive 10 minutes early. The interview will be conducted in English.',
+      'application': {'id': 'app_789', 'status': 'interview_scheduled'},
       'posting': {
         'id': 'p_100',
         'posting_title': 'Software Engineer',
@@ -483,7 +678,7 @@ class DummyInterviewCardPreview extends StatelessWidget {
           'is_free': true,
           'amount': 0,
           'currency': 'USD',
-          'refundable': false,
+          'refundable': true,
           'notes': 'Covered by employer'
         }
       ]

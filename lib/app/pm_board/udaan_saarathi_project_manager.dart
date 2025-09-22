@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:variant_dashboard/app/pm_board/wrapper_widget.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
@@ -52,38 +51,40 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
     var width3 = MediaQuery.of(context).size.width;
     var height2 = MediaQuery.of(context).size.height;
     var other = 1;
-    return WrapperWidget(width3: width3, height2: height2, other: other,child:pageView());
+    return WrapperWidget(
+        width3: width3, height2: height2, other: other, child: pageView());
   }
 
   PageView pageView() {
     return PageView(
       controller: PageController(viewportFraction: .3),
-      
       children: [
-         buildScreen( InterviewsListPage()),
-      if(!false)...  [ buildScreen(const ProfilePage()),
-        buildScreen(const SplashScreen()),
-        buildScreen(const OnboardingListPage()),
-        PageView(
-          controller: PageController(viewportFraction: .9),
-          clipBehavior: Clip.none,
-          padEnds: false,
-          scrollDirection: Axis.vertical,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildScreen(const RegisterPage(), wideMultifiler: 1),
-            buildScreen(const LoginPage()),
-          ]
-              .map((e) => Expanded(child: FittedBox(child: e)))
-              .map((e) => KeepAlive(child: e))
-              .toList(),
-        ),
-        buildScreen(const SetPreferenceScreen()),
-        buildScreen(const HomePageVariant1()),
-        buildScreen(JobDetailPage(job: blueCollarJobQatar)),
-       
-        buildScreen(const JobsListPage()),]
+      
+        buildScreen(InterviewsListPage()),
+        if (!false) ...[
+          buildScreen(const ProfilePage()),
+          buildScreen(const SplashScreen()),
+          buildScreen(const OnboardingListPage()),
+          PageView(
+            controller: PageController(viewportFraction: .9),
+            clipBehavior: Clip.none,
+            padEnds: false,
+            scrollDirection: Axis.vertical,
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildScreen(const RegisterPage(), wideMultifiler: 1),
+              buildScreen(const LoginPage()),
+            ]
+                .map((e) => Expanded(child: FittedBox(child: e)))
+                .map((e) => KeepAlive(child: e))
+                .toList(),
+          ),
+          buildScreen(const SetPreferenceScreen()),
+          buildScreen(const HomePageVariant1()),
+          buildScreen(JobDetailPage(job: blueCollarJobQatar)),
+          buildScreen(const JobsListPage()),
+        ]
       ].map((e) => KeepAlive(child: e)).toList(),
     );
   }
@@ -115,4 +116,3 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
     );
   }
 }
-

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
+import 'widgets.dart';
+
 class JobOverviewSection extends StatelessWidget {
   final MobileJobEntity job;
   const JobOverviewSection({super.key, required this.job});
@@ -49,64 +51,77 @@ class JobOverviewSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          _OverviewRow(label: 'Position', value: job.postingTitle),
-          _OverviewRow(label: 'Experience Level', value: job.experience ?? 'Not specified'),
-          _OverviewRow(label: 'Employment Type', value: job.type ?? 'Not specified'),
+          DetailRow(label: 'Position', value: job.postingTitle),
+          DetailRow(
+              label: 'Experience Level',
+              value: job.experience ?? 'Not specified'),
+          DetailRow(
+              label: 'Employment Type', value: job.type ?? 'Not specified'),
           if (job.isRemote == true)
-            const _OverviewRow(label: 'Work Mode', value: 'Remote Available', isHighlight: true),
+            const DetailRow(
+                label: 'Work Mode',
+                value: 'Remote Available',
+                isHighlight: true),
           if (job.isFeatured == true)
-            const _OverviewRow(label: 'Status', value: 'Featured Position', isHighlight: true),
+            const DetailRow(
+                label: 'Status', value: 'Featured Position', isHighlight: true),
         ],
       ),
     );
   }
 }
 
-class _OverviewRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isHighlight;
-  const _OverviewRow({required this.label, required this.value, this.isHighlight = false});
+// class _OverviewRow extends StatelessWidget {
+//   final String label;
+//   final String value;
+//   final bool isHighlight;
+//   const _OverviewRow(
+//       {required this.label, required this.value, this.isHighlight = false});
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF64748B),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: isHighlight ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : null,
-              decoration: isHighlight
-                  ? BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    )
-                  : null,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: isHighlight ? const Color(0xFF10B981) : const Color(0xFF1E293B),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           SizedBox(
+//             width: 120,
+//             child: Text(
+//               label,
+//               style: const TextStyle(
+//                 fontSize: 14,
+//                 fontWeight: FontWeight.w500,
+//                 color: Color(0xFF64748B),
+//               ),
+//             ),
+//           ),
+//           const SizedBox(width: 12),
+//           Expanded(
+//             child: Container(
+//               padding: isHighlight
+//                   ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+//                   : null,
+//               decoration: isHighlight
+//                   ? BoxDecoration(
+//                       color: const Color(0xFF10B981).withValues(alpha: 0.1),
+//                       borderRadius: BorderRadius.circular(6),
+//                     )
+//                   : null,
+//               child: Text(
+//                 value,
+//                 style: TextStyle(
+//                   fontSize: 14,
+//                   fontWeight: FontWeight.w600,
+//                   color: isHighlight
+//                       ? const Color(0xFF10B981)
+//                       : const Color(0xFF1E293B),
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

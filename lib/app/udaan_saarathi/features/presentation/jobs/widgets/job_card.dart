@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/logo_widget.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
 
 class JobCard extends StatefulWidget {
@@ -50,44 +50,9 @@ class _JobCardState extends State<JobCard> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: job.employer.companyLogo.isEmpty
-                      ? Center(
-                          child: Text(
-                            job.employer.companyName.companyInitial,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: job.employer.companyLogo,
-                          width: 48,
-                          height: 48,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.grey.shade200,
-                            child:
-                                const Icon(Icons.business, color: Colors.grey),
-                          ),
-                          errorWidget: (context, url, error) => CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.grey.shade300,
-                            child:
-                                Text(job.employer.companyLogo.companyInitial),
-                          ),
-                        ),
+                LogoWidget(
+                  logoUrl: job.employer.companyLogo,
+                  companyName: job.employer.companyName,
                 ),
                 const SizedBox(width: 16),
                 Expanded(

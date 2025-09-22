@@ -54,8 +54,8 @@ class SelectedJobTitleCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.drag_handle, color: Color(0xFF94A3B8)),
-            const SizedBox(width: 8),
+            // const Icon(Icons.drag_handle, color: Color(0xFF94A3B8)),
+            // const SizedBox(width: 8),
             GestureDetector(
               onTap: onRemove,
               child: Container(
@@ -64,9 +64,11 @@ class SelectedJobTitleCard extends StatelessWidget {
                   color: const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Icon(Icons.close, size: 16, color: Color(0xFFEF4444)),
+                child:
+                    const Icon(Icons.close, size: 16, color: Color(0xFFEF4444)),
               ),
             ),
+            const SizedBox(width: 16),
           ],
         ),
       ),

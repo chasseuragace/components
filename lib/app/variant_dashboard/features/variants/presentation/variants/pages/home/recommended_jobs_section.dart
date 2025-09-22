@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting_mapper.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_post_card.dart';
@@ -15,11 +14,13 @@ class RecommendedJobsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final jobsState = ref.watch(getGroupedJobsProvider);
-    ref.listen(userPreferencesProvider,(p,n){
+    ref.listen(userPreferencesProvider, (p, n) {
       ref.invalidate(getGroupedJobsProvider);
     });
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(24.0).copyWith(
+        bottom: 0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -91,7 +92,6 @@ class RecommendedJobsSection extends ConsumerWidget {
   }
 }
 
-
 class _GroupPostingsPager extends StatefulWidget {
   final List<MobileJobEntity> postings;
 
@@ -131,34 +131,36 @@ class _GroupPostingsPagerState extends State<_GroupPostingsPager> {
               child: JobPostingCard(posting: widget.postings.first),
             ),
           ),
-              if (hasItems)
-        SizedBox(
-          height: pageHeight,
-          child: PageView.builder(
-            clipBehavior: Clip.none,
-            controller: PageController(viewportFraction: .98),
-            padEnds: false,
-            itemCount: widget.postings.length,
-            itemBuilder: (context, index) {
-              final p = widget.postings[index];
-              return Padding(
-                padding: EdgeInsets.only(
-                  right: index == widget.postings.length - 1 ? 0 : 12,
-                ),
-                child: Consumer(
-                  builder: (context,ref,_) {
+        if (hasItems)
+          SizedBox(
+            height: pageHeight,
+            child: PageView.builder(
+              clipBehavior: Clip.none,
+              controller: PageController(viewportFraction: .98),
+              padEnds: false,
+              itemCount: widget.postings.length,
+              itemBuilder: (context, index) {
+                final p = widget.postings[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: index == widget.postings.length - 1 ? 0 : 12,
+                  ),
+                  child: Consumer(builder: (context, ref, _) {
                     return GestureDetector(
-                      onTap: (){
-                        ref.read(selectedJobIdProvider.notifier).update((cb)=>p.id);
-                        ref.read(getJobsByIdProvider.notifier).getJobsById(p.id);
-                      },
-                      child: JobPostingCard(posting: p));
-                  }
-                ),
-              );
-            },
+                        onTap: () {
+                          ref
+                              .read(selectedJobIdProvider.notifier)
+                              .update((cb) => p.id);
+                          ref
+                              .read(getJobsByIdProvider.notifier)
+                              .getJobsById(p.id);
+                        },
+                        child: JobPostingCard(posting: p));
+                  }),
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }

@@ -4,6 +4,7 @@ export 'bottom_action_buttons.dart';
 export 'company_details_section.dart';
 export 'company_policy_section.dart';
 export 'contract_details_section.dart';
+export 'detail_row.dart';
 export 'facilities_section.dart';
 export 'job_image_section.dart';
 export 'job_overview_section.dart';

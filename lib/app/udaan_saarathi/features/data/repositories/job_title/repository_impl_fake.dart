@@ -1,19 +1,20 @@
 import 'package:dartz/dartz.dart';
-import 'package:openapi/openapi.dart';
+
+import '../../../../core/config/api_config.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/job_title/entity.dart';
 import '../../../domain/repositories/job_title/repository.dart';
 import '../../datasources/job_title/local_data_source.dart';
 import '../../datasources/job_title/remote_data_source.dart';
 import '../../models/job_title/model.dart';
+
 // Fake data for JobTitles
-      final remoteItems = [
-       
-      ];
+final remoteItems = [];
+
 class JobTitleRepositoryFake implements JobTitleRepository {
   final JobTitleLocalDataSource localDataSource;
   final JobTitleRemoteDataSource remoteDataSource;
-final aip = Openapi(basePathOverride: "http://localhost:3000").getJobTitlesApi();
+  final aip = ApiConfig.client().getJobTitlesApi();
   JobTitleRepositoryFake({
     required this.localDataSource,
     required this.remoteDataSource,
@@ -28,9 +29,8 @@ final aip = Openapi(basePathOverride: "http://localhost:3000").getJobTitlesApi()
       await Future.delayed(Duration(milliseconds: 300));
 
       final rawList = response.data?.data ?? [];
-      final items = rawList
-          .map((model) => JobTitle.fromJson(model.toJson()))
-          .toList();
+      final items =
+          rawList.map((model) => JobTitle.fromJson(model.toJson())).toList();
       return right(items);
     } catch (error) {
       print(error);
@@ -41,7 +41,6 @@ final aip = Openapi(basePathOverride: "http://localhost:3000").getJobTitlesApi()
   @override
   Future<Either<Failure, JobTitleEntity?>> getItemById(String id) async {
     try {
-    
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 

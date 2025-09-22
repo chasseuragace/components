@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
 import 'package:intl/intl.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_controller.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/dashboard_header.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/interview_card.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_section.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting_mapper.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/recommended_jobs_section.dart';
-
-import 'widgets/job_post_card.dart';
 
 // Global Riverpod provider for JobDashboardData
 
@@ -926,7 +919,7 @@ class ApplicationsSection extends ConsumerWidget {
     final recentApplications = dashboardData.applications.take(3).toList();
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(24.0).copyWith(top: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

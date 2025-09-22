@@ -51,8 +51,10 @@ class OtherPositionsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ...otherPositions
-              .map((position) => _PositionRow(text: position.toString())),
+          ...otherPositions.map((position) => _PositionRow(
+              text: position.title,
+              convertedSalary: position.convertedSalary,
+              baseSalary: position.baseSalary)),
         ],
       ),
     );
@@ -61,7 +63,10 @@ class OtherPositionsSection extends StatelessWidget {
 
 class _PositionRow extends StatelessWidget {
   final String text;
-  const _PositionRow({required this.text});
+  final String? convertedSalary;
+  final String? baseSalary;
+  const _PositionRow(
+      {required this.text, this.convertedSalary, this.baseSalary});
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +76,8 @@ class _PositionRow extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF6366F1).withOpacity(0.05),
-            const Color(0xFF8B5CF6).withOpacity(0.02),
+            const Color(0xFF6366F1).withValues(alpha: 0.05),
+            const Color(0xFF8B5CF6).withValues(alpha: 0.02),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
@@ -97,20 +102,50 @@ class _PositionRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF374151),
+                  ),
+                ),
+                if (convertedSalary != null || baseSalary != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      if (convertedSalary != null)
+                        Text(
+                          '$convertedSalary ',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF4F7DF9),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      if (baseSalary != null)
+                        Text(
+                          '($baseSalary)',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF4F7DF9),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
-          const Icon(
-            Icons.open_in_new,
-            color: Color(0xFF6366F1),
-            size: 16,
-          ),
+          // const Icon(
+          //   Icons.open_in_new,
+          //   color: Color(0xFF6366F1),
+          //   size: 16,
+          // ),
         ],
       ),
     );

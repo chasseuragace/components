@@ -14,15 +14,13 @@ class MyApp extends ConsumerWidget {
     // - profiver for app
     return MaterialApp(
       theme: ThemeData.dark(),
-      home:
-      !true? Homepage():
-       !false
-          ? Opacity(
-            opacity: .5,
-            child: UdaanSaarathiProjectManager())
-          : !true
-              ? UdaanSaarathiApp()
-              : VariantDashboardPage(),
+      home: !true
+          ? Homepage()
+          : !false
+              ? Opacity(opacity: 1, child: UdaanSaarathiProjectManager())
+              : !true
+                  ? UdaanSaarathiApp()
+                  : VariantDashboardPage(),
       // initialRoute: RouteConstants.kSplashScreen,
       // onGenerateRoute: (settings) => AppRouter.generateRoute(ref, settings),
     );

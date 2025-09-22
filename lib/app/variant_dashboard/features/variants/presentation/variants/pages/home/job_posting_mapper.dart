@@ -1,6 +1,7 @@
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart' show JobPosition; // For JobPosition
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart'
+    show JobPosition; // For JobPosition
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 /// Functions to transform backend models (GroupedJobsModel, JobGroupModel, GroupJobModel)
@@ -15,9 +16,7 @@ class JobPostingMapper {
 
   /// Map a group (JobGroupEntity) -> List<JobPosting>
   static List<MobileJobEntity> fromJobGroup(JobGroupEntity group) {
-    return group.jobs
-        .map((job) => fromGroupJob(job))
-        .toList(growable: false);
+    return group.jobs.map((job) => fromGroupJob(job)).toList(growable: false);
   }
 
   /// Core mapping: GroupJobEntity -> JobPosting
@@ -58,7 +57,6 @@ class JobPostingMapper {
       convertedSalary: convertedSalaryStr,
       applications: null,
       policy: null,
-      
     );
   }
 
@@ -96,7 +94,8 @@ class JobPostingMapper {
 
   static String _buildPreferenceText(GroupJobEntity job) {
     if (job.primaryTitles.isNotEmpty) return job.primaryTitles.first;
-    if (job.employer.companyName != null && job.employer.companyName!.isNotEmpty) {
+    if (job.employer.companyName != null &&
+        job.employer.companyName!.isNotEmpty) {
       return 'Role at ${job.employer.companyName}';
     }
     return job.postingTitle;
@@ -109,10 +108,13 @@ class JobPostingMapper {
   ) {
     final parts = <String>[
       job.postingTitle,
-      if (job.employer.companyName != null && job.employer.companyName!.isNotEmpty)
+      if (job.employer.companyName != null &&
+          job.employer.companyName!.isNotEmpty)
         'Employer: ${job.employer.companyName}',
-      if (job.agency.name != null && job.agency.name!.isNotEmpty) 'Agency: ${job.agency.name}',
-      if (job.city != null && job.city!.isNotEmpty) 'Location: ${_composeLocation(job)}',
+      if (job.agency.name != null && job.agency.name!.isNotEmpty)
+        'Agency: ${job.agency.name}',
+      if (job.city != null && job.city!.isNotEmpty)
+        'Location: ${_composeLocation(job)}',
       if (convertedSalaryStr != null) 'Salary: $convertedSalaryStr',
       if (baseSalaryStr != null) 'Base: $baseSalaryStr',
     ];
@@ -127,9 +129,9 @@ class JobPostingMapper {
   static String _composeLocation(GroupJobEntity job) {
     final city = job.city;
     final country = job.country;
-    if (((city??'').trim()).isNotEmpty) return '$city, $country';
+    if (((city ?? '').trim()).isNotEmpty) return '$city, $country';
     return country;
-    }
+  }
 
   static String? _formatBaseSalary(SalarySummaryEntity salary) {
     final min = salary.monthlyMin;
@@ -143,13 +145,17 @@ class JobPostingMapper {
     return '${cur ?? ''} ${_compact(only)}'.trim();
   }
 
-  static String? _formatConvertedSalary(SalarySummaryEntity salary, {String preferred = 'USD'}) {
+  static String? _formatConvertedSalary(SalarySummaryEntity salary,
+      {String preferred = 'NPR'}) {
     if (salary.converted.isEmpty) return null;
     // Prefer a specific currency if available
-    final preferredAmt = salary.converted.firstWhere(
-      (c) => c.currency.toUpperCase() == preferred.toUpperCase(),
-      orElse: () => salary.converted.first,
-    );
+    ConvertedAmountEntity preferredAmt;
+    try {
+      preferredAmt = salary.converted.first;
+    } catch (e) {
+      print('salary.converted: ${salary.converted}');
+      return 'Not available112';
+    }
     return '${preferredAmt.currency} ${_compact(preferredAmt.amount)}';
   }
 
