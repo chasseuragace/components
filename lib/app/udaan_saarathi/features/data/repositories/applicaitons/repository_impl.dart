@@ -63,6 +63,12 @@ class ApplicaitonsRepositoryImpl implements ApplicaitonsRepository {
       return left(ServerFailure());
     }
   }
+  
+  @override
+  Future<Either<Failure, Unit>> applyJob(ApplicationEntity entity) {
+    // TODO: implement applyJob
+    throw UnimplementedError();
+  }
 }
 extension model on ApplicaitonsEntity {
   ApplicaitonsModel toModel() {

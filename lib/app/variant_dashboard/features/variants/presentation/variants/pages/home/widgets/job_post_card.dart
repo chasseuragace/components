@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
-class JobPostingCard extends StatefulWidget {
+// Provider to track if a job has been applied by job_posting_id
+final jobAppliedProvider = StateProvider.family<bool, String>((ref, jobId) {
+  return false;
+});
+
+class JobPostingCard extends ConsumerStatefulWidget {
   final MobileJobEntity posting;
 
   const JobPostingCard({super.key, required this.posting});
 
   @override
-  State<JobPostingCard> createState() => _JobPostingCardState();
+  ConsumerState<JobPostingCard> createState() => _JobPostingCardState();
 }
 
-class _JobPostingCardState extends State<JobPostingCard> {
+class _JobPostingCardState extends ConsumerState<JobPostingCard> {
   bool _isHorizontalView = false;
 
   @override
   Widget build(BuildContext context) {
+    final isApplied = ref.watch(jobAppliedProvider(widget.posting.id));
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -224,11 +232,11 @@ class _JobPostingCardState extends State<JobPostingCard> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextButton(
-                      onPressed: widget.posting.isActive
+                      onPressed: (widget.posting.isActive && !isApplied)
                           ? () => _applyToJob(context, widget.posting)
                           : null,
                       child: Text(
-                        'Apply Now',
+                        isApplied ? 'Applied' : 'Apply Now',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -468,10 +476,13 @@ class _JobPostingCardState extends State<JobPostingCard> {
     );
   }
 
-  void _applyToJob(BuildContext context, MobileJobEntity posting) {
-    showDialog(
+  void _applyToJob(BuildContext context, MobileJobEntity posting) async {
+    final result = await showDialog<bool>(
       context: context,
       builder: (context) => ApplyJobDialog(posting: posting),
     );
+    if (result == true) {
+      ref.read(jobAppliedProvider(posting.id).notifier).state = true;
+    }
   }
 }

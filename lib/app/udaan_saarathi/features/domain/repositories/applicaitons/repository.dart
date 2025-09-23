@@ -8,4 +8,5 @@ abstract class ApplicaitonsRepository {
   Future<Either<Failure, Unit>> addItem(ApplicaitonsEntity entity);
   Future<Either<Failure, Unit>> updateItem(ApplicaitonsEntity entity);
   Future<Either<Failure, Unit>> deleteItem(String id);
+  Future<Either<Failure, Unit>> applyJob(ApplicationEntity entity);
 }

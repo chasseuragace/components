@@ -9,3 +9,16 @@ abstract class ApplicaitonsEntity extends BaseEntity {
         required this.id,
         });
 }
+class ApplicationEntity {
+  final String candidateId;
+  final String jobPostingId;
+  final String note;
+  final String updatedBy;
+
+  ApplicationEntity({
+    required this.candidateId,
+    required this.jobPostingId,
+    required this.note,
+    required this.updatedBy,
+  });
+}
