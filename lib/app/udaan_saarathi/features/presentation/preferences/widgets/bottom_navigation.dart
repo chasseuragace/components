@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class PreferencesBottomNavigation extends StatelessWidget {
   const PreferencesBottomNavigation({
@@ -36,21 +37,24 @@ class PreferencesBottomNavigation extends StatelessWidget {
         children: [
           if (currentStep > 0)
             Expanded(
-              child: OutlinedButton(
-                onPressed: onPrevious,
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF1E88E5)),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: onPrevious,
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.lightBlueColor),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Previous',
-                  style: TextStyle(
-                    color: Color(0xFF1E88E5),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  child: const Text(
+                    'Previous',
+                    style: TextStyle(
+                      color: AppColors.lightBlueColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -58,41 +62,49 @@ class PreferencesBottomNavigation extends StatelessWidget {
           if (currentStep > 0) const SizedBox(width: 16),
           Expanded(
             flex: currentStep == 0 ? 1 : 2,
-            child: ElevatedButton(
-              onPressed: (isStepValid() && !isSaving) ? onNext : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E88E5),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              height: 48,
+              child: ElevatedButton(
+                onPressed: (isStepValid() && !isSaving) ? onNext : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  disabledBackgroundColor: const Color(0xFFE2E8F0),
                 ),
-                disabledBackgroundColor: const Color(0xFFE2E8F0),
-              ),
-              child: isSaving && currentStep == totalSteps - 1
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                child: isSaving && currentStep == totalSteps - 1
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Saving...',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    )
-                  : Text(
-                      currentStep == totalSteps - 1 ? 'Save Preferences' : 'Next',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Saving...',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      )
+                    : Text(
+                        currentStep == totalSteps - 1
+                            ? 'Save Preferences'
+                            : 'Next',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+              ),
             ),
           ),
         ],

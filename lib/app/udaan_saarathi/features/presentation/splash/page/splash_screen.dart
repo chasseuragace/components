@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splash/providers/splash_controller.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -49,8 +50,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     // Navigate using named routes
     print("pushing $routeName");
-  
-    Navigator.of(context)..popUntil((r)=>r.isFirst)..pushReplacementNamed (routeName);
+
+    Navigator.of(context)
+      ..popUntil((r) => r.isFirst)
+      ..pushReplacementNamed(routeName);
   }
 
   @override
@@ -88,8 +91,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [
-                                    Color(0xFF4F7DF9),
-                                    Color(0xFF6C5CE7),
+                                    AppColors.primaryColor,
+                                    AppColors.primaryDarkColor,
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -97,8 +100,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF4F7DF9)
-                                        .withOpacity(0.3),
+                                    color: AppColors.primaryColor
+                                        .withValues(alpha: 0.3),
                                     blurRadius: 20,
                                     offset: const Offset(0, 10),
                                   ),
@@ -110,6 +113,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 size: 60,
                               ),
                             ),
+                            // SvgPicture.asset(
+                            //   'assets/svg/sarathi_logo.svg',
+                            //   width: 120,
+                            //   height: 120,
+                            // ),
                             const SizedBox(height: 40),
                             const Text(
                               'UdaanSarathi',
@@ -147,10 +155,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                   widthFactor: _fadeAnimation.value,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
+                                      gradient: LinearGradient(
                                         colors: [
-                                          Color(0xFF4F7DF9),
-                                          Color(0xFF6C5CE7),
+                                          AppColors.lightBlueColor,
+                                          AppColors.primaryColor,
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(2),
@@ -184,7 +192,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF4F7DF9),
+                              color: AppColors.primaryColor,
                               letterSpacing: 2.0,
                             ),
                           ),

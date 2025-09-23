@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class PreferencesProgressIndicator extends StatelessWidget {
   const PreferencesProgressIndicator({
@@ -31,9 +32,9 @@ class PreferencesProgressIndicator extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
                     color: isCompleted
-                        ? const Color(0xFF10B981)
+                        ? AppColors.secondaryColor
                         : isActive
-                            ? const Color(0xFF1E88E5)
+                            ? AppColors.primaryColor
                             : const Color(0xFFE2E8F0),
                   ),
                 ),

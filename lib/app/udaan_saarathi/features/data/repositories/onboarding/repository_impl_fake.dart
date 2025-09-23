@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/onboarding/entity.dart';
 import '../../../domain/repositories/onboarding/repository.dart';
@@ -14,8 +16,10 @@ final remoteItems = [
     description:
         "Your journey companion that helps you soar high and achieve your dreams with confidence and guidance.",
     image: Icons.flight_takeoff,
-    primaryColor: const Color(0xFF6366F1),
-    secondaryColor: const Color(0xFF8B5CF6),
+    // primaryColor: const Color(0xFF6366F1),
+    // secondaryColor: const Color(0xFF8B5CF6),
+    primaryColor: AppColors.primaryColor,
+    secondaryColor: AppColors.primaryDarkColor,
   ),
   OnboardingEntity(
     id: "_",
@@ -24,7 +28,9 @@ final remoteItems = [
         "Discover personalized routes to success with smart recommendations and expert insights tailored just for you.",
     image: Icons.explore,
     primaryColor: const Color(0xFF06B6D4),
-    secondaryColor: const Color(0xFF0EA5E9),
+    // secondaryColor: const Color(0xFF0EA5E9),
+    // primaryColor: AppColors.lightBlueColor,
+    secondaryColor: AppColors.primaryColor,
   ),
   OnboardingEntity(
     id: "_",
@@ -32,8 +38,8 @@ final remoteItems = [
     description:
         "Join a community of achievers and unlock your potential with collaborative tools and shared experiences.",
     image: Icons.groups,
-    primaryColor: const Color(0xFF10B981),
-    secondaryColor: const Color(0xFF059669),
+    primaryColor: AppColors.secondaryColor,
+    secondaryColor: AppColors.secondaryDarkColor,
   ),
 ];
 
