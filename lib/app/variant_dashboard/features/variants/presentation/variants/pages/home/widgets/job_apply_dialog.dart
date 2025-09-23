@@ -6,6 +6,8 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/appli
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
 
 class ApplyJobDialog extends ConsumerStatefulWidget {
   final MobileJobEntity posting;
@@ -370,6 +372,24 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
   }
 
   void _submitApplication() async {
+    // 1) Gate: ensure profile is complete before applying
+    final isComplete = await ref.read(profileProvider.notifier).isProfileComplete();
+    if (!isComplete) {
+      // Inform and redirect to ProfilePage
+      if (!mounted) return;
+      CustomSnackbar.showFailureSnackbar(
+        context,
+        'Please complete your profile before applying.',
+      );
+      Navigator.of(context).pop();
+      // redirect to profile screen
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const ProfilePage()),
+      );
+      return;
+    }
+
+    // 2) Proceed to apply if profile complete
     final candidateId = ref.read(jobDashboardDataProvider).candidate.id;
     final note = _noteController.text.trim().isEmpty
         ? 'Applied via mobile app'
