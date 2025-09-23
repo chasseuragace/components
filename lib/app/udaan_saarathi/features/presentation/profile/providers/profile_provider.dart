@@ -4,6 +4,9 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/pr
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/profile/add.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/di.dart';
 
+import '../../../../core/usecases/usecase.dart';
+import '../../../domain/usecases/profile/get_all.dart';
+
 final profileProvider = AsyncNotifierProvider<ProfileProvider, ProfileState>(
   ProfileProvider.new,
 );
@@ -37,12 +40,38 @@ class ProfileState {
 
 class ProfileProvider extends AsyncNotifier<ProfileState> {
   late final AddProfileUseCase addProfileUseCase;
+  late final GetAllProfileUseCase getAllProfileUseCase;
 
   @override
   Future<ProfileState> build() async {
     // Resolve dependencies via ref here
     addProfileUseCase = ref.read(addProfileUseCaseProvider);
+    getAllProfileUseCase = ref.read(getAllProfileUseCaseProvider);
     return const ProfileState(status: ResponseStates.initial);
+  }
+
+  Future<bool> isProfileComplete() async {
+    final result = await getAllProfileUseCase(NoParm());
+    return result.fold(
+      (failure) => false,
+      (profiles) {
+        if (profiles.isEmpty) return false;
+        final p = profiles.first;
+        final blob = p.profileBlob;
+        if (blob == null) return false;
+
+        // bool hasSummary = (blob.summary != null && blob.summary!.trim().isNotEmpty);
+        bool hasSkills = (blob.skills != null && blob.skills!.isNotEmpty);
+        bool hasEducation =
+            (blob.education != null && blob.education!.isNotEmpty);
+        bool hasTrainings =
+            (blob.trainings != null && blob.trainings!.isNotEmpty);
+        bool hasExperience =
+            (blob.experience != null && blob.experience!.isNotEmpty);
+
+        return hasSkills && hasEducation && hasTrainings && hasExperience;
+      },
+    );
   }
 
   Future<void> addSkills(List<Map<String, dynamic>> skills) async {
@@ -56,12 +85,15 @@ class ProfileProvider extends AsyncNotifier<ProfileState> {
       );
       final result = await addProfileUseCase(ProfileEntity(
         profileBlob: ProfileBlobEntity(
-          skills: skills.map((skill) => SkillEntity(
-            title: skill['title'] as String?,
-            durationMonths: skill['duration_months'] as int?,
-            years: skill['years'] as int?,
-            documents: (skill['documents'] as List<dynamic>?)?.cast<String>(),
-          )).toList(),
+          skills: skills
+              .map((skill) => SkillEntity(
+                    title: skill['title'] as String?,
+                    durationMonths: skill['duration_months'] as int?,
+                    years: skill['years'] as int?,
+                    documents:
+                        (skill['documents'] as List<dynamic>?)?.cast<String>(),
+                  ))
+              .toList(),
         ),
       ));
 
@@ -98,12 +130,14 @@ class ProfileProvider extends AsyncNotifier<ProfileState> {
       );
       final result = await addProfileUseCase(ProfileEntity(
         profileBlob: ProfileBlobEntity(
-          education: educationList.map((edu) => EducationEntity(
-            title: edu['title'] as String?,
-            institute: edu['institute'] as String?,
-            degree: edu['degree'] as String?,
-            document: edu['document'] as String?,
-          )).toList(),
+          education: educationList
+              .map((edu) => EducationEntity(
+                    title: edu['title'] as String?,
+                    institute: edu['institute'] as String?,
+                    degree: edu['degree'] as String?,
+                    document: edu['document'] as String?,
+                  ))
+              .toList(),
         ),
       ));
 
@@ -140,12 +174,14 @@ class ProfileProvider extends AsyncNotifier<ProfileState> {
       );
       final result = await addProfileUseCase(ProfileEntity(
         profileBlob: ProfileBlobEntity(
-          trainings: trainingsList.map((training) => TrainingEntity(
-            title: training['title'] as String?,
-            provider: training['provider'] as String?,
-            hours: training['hours'] as int?,
-            certificate: training['certificate'] as bool?,
-          )).toList(),
+          trainings: trainingsList
+              .map((training) => TrainingEntity(
+                    title: training['title'] as String?,
+                    provider: training['provider'] as String?,
+                    hours: training['hours'] as int?,
+                    certificate: training['certificate'] as bool?,
+                  ))
+              .toList(),
         ),
       ));
 
@@ -182,14 +218,16 @@ class ProfileProvider extends AsyncNotifier<ProfileState> {
       );
       final result = await addProfileUseCase(ProfileEntity(
         profileBlob: ProfileBlobEntity(
-          experience: experienceList.map((exp) => ExperienceEntity(
-            title: exp['title'] as String?,
-            employer: exp['employer'] as String?,
-            startDateAd: exp['start_date_ad'] as String?,
-            endDateAd: exp['end_date_ad'] as String?,
-            months: exp['months'] as int?,
-            description: exp['description'] as String?,
-          )).toList(),
+          experience: experienceList
+              .map((exp) => ExperienceEntity(
+                    title: exp['title'] as String?,
+                    employer: exp['employer'] as String?,
+                    startDateAd: exp['start_date_ad'] as String?,
+                    endDateAd: exp['end_date_ad'] as String?,
+                    months: exp['months'] as int?,
+                    description: exp['description'] as String?,
+                  ))
+              .toList(),
         ),
       ));
 
@@ -226,8 +264,8 @@ class ProfileProvider extends AsyncNotifier<ProfileState> {
       );
       final result = await addProfileUseCase(ProfileEntity(
         profileBlob: ProfileBlobEntity(
-          // Add personal info mapping here
-        ),
+            // Add personal info mapping here
+            ),
       ));
 
       result.fold(

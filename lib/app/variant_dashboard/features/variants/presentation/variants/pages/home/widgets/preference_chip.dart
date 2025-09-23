@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class PreferenceChip extends StatelessWidget {
   const PreferenceChip({
@@ -17,7 +18,8 @@ class PreferenceChip extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+          // colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+          colors: [AppColors.primaryColor, AppColors.primaryDarkColor],
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -29,7 +31,7 @@ class PreferenceChip extends StatelessWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -45,7 +47,6 @@ class PreferenceChip extends StatelessWidget {
             ),
             const SizedBox(width: 8),
           ],
-
           Text(
             preferenceText,
             style: TextStyle(

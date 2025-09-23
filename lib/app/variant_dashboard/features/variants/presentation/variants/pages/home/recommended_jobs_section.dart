@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
@@ -40,7 +41,7 @@ class RecommendedJobsSection extends ConsumerWidget {
                 child: Text(
                   'View All',
                   style: TextStyle(
-                    color: Color(0xFF4F7DF9),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

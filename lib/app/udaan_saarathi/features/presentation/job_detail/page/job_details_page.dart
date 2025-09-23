@@ -5,6 +5,8 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_d
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart'
     show getJobsByIdProvider;
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
 
 final selectedJobIdProvider = StateProvider<String?>((ref) => null);
 
@@ -25,6 +27,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
     final job = widget.job;
 
     final jobdataprovider = ref.watch(getJobsByIdProvider);
+    final isApplied = ref.watch(jobAppliedProvider(widget.job.id));
 
     return Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
@@ -68,7 +71,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
           ],
         ),
         body: jobdataprovider.when(data: (MobileJobEntity? data) {
-          return body(data!);
+          return body(data!, isApplied);
         }, error: (Object error, StackTrace stackTrace) {
           return Center(child: Text("error : $error\n$stackTrace"));
         }, loading: () {
@@ -76,7 +79,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
         }));
   }
 
-  Column body(MobileJobEntity job) {
+  Column body(MobileJobEntity job, bool isApplied) {
     return Column(children: [
       Expanded(
         child: SingleChildScrollView(
@@ -129,7 +132,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
                     const SizedBox(height: 24),
                     // Action Buttons
                     //remove this if using bottom action buttonsgh
-                    const ActionButtons(),
+                    // const ActionButtons(),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -141,9 +144,9 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 
       // use this if required instead of action buttons
       BottomActionButtons(
-        onApply: () {
-          // your apply logic
-        },
+        onApply: (widget.job.isActive && !isApplied)
+            ? () => _applyToJob(context, widget.job)
+            : null,
         onContact: () {
           // your contact logic
         },
@@ -152,6 +155,16 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
         },
       )
     ]);
+  }
+
+  void _applyToJob(BuildContext context, MobileJobEntity posting) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ApplyJobDialog(posting: posting),
+    );
+    if (result == true) {
+      ref.read(jobAppliedProvider(posting.id).notifier).state = true;
+    }
   }
 }
 // Quick Info Section with cards

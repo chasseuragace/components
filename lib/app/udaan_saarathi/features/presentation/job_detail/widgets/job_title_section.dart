@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
@@ -44,7 +45,11 @@ class JobTitleSection extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                    // colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                    colors: [
+                      AppColors.primaryColor,
+                      AppColors.primaryDarkColor
+                    ],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),

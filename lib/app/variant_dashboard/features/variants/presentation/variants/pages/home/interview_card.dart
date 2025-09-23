@@ -188,9 +188,9 @@ class InterviewCardFromModel extends StatelessWidget {
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
       case 'interview_scheduled':
-        return const Color(0xFF2563EB);
+        return AppColors.primaryColor;
       case 'interview_completed':
-        return const Color(0xFF059669);
+        return AppColors.secondaryColor;
       case 'interview_cancelled':
         return const Color(0xFFDC2626);
       default:

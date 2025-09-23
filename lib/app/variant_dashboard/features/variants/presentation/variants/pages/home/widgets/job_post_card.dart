@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
 // Provider to track if a job has been applied by job_posting_id
-final jobAppliedProvider = StateProvider.family<bool, String>((ref, jobId) {
-  return false;
-});
 
 class JobPostingCard extends ConsumerStatefulWidget {
   final MobileJobEntity posting;
@@ -57,7 +56,10 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                   height: 50,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+                      colors: [
+                        AppColors.primaryColor,
+                        AppColors.primaryDarkColor
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -199,7 +201,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                     height: 48,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Color(0xFF4F7DF9).withOpacity(0.3),
+                        color: AppColors.primaryColor.withOpacity(0.3),
                       ),
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -214,7 +216,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                       child: Text(
                         'View Details',
                         style: TextStyle(
-                          color: Color(0xFF4F7DF9),
+                          color: AppColors.primaryColor,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -227,7 +229,11 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                     height: 48,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+                        // colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+                        colors: [
+                          AppColors.primaryColor,
+                          AppColors.primaryColor
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -263,7 +269,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
       child: Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFF4F7DF9) : Colors.transparent,
+          color: isSelected ? AppColors.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(
@@ -288,7 +294,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
               '+ ${widget.posting.positions.length - 2} more positions',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF4F7DF9),
+                color: AppColors.primaryColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -436,7 +442,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                     '${position.convertedSalary} (${position.baseSalary})',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF4F7DF9),
+                      color: AppColors.primaryColor,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

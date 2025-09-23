@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/logo_widget.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
@@ -193,7 +194,7 @@ class _JobCardState extends State<JobCard> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF64748B),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -202,7 +203,7 @@ class _JobCardState extends State<JobCard> {
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF059669),
+                        color: AppColors.secondaryDarkColor,
                       ),
                     ),
                   ],
@@ -233,7 +234,7 @@ class _JobCardState extends State<JobCard> {
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor: AppColors.primaryColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,

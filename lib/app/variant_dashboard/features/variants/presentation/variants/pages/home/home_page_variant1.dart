@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
 import 'package:intl/intl.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/dashboard_header.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/interview_card.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
@@ -217,7 +218,7 @@ class DashboardAnalytics {
 //                   height: 50,
 //                   decoration: BoxDecoration(
 //                     gradient: LinearGradient(
-//                       colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+//                       colors: [AppColors.primaryColor, Color(0xFF6C5CE7)],
 //                     ),
 //                     borderRadius: BorderRadius.circular(12),
 //                   ),
@@ -296,7 +297,7 @@ class DashboardAnalytics {
 //                   '+ ${posting.positions.length - 2} more positions',
 //                   style: TextStyle(
 //                     fontSize: 14,
-//                     color: Color(0xFF4F7DF9),
+//                     color: AppColors.primaryColor,
 //                     fontWeight: FontWeight.w500,
 //                   ),
 //                 ),
@@ -344,7 +345,7 @@ class DashboardAnalytics {
 //                     height: 48,
 //                     decoration: BoxDecoration(
 //                       border: Border.all(
-//                         color: Color(0xFF4F7DF9).withOpacity(0.3),
+//                         color: AppColors.primaryColor.withOpacity(0.3),
 //                       ),
 //                       borderRadius: BorderRadius.circular(24),
 //                     ),
@@ -353,7 +354,7 @@ class DashboardAnalytics {
 //                       child: Text(
 //                         'View Details',
 //                         style: TextStyle(
-//                           color: Color(0xFF4F7DF9),
+//                           color: AppColors.primaryColor,
 //                           fontWeight: FontWeight.w600,
 //                         ),
 //                       ),
@@ -366,7 +367,7 @@ class DashboardAnalytics {
 //                     height: 48,
 //                     decoration: BoxDecoration(
 //                       gradient: LinearGradient(
-//                         colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+//                         colors: [AppColors.primaryColor, Color(0xFF6C5CE7)],
 //                       ),
 //                       borderRadius: BorderRadius.circular(24),
 //                     ),
@@ -446,7 +447,7 @@ class DashboardAnalytics {
 //                     '${position.convertedSalary} (${position.baseSalary})',
 //                     style: TextStyle(
 //                       fontSize: 13,
-//                       color: Color(0xFF4F7DF9),
+//                       color: AppColors.primaryColor,
 //                       fontWeight: FontWeight.w500,
 //                     ),
 //                   ),
@@ -584,7 +585,7 @@ class JobDetailsModal extends StatelessWidget {
             height: 52,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+                colors: [AppColors.primaryColor, Color(0xFF6C5CE7)],
               ),
               borderRadius: BorderRadius.circular(26),
             ),
@@ -691,7 +692,7 @@ class JobDetailsModal extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4F7DF9),
+                    color: AppColors.primaryColor,
                   ),
                 ),
             ],
@@ -725,14 +726,14 @@ class JobDetailsModal extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Color(0xFF4F7DF9).withOpacity(0.1),
+                        color: AppColors.primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         req,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF4F7DF9),
+                          color: AppColors.primaryColor,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -800,7 +801,7 @@ class ApplicationsSection extends ConsumerWidget {
                   child: Text(
                     'View All',
                     style: TextStyle(
-                      color: Color(0xFF4F7DF9),
+                      color: AppColors.primaryColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -829,7 +830,7 @@ class ApplicationsSection extends ConsumerWidget {
                 child: Text(
                   'View All',
                   style: TextStyle(
-                    color: Color(0xFF4F7DF9),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -991,7 +992,7 @@ class ApplicationCard extends StatelessWidget {
   Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.applied:
-        return Color(0xFF4F7DF9);
+        return AppColors.primaryColor;
       case ApplicationStatus.underReview:
         return Color(0xFFF59E0B);
       case ApplicationStatus.interviewScheduled:

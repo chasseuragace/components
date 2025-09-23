@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/job_card.dart';
 
@@ -156,7 +157,10 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                    colors: [
+                      AppColors.primaryColor,
+                      AppColors.primaryDarkColor
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -484,7 +488,7 @@ class SearchBarWidget extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                colors: [AppColors.primaryColor, AppColors.primaryDarkColor],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [

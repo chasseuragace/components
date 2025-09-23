@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
 
 class SelectedJobTitleCard extends StatelessWidget {
@@ -26,7 +27,8 @@ class SelectedJobTitleCard extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF1E88E5),
+            // color: const Color(0xFF1E88E5),
+            color: AppColors.primaryColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Center(

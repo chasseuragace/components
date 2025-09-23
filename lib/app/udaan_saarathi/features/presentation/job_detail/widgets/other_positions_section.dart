@@ -122,7 +122,7 @@ class _PositionRow extends StatelessWidget {
                           '$convertedSalary ',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Color(0xFF4F7DF9),
+                            color: AppColors.primaryColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -131,7 +131,7 @@ class _PositionRow extends StatelessWidget {
                           '($baseSalary)',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Color(0xFF4F7DF9),
+                            color: AppColors.primaryColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

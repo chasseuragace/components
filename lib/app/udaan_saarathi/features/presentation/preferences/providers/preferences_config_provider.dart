@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/preferences/entity.dart';
+
 import '../../../../core/storage/local_storage.dart';
-import '../../../domain/repositories/preferences/repository.dart';
-import '../../../data/repositories/preferences/repository_impl_fake.dart';
 import '../../../data/datasources/preferences/local_data_source.dart';
 import '../../../data/datasources/preferences/remote_data_source.dart';
 import '../../../data/repositories/auth/token_storage.dart';
+import '../../../data/repositories/preferences/repository_impl_fake.dart';
+import '../../../domain/repositories/preferences/repository.dart';
 
 // Provider for the preferences repository
 final preferencesRepositoryProvider = Provider<PreferencesRepository>((ref) {
@@ -20,10 +21,11 @@ final preferencesRepositoryProvider = Provider<PreferencesRepository>((ref) {
 
 /// Provider for user preferences data (actual user selections)
 /// This loads ALL user's saved preferences from server/storage
-final userPreferencesProvider = FutureProvider<List<PreferencesEntity>>((ref) async {
+final userPreferencesProvider =
+    FutureProvider<List<PreferencesEntity>>((ref) async {
   final repository = ref.watch(preferencesRepositoryProvider);
   final result = await repository.getAllItems();
-  
+
   return result.fold(
     (failure) => throw Exception('Failed to load user preferences'),
     (items) => items, // Return all items, not just first
@@ -35,7 +37,7 @@ final userPreferencesProvider = FutureProvider<List<PreferencesEntity>>((ref) as
 final filterDataProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   final repository = ref.watch(preferencesRepositoryProvider);
   final result = await repository.getFilter();
-  
+
   return result.fold(
     (failure) => null, // Return null on failure, UI will use default template
     (filterData) => filterData,
@@ -59,22 +61,23 @@ List<Map<String, dynamic>> _getDefaultStepsConfig() {
       'type': 'builtin',
       'key': 'job_titles',
       'title': 'Job Titles (Priority Order)',
-      'subtitle': 'Select and prioritize job titles. Your top choice appears first.',
+      'subtitle':
+          'Select and prioritize job titles. Your top choice appears first.',
       'icon': 'work_outline',
-      'color': 0xFF3B82F6
+      'color': 0xFF006BA3,
     },
     {
       'title': 'Countries & Locations',
       'subtitle': 'Select Gulf countries and preferred locations.',
       'icon': 'public',
-      'color': 0xFF059669,
+      'color': 0xFF56AF12,
       'sections': [
         {
           'id': 'countries',
           'type': 'multi_select',
           'title': 'Gulf Countries',
           'source': 'gulfCountries',
-          'color': 0xFF059669,
+          'color': 0xFF56AF12,
           'required': true
         }
       ]
@@ -99,7 +102,7 @@ List<Map<String, dynamic>> _getDefaultStepsConfig() {
       'title': 'Review & Confirm',
       'subtitle': 'Review and confirm your job preferences before saving.',
       'icon': 'check_circle_outline',
-      'color': 0xFF059669
+      'color': 0xFF56AF12
     }
   ];
 }

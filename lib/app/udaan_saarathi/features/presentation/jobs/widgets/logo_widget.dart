@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
 
 class LogoWidget extends StatelessWidget {
@@ -18,7 +19,7 @@ class LogoWidget extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+          colors: [AppColors.primaryColor, AppColors.primaryDarkColor],
         ),
         borderRadius: BorderRadius.circular(16),
       ),

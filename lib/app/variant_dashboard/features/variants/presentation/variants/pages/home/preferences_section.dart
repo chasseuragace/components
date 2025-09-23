@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/preferences/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_modal.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
@@ -16,12 +15,11 @@ class PreferencesSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Added WidgetRef ref
-    final preferences = ref
-        .watch(jobDashboardDataProvider)
-        .preferences; // Access data via ref
+    final preferences =
+        ref.watch(jobDashboardDataProvider).preferences; // Access data via ref
 
-  final apiPreferences = ref.watch(userPreferencesProvider);
-  
+    final apiPreferences = ref.watch(userPreferencesProvider);
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -43,7 +41,7 @@ class PreferencesSection extends ConsumerWidget {
                 child: Text(
                   'Add',
                   style: TextStyle(
-                    color: Color(0xFF4F7DF9),
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -51,39 +49,25 @@ class PreferencesSection extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16.0),
-          Builder(
-            builder: (context) {
-
-return apiPreferences.when(
-    data: (data) {
-      return  Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: 
-                      
-                    
-              
-                      
-                      data
-                          .map<Widget>((pref) => _buildPreferenceChip(pref))
-                          .toList(),
-                    );
-    },
-    error: (error, stackTrace) {
-      return _buildEmptyPreferences(context);
-    },
-    loading: () {
-      return _buildEmptyPreferences(context);
-    },
-  );
-              
-           
-                  
-                  
-                  
-                 
-            }
-          ),
+          Builder(builder: (context) {
+            return apiPreferences.when(
+              data: (data) {
+                return Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: data
+                      .map<Widget>((pref) => _buildPreferenceChip(pref))
+                      .toList(),
+                );
+              },
+              error: (error, stackTrace) {
+                return _buildEmptyPreferences(context);
+              },
+              loading: () {
+                return _buildEmptyPreferences(context);
+              },
+            );
+          }),
         ],
       ),
     );
@@ -120,7 +104,7 @@ return apiPreferences.when(
           ElevatedButton(
             onPressed: () => _showPreferencesModal(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF4F7DF9),
+              backgroundColor: AppColors.primaryColor,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
