@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/favorites/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart'
     show getJobsByIdProvider;
@@ -48,12 +49,15 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
-                icon: const Icon(
-                  Icons.bookmark_border,
+                icon: Icon(
+                  isSaved ? Icons.bookmark : Icons.bookmark_border,
                   color: Color(0xFFE67E22),
                   size: 20,
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  await ref
+                      .read(addFavoritesProvider.notifier)
+                      .addFavorites(job.id);
                   setState(() {
                     isSaved = !isSaved;
                   });
