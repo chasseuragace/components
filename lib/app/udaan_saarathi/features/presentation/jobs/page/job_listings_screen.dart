@@ -778,7 +778,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF3B82F6),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -794,19 +794,19 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildFilterSection('Country', 'country', [
-                    'Nepal',
-                    'India',
-                    'USA',
-                    'Canada',
-                    'Australia',
+                    'Qatar',
+                    'Malaysia',
+                    'Saudi Arabia',
+                    'UAE',
+                    'Kuwait',
                   ]),
-                  _buildFilterSection('Position', 'position', [
-                    'Developer',
-                    'Designer',
-                    'Manager',
-                    'Analyst',
-                    'Specialist',
-                  ]),
+                  // _buildFilterSection('Position', 'position', [
+                  //   'Developer',
+                  //   'Designer',
+                  //   'Manager',
+                  //   'Analyst',
+                  //   'Specialist',
+                  // ]),
                   _buildFilterSection('Job Type', 'jobType', [
                     'Full Time',
                     'Part Time',
@@ -840,7 +840,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       side: const BorderSide(color: Color(0xFFE2E8F0)),
                     ),
@@ -863,11 +863,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3B82F6),
+                      backgroundColor: AppColors.primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: const Text(
