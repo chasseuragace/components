@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
     as cand;
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/image_source_selection_prompt.dart';
 
 class ProfileContentWidget extends ConsumerStatefulWidget {
   const ProfileContentWidget({super.key});
@@ -47,8 +48,14 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
               bottom: 0,
               right: 0,
               child: GestureDetector(
-                onTap: () {
-                  // Handle profile image edit
+                onTap: () async {
+                  final source = await showDialog(
+                    context: context,
+                    builder: (context) => const ImageSourceSelectionPrompt(),
+                  );
+                  if (source == null) {
+                    return;
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),
@@ -98,11 +105,16 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
             String? addressText;
             if (address != null) {
               final parts = <String>[];
-              if ((address.name ?? '').trim().isNotEmpty) parts.add(address.name!.trim());
-              if ((address.municipality ?? '').trim().isNotEmpty) parts.add(address.municipality!.trim());
-              if ((address.district ?? '').trim().isNotEmpty) parts.add(address.district!.trim());
-              if ((address.province ?? '').trim().isNotEmpty) parts.add(address.province!.trim());
-              if ((address.ward ?? '').trim().isNotEmpty) parts.add('Ward ${address.ward!.trim()}');
+              if ((address.name ?? '').trim().isNotEmpty)
+                parts.add(address.name!.trim());
+              if ((address.municipality ?? '').trim().isNotEmpty)
+                parts.add(address.municipality!.trim());
+              if ((address.district ?? '').trim().isNotEmpty)
+                parts.add(address.district!.trim());
+              if ((address.province ?? '').trim().isNotEmpty)
+                parts.add(address.province!.trim());
+              if ((address.ward ?? '').trim().isNotEmpty)
+                parts.add('Ward ${address.ward!.trim()}');
               addressText = parts.isNotEmpty ? parts.join(', ') : null;
             }
 
@@ -125,7 +137,8 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
                       const SizedBox(width: 6),
                       Text(
                         phone,
-                        style: const TextStyle(fontSize: 14, color: Colors.black87),
+                        style: const TextStyle(
+                            fontSize: 14, color: Colors.black87),
                       ),
                     ],
                   ),
@@ -136,13 +149,15 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                      const Icon(Icons.location_on,
+                          size: 16, color: Colors.grey),
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           addressText,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black87),
                         ),
                       ),
                     ],

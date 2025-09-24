@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
 
 class DashboardHeader extends ConsumerWidget {
@@ -15,7 +16,7 @@ class DashboardHeader extends ConsumerWidget {
 
     final analytics = ref.watch(getCandidatAnalytocseByIdProvider);
     return analytics.when(data: (CandidateStatisticsEntity? data) {
-      return body(data!);
+      return body(data!, context);
     }, error: (Object error, StackTrace stackTrace) {
       return SizedBox();
     }, loading: () {
@@ -23,7 +24,7 @@ class DashboardHeader extends ConsumerWidget {
     });
   }
 
-  Container body(CandidateStatisticsEntity analytics) {
+  Container body(CandidateStatisticsEntity analytics, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -72,18 +73,27 @@ class DashboardHeader extends ConsumerWidget {
                     'Applications',
                     analytics.byStatus.applied.toString(),
                     Icons.send_rounded,
+                    onTap: () {},
                   ),
                   const SizedBox(width: 16),
                   _buildQuickStat(
                     'Shortlists',
                     analytics.byStatus.shortlisted.toString(),
                     Icons.list_alt,
+                    onTap: () {},
                   ),
                   const SizedBox(width: 16),
                   _buildQuickStat(
                     'Interviews',
                     analytics.byStatus.interviewScheduled.toString(),
                     Icons.event_rounded,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => InterviewsListPage(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -94,8 +104,11 @@ class DashboardHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickStat(String label, String value, IconData icon) {
+  Widget _buildQuickStat(String label, String value, IconData icon,
+      {VoidCallback? onTap}) {
     return Expanded(
+        child: InkWell(
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -126,7 +139,7 @@ class DashboardHeader extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 

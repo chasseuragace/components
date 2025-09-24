@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/pages/frame.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/pages/new_frame.dart';
 
 import '../../domain/entities/variant_item.dart';
 
@@ -21,7 +21,7 @@ class VariantPreview extends StatelessWidget {
     double mobileHeight = 2622.0 * multiplier;
 
     return true
-        ? MobileFrame(
+        ? NewMobileFrame(
             frameWidth: isExpanded ? mobileWidth : 400,
             frameHeight: isExpanded ? mobileHeight : 800,
             child: true
@@ -69,7 +69,6 @@ class VariantPreview extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade400, width: 2),
