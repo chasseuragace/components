@@ -26,7 +26,7 @@ class LogoWidget extends StatelessWidget {
       child: logoUrl.isEmpty
           ? Center(
               child: Text(
-                companyName.companyInitial,
+                companyName.companyInitials,
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

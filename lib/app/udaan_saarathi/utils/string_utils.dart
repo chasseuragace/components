@@ -5,6 +5,21 @@ extension CompanyNameExtension on String {
     if (trim().isEmpty) return "C"; // fallback if company name is empty
     return trim()[0].toUpperCase();
   }
+
+  String get companyInitials {
+    final parts = trim().split(RegExp(r"\s+")); // split by spaces
+    if (parts.isEmpty || parts.first.isEmpty) return "C";
+
+    // Take first char of first word
+    String initials = parts[0][0].toUpperCase();
+
+    // If there is a second word, take its first char too
+    if (parts.length > 1 && parts[1].isNotEmpty) {
+      initials += parts[1][0].toUpperCase();
+    }
+
+    return initials;
+  }
 }
 
 extension RelativeTimeExtension on DateTime {

@@ -53,54 +53,65 @@ class RequirementsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          ...allRequirements.asMap().entries.map((entry) {
-            final index = entry.key;
-            final requirement = entry.value;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF3498DB), Color(0xFF2980B9)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${index + 1}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+          allRequirements.isEmpty
+              ? Center(
+                  child: Text(
+                    "No requirements available",
+                    style: TextStyle(
+                      fontSize: 14,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        requirement.toString(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF374151),
-                          height: 1.5,
-                        ),
+                )
+              : Column(
+                  children: allRequirements.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final requirement = entry.value;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFF3498DB), Color(0xFF2980B9)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${index + 1}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                requirement.toString(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF374151),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
+                    );
+                  }).toList(),
+                )
         ],
       ),
     );
