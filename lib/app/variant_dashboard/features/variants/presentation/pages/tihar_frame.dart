@@ -14,7 +14,7 @@ class MobileFrameDemo extends StatelessWidget {
         elevation: 0,
       ),
       body: Center(
-        child: NewMobileFrame(
+        child: TiharMobileFrame(
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -50,7 +50,7 @@ class MobileFrameDemo extends StatelessWidget {
   }
 }
 
-class NewMobileFrame extends StatefulWidget {
+class TiharMobileFrame extends StatefulWidget {
   final Widget child;
   final double frameWidth;
   final double frameHeight;
@@ -58,7 +58,7 @@ class NewMobileFrame extends StatefulWidget {
   final double cornerRadius;
   final bool enableAnimation;
 
-  const NewMobileFrame({
+  const TiharMobileFrame({
     super.key,
     required this.child,
     this.frameWidth = 300,
@@ -69,10 +69,10 @@ class NewMobileFrame extends StatefulWidget {
   });
 
   @override
-  State<NewMobileFrame> createState() => _NewMobileFrameState();
+  State<TiharMobileFrame> createState() => _TiharMobileFrameState();
 }
 
-class _NewMobileFrameState extends State<NewMobileFrame>
+class _TiharMobileFrameState extends State<TiharMobileFrame>
     with SingleTickerProviderStateMixin {
   late AnimationController _glowController;
   late Animation<double> _glowAnimation;
