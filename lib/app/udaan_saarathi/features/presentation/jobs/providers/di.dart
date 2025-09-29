@@ -10,6 +10,7 @@ import '../../../domain/usecases/jobs/get_by_id.dart';
 import '../../../domain/usecases/jobs/add.dart';
 import '../../../domain/usecases/jobs/update.dart';
 import '../../../domain/usecases/jobs/delete.dart';
+import '../../../domain/usecases/jobs/search_jobs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getAllJobsUseCaseProvider = Provider<GetAllJobsUseCase>((ref) {
@@ -36,6 +37,10 @@ final updateJobsUseCaseProvider = Provider<UpdateJobsUseCase>((ref) {
 
 final deleteJobsUseCaseProvider = Provider<DeleteJobsUseCase>((ref) {
   return DeleteJobsUseCase(ref.watch(rJobsRepositoryProvider));
+});
+
+final searchJobsUseCaseProvider = Provider<SearchJobsUseCase>((ref) {
+  return SearchJobsUseCase(ref.watch(rJobsRepositoryProvider));
 });
 
 final rJobsRepositoryProvider = Provider((ref) {

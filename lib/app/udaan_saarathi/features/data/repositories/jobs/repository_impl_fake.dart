@@ -2,9 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:openapi/openapi.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/grouped_jobs_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/jobs_search_result_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart' as search_entities;
 
 import '../../../../core/config/api_config.dart';
 import '../../../../core/errors/failures.dart';
@@ -31,6 +33,7 @@ import '../../datasources/jobs/remote_data_source.dart';
 //     name: 'Guest',
 //   ),
 // ];
+
 
 final List<JobsEntity> jobPostings = [
   JobsEntity(
@@ -274,8 +277,10 @@ class JobsRepositoryFake implements JobsRepository {
     required this.localDataSource,
     required this.remoteDataSource,
     required this.storage,
-  }) : _api = ApiConfig.client().getCandidatesApi();
+  })  : _api = ApiConfig.client().getCandidatesApi(),
+        jobsApi = ApiConfig.client().getJobsApi();
   final CandidatesApi _api;
+  final JobsApi jobsApi;
   @override
   Future<Either<Failure, List<JobsEntity>>> getAllItems() async {
     try {
@@ -294,11 +299,36 @@ class JobsRepositoryFake implements JobsRepository {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-    final data=  await  _api.candidateControllerGetJobMobile(id:  (await storage.getCandidateId())!, jobId: id);
-     print(data.data!.toJson());
+      final data = await _api.candidateControllerGetJobMobile(
+          id: (await storage.getCandidateId())!, jobId: id);
+      print(data.data!.toJson());
       return right(MobileJobModel.fromJson(data.data!.toJson()));
-    } catch (error,s) {
-       print(error);
+    } catch (error, s) {
+      print(error);
+      print(s);
+      return left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, search_entities.PaginatedJobsSearchResults>> searchJobs(JobSearchDTO dto) async {
+    try {
+      // Simulate delay
+      await Future.delayed(Duration(milliseconds: 300));
+      final data = await jobsApi.publicJobsControllerSearchJobs(
+          keyword: dto.keyword,
+          country: dto.country,
+          minSalary: dto.minSalary,
+          maxSalary: dto.maxSalary,
+          currency: dto.currency,
+          page: dto.page,
+          limit: dto.limit,
+          sortBy: dto.sortBy,
+          order: dto.order);
+
+      return right(PaginatedJobsSearchResultsModel.fromJson(data.data!.toJson()));
+    } catch (error, s) {
+      print(error);
       print(s);
       return left(ServerFailure());
     }
@@ -347,18 +377,21 @@ class JobsRepositoryFake implements JobsRepository {
   Future<Either<Failure, GroupedJobsEntity>> getGroupedJobs() async {
     try {
       final candidateId = await storage.getCandidateId();
-      print('🔍 Attempting to fetch grouped relevant jobs for candidate ID: $candidateId');
-      
+      print(
+          '🔍 Attempting to fetch grouped relevant jobs for candidate ID: $candidateId');
+
       if (candidateId == null || candidateId.isEmpty) {
         print('❌ No candidate ID found in storage for grouped jobs');
         return left(ServerFailure(
           message: 'No candidate ID available for grouped jobs',
-          details: 'Candidate ID is required to fetch grouped jobs but was not found in storage',
+          details:
+              'Candidate ID is required to fetch grouped jobs but was not found in storage',
         ));
       }
 
       print('📡 Making API call to fetch grouped relevant jobs...');
-      final data = await _api.candidateControllerGetRelevantJobsGrouped(id: candidateId);
+      final data =
+          await _api.candidateControllerGetRelevantJobsGrouped(id: candidateId);
       print('📡 Grouped jobs API response status: ${data.statusCode}');
 
       if (data.data == null) {
@@ -371,14 +404,15 @@ class JobsRepositoryFake implements JobsRepository {
 
       print('✅ Successfully fetched grouped relevant jobs data');
       final groupedJobs = GroupedJobsModel.fromJson(data.data!.toJson());
-      
+
       // Log summary of what was fetched
       int totalJobs = 0;
       for (final group in groupedJobs.groups) {
         totalJobs += group.jobs.length;
       }
-      print('📊 Fetched ${groupedJobs.groups.length} job groups with $totalJobs total jobs');
-      
+      print(
+          '📊 Fetched ${groupedJobs.groups.length} job groups with $totalJobs total jobs');
+
       return right(groupedJobs);
     } catch (error, stackTrace) {
       print('❌ Error fetching grouped relevant jobs: $error');

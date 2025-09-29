@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart' as search_entities;
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/jobs/entity.dart';
+import '../../../domain/repositories/jobs/repository.dart';
 
 import '../../../../core/usecases/usecase.dart';
 import './di.dart';
@@ -99,6 +100,26 @@ class DeleteJobsNotifier extends AsyncNotifier {
   }
 }
 
+class SearchJobsNotifier extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
+  @override
+  Future<search_entities.PaginatedJobsSearchResults?> build() async {
+    return null; // Initially null
+  }
+
+  Future<void> searchJobs(JobSearchDTO searchParams) async {
+    state = const AsyncValue.loading();
+    final result = await ref.read(searchJobsUseCaseProvider)(searchParams);
+    state = result.fold(
+      (failure) => AsyncValue.error(failure, StackTrace.current),
+      (results) => AsyncValue.data(results),
+    );
+  }
+
+  void clearResults() {
+    state = const AsyncValue.data(null);
+  }
+}
+
 Exception _mapFailureToException(Failure failure) {
   if (failure is ServerFailure) {
     return Exception('Server failure');
@@ -130,4 +151,8 @@ final updateJobsProvider = AsyncNotifierProvider<UpdateJobsNotifier, void>(() {
 
 final deleteJobsProvider = AsyncNotifierProvider<DeleteJobsNotifier, void>(() {
   return DeleteJobsNotifier();
+});
+
+final searchJobsProvider = AsyncNotifierProvider<SearchJobsNotifier, search_entities.PaginatedJobsSearchResults?>(() {
+  return SearchJobsNotifier();
 });
