@@ -12,43 +12,41 @@ class GetAllApplicaitonsNotifier
     final result = await ref.read(getAllApplicaitonsUseCaseProvider)(NoParm());
     return result.fold(
       (failure) => throw _mapFailureToException(failure),
-      (items) => items,
+      (items) => items.items,
     );
   }
 }
 
-class GetApplicaitonsByIdNotifier extends AsyncNotifier<ApplicaitonsEntity?> {
+class GetApplicaitonsByIdNotifier extends AsyncNotifier<ApplicationDetailsEntity?> {
   @override
-  Future<ApplicaitonsEntity?> build() async {
-    return null; // Initially null
-  }
-
-  Future<void> getApplicaitonsById(String id) async {
-    state = const AsyncValue.loading();
-    final result = await ref.read(getApplicaitonsByIdUseCaseProvider)(id);
-    state = result.fold(
-      (failure) => AsyncValue.error(failure, StackTrace.current),
-      (item) => AsyncValue.data(null),
+  Future<ApplicationDetailsEntity?> build() async {
+    final selectedId = ref.watch(selectedApplicationIdProvider);
+    if (selectedId == null) return null;
+    
+    final result = await ref.read(getApplicaitonsByIdUseCaseProvider)(selectedId);
+    return result.fold(
+      (failure) => throw _mapFailureToException(failure),
+      (item) => item,
     );
   }
 }
 
-class AddApplicaitonsNotifier extends AsyncNotifier {
-  @override
-  Future<void> build() async {
-    return;
-  }
+// class AddApplicaitonsNotifier extends AsyncNotifier {
+//   @override
+//   Future<void> build() async {
+//     return;
+//   }
 
-  Future<void> addApplicaitons(ApplicaitonsEntity item) async {
-    state = const AsyncValue.loading();
-    final result = await ref.read(addApplicaitonsUseCaseProvider)(item);
-    state = result.fold(
-      (failure) => AsyncValue.error(failure, StackTrace.current),
-      (_) => AsyncValue.data(null),
-    );
-    ref.invalidate(getAllApplicaitonsProvider);
-  }
-}
+//   Future<void> addApplicaitons(ApplyJobDTOEntity item) async {
+//     state = const AsyncValue.loading();
+//     final result = await ref.read(addApplicaitonsUseCaseProvider)(item);
+//     state = result.fold(
+//       (failure) => AsyncValue.error(failure, StackTrace.current),
+//       (_) => AsyncValue.data(null),
+//     );
+//     ref.invalidate(getAllApplicaitonsProvider);
+//   }
+// }
 
 class ApplyJobNotifier extends AsyncNotifier {
   @override
@@ -56,7 +54,7 @@ class ApplyJobNotifier extends AsyncNotifier {
     return null;
   }
 
-  Future<void> applyJob(ApplicationEntity item) async {
+  Future<void> applyJob(ApplyJobDTOEntity item) async {
     state = const AsyncValue.loading();
     final result = await ref.read(applyJobUseCaseProvider)(item);
     state = result.fold(
@@ -116,14 +114,17 @@ final getAllApplicaitonsProvider =
 });
 
 final getApplicaitonsByIdProvider =
-    AsyncNotifierProvider<GetApplicaitonsByIdNotifier, ApplicaitonsEntity?>(() {
+    AsyncNotifierProvider<GetApplicaitonsByIdNotifier, ApplicationDetailsEntity?>(() {
   return GetApplicaitonsByIdNotifier();
 });
 
-final addApplicaitonsProvider =
-    AsyncNotifierProvider<AddApplicaitonsNotifier, void>(() {
-  return AddApplicaitonsNotifier();
-});
+// State provider for selected application ID
+final selectedApplicationIdProvider = StateProvider<String?>((ref) => null);
+
+// final addApplicaitonsProvider =
+//     AsyncNotifierProvider<AddApplicaitonsNotifier, void>(() {
+//   return AddApplicaitonsNotifier();
+// });
 
 final updateApplicaitonsProvider =
     AsyncNotifierProvider<UpdateApplicaitonsNotifier, void>(() {

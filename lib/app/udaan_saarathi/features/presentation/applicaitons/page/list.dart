@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/applicaitons/entity.dart';
 import '../providers/providers.dart';
+import 'detail_by_id.dart';
 
 class ApplicaitonsListPage extends ConsumerStatefulWidget {
   const ApplicaitonsListPage({super.key});
@@ -35,26 +36,18 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
                 itemBuilder: (context, index) {
                   final item = items[index];
                   return ListTile(
-                    title: Text(item.runtimeType.toString()), // Adjust this based on your entity properties
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            _showEditDialog(context, ref, item);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            _showDeleteConfirmation(context, ref, item.id);
-                          },
-                        ),
-                      ],
-                    ),
+                    subtitle: Text(item.id),
+                    title: Text(item.status), // Adjust this based on your entity properties
+                    
                     onTap: () {
-                      // Handle item tap, e.g., navigate to detail page
+                      // Set the selected application ID
+                      ref.read(selectedApplicationIdProvider.notifier).state = item.id;
+                      // Navigate to detail page
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const ApplicationDetailPage(),
+                        ),
+                      );
                     },
                   );
                 },

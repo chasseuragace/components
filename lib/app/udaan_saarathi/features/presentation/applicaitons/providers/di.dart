@@ -5,7 +5,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/ap
 import '../../../data/datasources/applicaitons/local_data_source.dart';
 import '../../../data/datasources/applicaitons/remote_data_source.dart';
 import '../../../data/repositories/applicaitons/repository_impl_fake.dart';
-import '../../../domain/usecases/applicaitons/add.dart';
+
 import '../../../domain/usecases/applicaitons/delete.dart';
 import '../../../domain/usecases/applicaitons/get_all.dart';
 import '../../../domain/usecases/applicaitons/get_by_id.dart';
@@ -21,9 +21,7 @@ final getApplicaitonsByIdUseCaseProvider =
   return GetApplicaitonsByIdUseCase(ref.watch(rApplicaitonsRepositoryProvider));
 });
 
-final addApplicaitonsUseCaseProvider = Provider<AddApplicaitonsUseCase>((ref) {
-  return AddApplicaitonsUseCase(ref.watch(rApplicaitonsRepositoryProvider));
-});
+
 final applyJobUseCaseProvider = Provider<ApplyJobUseCase>((ref) {
   return ApplyJobUseCase(ref.watch(rApplicaitonsRepositoryProvider));
 });
