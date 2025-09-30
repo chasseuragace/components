@@ -394,11 +394,11 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
     final note = _noteController.text.trim().isEmpty
         ? 'Applied via mobile app'
         : _noteController.text.trim();
-    final application = ApplicationEntity(
+    final application = ApplyJobDTOEntity(
       candidateId: candidateId,
       jobPostingId: widget.posting.id,
       note: note,
-      updatedBy: 'candidate-mobile-app',
+      name: 'candidate-mobile-app',
     );
 
     await ref.read(applyJobProvider.notifier).applyJob(application);

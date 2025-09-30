@@ -4,13 +4,13 @@ import '../../repositories/applicaitons/repository.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 
-class GetAllApplicaitonsUseCase implements UseCase<List<ApplicaitonsEntity>, NoParm> {
+class GetAllApplicaitonsUseCase implements UseCase<ApplicationPaginationWrapper, NoParm> {
   final ApplicaitonsRepository repository;
 
   GetAllApplicaitonsUseCase (this.repository);
 
   @override
-  Future<Either<Failure, List<ApplicaitonsEntity>>> call(NoParm params) async {
+  Future<Either<Failure,ApplicationPaginationWrapper>> call(NoParm params) async {
     return  repository.getAllItems();
   }
 }

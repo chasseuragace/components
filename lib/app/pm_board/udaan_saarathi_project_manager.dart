@@ -11,6 +11,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/splas
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/pages/variant_dashboard_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
+import '../udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import '../udaan_saarathi/features/presentation/auth/pages/login_page.dart';
 import '../udaan_saarathi/features/presentation/auth/pages/register_page.dart';
 import '../udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
@@ -59,9 +60,10 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
     return PageView(
       controller: PageController(viewportFraction: .3),
       children: [
+        buildScreen(ApplicaitonsListPage()),
       
-        buildScreen(InterviewsListPage()),
-        if (!false) ...[
+        if (false) ...[
+            buildScreen(InterviewsListPage()),
           buildScreen(const ProfilePage()),
           buildScreen(const SplashScreen()),
           buildScreen(const OnboardingListPage()),

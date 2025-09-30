@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/storage/local_storage.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/applicaitons/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
@@ -317,23 +318,22 @@ void main() {
 
             print('\n✍️ Ramesh writes his application...');
 
-            final applicationEntity = ApplicaitonsModel(
-              rawJson: {
-                'job_posting_id': firstJob.id,
-                'note':
-                    'Dear Sir/Madam, I am very interested in this ${firstJob.postingTitle} position. I have relevant experience and am ready to work abroad. I am hardworking and reliable. Thank you for considering my application. - Ramesh Bahadur',
-              },
-              id: candidateId,
+            final applicationEntity = ApplyJobDTOEntity(
+             
+              jobPostingId: firstJob.id,
+              candidateId: candidateId,
+              note:'Dear Sir/Madam, I am very interested in this ${firstJob.postingTitle} position. I have relevant experience and am ready to work abroad. I am hardworking and reliable. Thank you for considering my application. - Ramesh Bahadur',
+            
               name: 'Job Application',
             );
 
             final applicationsNotifier =
-                container.read(addApplicaitonsProvider.notifier);
+                container.read(applyJobProvider.notifier);
 
             try {
-              await applicationsNotifier.addApplicaitons(applicationEntity);
+              await applicationsNotifier.applyJob(applicationEntity);
 
-              final applicationState = container.read(addApplicaitonsProvider);
+              final applicationState = container.read(applyJobProvider);
               await applicationState.when(
                 data: (_) async {
                   print(
