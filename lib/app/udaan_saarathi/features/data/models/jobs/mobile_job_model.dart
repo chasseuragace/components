@@ -191,7 +191,9 @@ factory MobileJobModel.fromJson(Map<String, dynamic> json) {
     isFeatured: json['isFeatured'] as bool? ?? false,
     companyLogo: json['companyLogo'] as String? ?? '',
     matchPercentage: json['matchPercentage'] as String? ?? '0',
-    convertedSalary: json['convertedSalary'] as String? ?? 'Not available',
+    // Note: Backend doesn't provide job-level convertedSalary, only position-level
+    // This field will typically be null - use positions[].convertedSalary instead
+    convertedSalary: json['convertedSalary'] as String?,
     applications: json['applications'] as int? ?? 0,
     policy: json['policy'] as String? ?? 'Standard',
   );

@@ -11,7 +11,7 @@ class MobileJobEntity {
   final String city;
   final String agency;
   final String employer;
-  final List<JobPosition> positions;
+  final List<JobPosition> positions; // Each position has its own convertedSalary
   final String description;
   final ContractTerms contractTerms;
   final bool isActive;
@@ -20,13 +20,17 @@ class MobileJobEntity {
   final String preferenceText;
   final String? location;
   final String? experience;
-  final String? salary;
+  final String? salary; // Display range (e.g., "AED 2500 - AED 2500")
   final String? type;
   final bool? isRemote;
   final bool? isFeatured;
   final String? companyLogo;
-  final String? matchPercentage;
+  final String? matchPercentage; // Skills alignment percentage (0-100)
+  
+  /// @deprecated Use positions[].convertedSalary instead
+  /// Backend does not provide job-level converted salary, only position-level
   final String? convertedSalary;
+  
   final int? applications;
   final String? policy;
   MobileJobEntity({

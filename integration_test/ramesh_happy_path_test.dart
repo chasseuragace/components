@@ -190,6 +190,7 @@ void main() {
 
       if (jobTitles.isEmpty) {
         print('⚠️ No job titles available at the moment. Continuing journey...');
+        throw "Riverpod jobs State didnt show Data";
       } else {
         print('✅ Found ${jobTitles.length} job categories');
         print(
@@ -385,7 +386,7 @@ void main() {
       );
 
       print('🔎 Searching for: "${searchParams.keyword}" in ${searchParams.country}');
-      print('💰 Salary range: \${searchParams.minSalary} - \${searchParams.maxSalary}');
+      print('💰 Salary range: ${searchParams.minSalary} - ${searchParams.maxSalary}');
 
       try {
         await searchNotifier.searchJobs(searchParams);
@@ -452,30 +453,38 @@ void main() {
               print('📱 Mobile-optimized job details:');
               print('   📋 Position: ${jobDetail.postingTitle}');
               print('   📍 Location: ${jobDetail.location ?? '${jobDetail.city}, ${jobDetail.country}'}');
-              print('   💰 Base Salary: ${jobDetail.salary ?? 'Competitive'}');
-              
-              // Check converted salary in job detail - matching backend test
-              if (jobDetail.convertedSalary != null) {
-                print('   🇳🇵 Mobile Converted Salary: ${jobDetail.convertedSalary}');
-                print('   ✅ Converted salary verified in job detail - matching backend test');
-              } else {
-                print('   ⚠️ No converted salary in job detail');
-              }
-              
-              // Check positions for detailed conversion info - matching backend test
-              if (jobDetail.positions.isNotEmpty) {
-                final firstPosition = jobDetail.positions.first;
-                if (firstPosition.convertedSalary != null) {
-                  print('   💱 Position Converted Salary: ${firstPosition.convertedSalary}');
-                }
-                if (firstPosition.baseSalary != null) {
-                  print('   💵 Position Base Salary: ${firstPosition.baseSalary}');
-                }
-              }
+              print('   💰 Salary Range: ${jobDetail.salary ?? 'Competitive'}');
               
               // Match percentage (if available)
               if (jobDetail.matchPercentage != null) {
                 print('   📊 Match: ${jobDetail.matchPercentage}% - Skills alignment verified');
+              }
+              
+              // Check positions for detailed salary info - converted salary exists at position level
+              if (jobDetail.positions.isNotEmpty) {
+                print('   📦 Available Positions: ${jobDetail.positions.length}');
+                
+                for (int i = 0; i < jobDetail.positions.length; i++) {
+                  final position = jobDetail.positions[i];
+                  print('   \n   Position ${i + 1}: ${position.title}');
+                  
+                  if (position.baseSalary != null && position.baseSalary != 'Not specified') {
+                    print('      💵 Base Salary: ${position.baseSalary}');
+                  }
+                  
+                  if (position.convertedSalary != null && position.convertedSalary != 'Not available') {
+                    print('      💱 Converted Salary: ${position.convertedSalary}');
+                    print('      ✅ Position-level converted salary verified');
+                  } else {
+                    print('      ⚠️ No converted salary for this position');
+                  }
+                  
+                  if (position.currency != null && position.currency != 'N/A') {
+                    print('      💰 Currency: ${position.currency}');
+                  }
+                }
+              } else {
+                print('   ⚠️ No positions available for this job');
               }
               
               print('🎉 Job detail functionality working perfectly!');
@@ -535,15 +544,15 @@ void main() {
       print('✅ Job Application System');
       print('✅ Interview System Access');
       print('✅ Secure Logout');
-      print('✅ Converted Salary Verification (NPR/USD equivalents)');
+      print('✅ Converted Salary Verification (Position-level NPR/USD)');
       print(
           '\n🌟 Ramesh\'s journey from village dreams to job applications is complete!');
       print('💫 The system is ready to help him achieve his goals abroad.');
-      print('\n💱 CONVERTED SALARY TESTING:');
-      print('   ✅ Frontend now matches backend test coverage');
-      print('   ✅ NPR/USD conversions verified in job listings');
-      print('   ✅ Search results include converted salary data');
-      print('   ✅ Grouped jobs show currency conversions');
+      print('\n💱 CONVERTED SALARY ARCHITECTURE:');
+      print('   ✅ Position-level converted salaries (not job-level)');
+      print('   ✅ Each position has its own convertedSalary field');
+      print('   ✅ Frontend properly uses positions[].convertedSalary');
+      print('   ✅ Job-level convertedSalary deprecated in favor of position-level');
     });
   });
 }
