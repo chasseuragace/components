@@ -83,6 +83,14 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
           return false;
         }
       }
+      if (_activeFilters['currency'] != null &&
+          _activeFilters['currency'].isNotEmpty) {
+        if (!job.postingTitle.toLowerCase().contains(
+              _activeFilters['currency'].toLowerCase(),
+            )) {
+          return false;
+        }
+      }
 
       // Job type filter
       // if (_activeFilters['jobType'] != null &&
@@ -252,6 +260,15 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
                       _activeFilters.remove(key);
                       _applyFilters();
                     });
+                    _triggerSearch();
+                  },
+                  onClearSearch: () {
+                    setState(() {
+                      _searchController.clear();
+                      _searchQuery = '';
+                      _applyFilters();
+                    });
+                    _triggerSearch();
                   },
                 ),
               ),
@@ -524,19 +541,28 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
   void _triggerSearch() {
     final hasSearch = _searchQuery.trim().isNotEmpty ||
         (_activeFilters['country'] != null &&
-            (_activeFilters['country'] as String).trim().isNotEmpty);
+            (_activeFilters['country'] as String).trim().isNotEmpty) ||
+        (_activeFilters['salaryRange'] != null) ||
+        (_activeFilters['currency'] != null &&
+            (_activeFilters['currency'] as String).trim().isNotEmpty);
 
     if (!hasSearch) {
       ref.read(searchJobsProvider.notifier).clearResults();
       return;
     }
 
+    final sr = _activeFilters['salaryRange'] as Map<String, dynamic>?;
     final dto = JobSearchDTO(
       keyword: _searchQuery.trim().isNotEmpty ? _searchQuery.trim() : null,
       country: _activeFilters['country'],
+      minSalary: sr != null ? (sr['min'] as num?)?.toDouble() : null,
+      maxSalary: sr != null ? (sr['max'] as num?)?.toDouble() : null,
+      currency: (_activeFilters['currency'] as String?) ??
+          (sr != null ? 'NPR' : null),
       page: 1,
-      limit: 20,
+      limit: 10,
     );
+    print(dto.currency);
     ref.read(searchJobsProvider.notifier).searchJobs(dto);
   }
 
@@ -873,6 +899,7 @@ class ActiveFiltersWidget extends StatelessWidget {
   final String searchQuery;
   final VoidCallback onClearAll;
   final Function(String) onRemoveFilter;
+  final VoidCallback onClearSearch;
 
   const ActiveFiltersWidget({
     super.key,
@@ -880,6 +907,7 @@ class ActiveFiltersWidget extends StatelessWidget {
     required this.searchQuery,
     required this.onClearAll,
     required this.onRemoveFilter,
+    required this.onClearSearch,
   });
 
   @override
@@ -919,9 +947,7 @@ class ActiveFiltersWidget extends StatelessWidget {
             if (searchQuery.isNotEmpty)
               FilterChip(
                 label: Text('Search: $searchQuery'),
-                onDeleted: () {
-                  // Handle search clear
-                },
+                onDeleted: onClearSearch,
                 onSelected: (value) {},
                 deleteIcon: const Icon(Icons.close, size: 16),
               ),
@@ -1145,17 +1171,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   //   'Analyst',
                   //   'Specialist',
                   // ]),
-                  _buildFilterSection('Job Type', 'jobType', [
-                    'Full Time',
-                    'Part Time',
-                    'Contract',
-                    'Freelance',
-                  ]),
-                  _buildFilterSection('Experience Level', 'experience', [
-                    '1-2',
-                    '2-3',
-                    '3-5',
-                    '5+',
+                  // _buildFilterSection('Job Type', 'jobType', [
+                  //   'Full Time',
+                  //   'Part Time',
+                  //   'Contract',
+                  //   'Freelance',
+                  // ]),
+                  // _buildFilterSection('Experience Level', 'experience', [
+                  //   '1-2',
+                  //   '2-3',
+                  //   '3-5',
+                  //   '5+',
+                  // ]),
+                  _buildFilterSection('Currency', 'currency', [
+                    'NPR',
+                    'USD',
                   ]),
                   // Salary Range (NPR)
                   const SizedBox(height: 8),
