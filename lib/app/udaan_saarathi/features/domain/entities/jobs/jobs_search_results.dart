@@ -1,3 +1,5 @@
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
+
 /// Entity representing converted salary information
 class ConvertedSalary {
   final double amount;
@@ -194,7 +196,7 @@ class JobsSearchResults {
 
 /// Entity representing paginated jobs search results
 class PaginatedJobsSearchResults {
-  final List<JobsSearchResults> data;
+  final List<JobsEntity> data;
   final int total;
   final int page;
   final int limit;

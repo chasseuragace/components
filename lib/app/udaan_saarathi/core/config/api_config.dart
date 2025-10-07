@@ -9,7 +9,7 @@ class ApiConfig {
   /// interceptor (e.g. auth header injector) if needed.
   static Openapi client({String? basePath, Interceptor? extraInterceptor}) {
     final dio = Dio(
-        BaseOptions(baseUrl: basePath ?? 'http://localhost:3000'));
+        BaseOptions(baseUrl: basePath ?? 'https://dev.kaha.com.np/job-portal'));
 
     // Logging interceptor: request + response + errors
     dio.interceptors.add(LogInterceptor(

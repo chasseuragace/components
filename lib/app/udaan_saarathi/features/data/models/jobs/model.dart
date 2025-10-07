@@ -26,30 +26,72 @@ class JobsModel extends JobsEntity {
 
   factory JobsModel.fromJson(Map<String, dynamic> json) {
     return JobsModel(
-      id: json['id'],
-      postingTitle: json['posting_title'],
-      country: json['country'],
-      city: json['city'],
-      announcementType: json['announcement_type'],
-      postingDateAd: DateTime.parse(json['posting_date_ad']),
-      notes: json['notes'],
-      agency: AgencyModel.fromJson(json['agency']),
-      employer: EmployerModel.fromJson(json['employer']),
-      contract: ContractModel.fromJson(json['contract']),
-      positions: (json['positions'] as List)
-          .map((p) => PositionModel.fromJson(p))
+      id: (json['id'] as String?) ?? '',
+      postingTitle: (json['posting_title'] as String?) ?? '',
+      country: (json['country'] as String?) ?? '',
+      city: (json['city'] as String?) ?? '',
+      announcementType: json['announcement_type'] ?? '',
+      postingDateAd: (() {
+        final s = json['posting_date_ad'] as String?;
+        if (s == null || s.isEmpty) return DateTime.now();
+        return DateTime.tryParse(s) ?? DateTime.now();
+      })(),
+      notes: (json['notes'] as String?) ?? '',
+      agency: AgencyModel.fromJson(
+          (json['agency'] as Map<String, dynamic>?) ?? <String, dynamic>{}),
+      employer: EmployerModel.fromJson(
+          (json['employer'] as Map<String, dynamic>?) ?? <String, dynamic>{}),
+      contract: (() {
+        final c = json['contract'] as Map<String, dynamic>?;
+        if (c != null) return ContractModel.fromJson(c);
+        return ContractModel(
+          periodYears: 0,
+          renewable: false,
+          hoursPerDay: 0,
+          daysPerWeek: 0,
+          overtimePolicy: '',
+          weeklyOffDays: 0,
+          food: '',
+          accommodation: '',
+          transport: '',
+          annualLeaveDays: 0,
+        );
+      })(),
+      positions: ((json['positions'] as List<dynamic>?) ?? const <dynamic>[])
+          .map((p) => PositionModel.fromJson(p as Map<String, dynamic>))
           .toList(),
-      skills: List<String>.from(json['skills']),
-      educationRequirements: List<String>.from(json['education_requirements']),
-      experienceRequirements:
-          ExperienceRequirementsModel.fromJson(json['experience_requirements']),
-      canonicalTitles: List<String>.from(json['canonical_titles']),
-      expenses: ExpensesModel.fromJson(json['expenses']),
-      interview: json['interview'],
-      cutoutUrl: json['cutout_url'],
-      fitnessScore: json['fitness_score'],
-      isFeatured: json['is_featured'],
-      description: json['description'],
+      skills: ((json['skills'] as List?)?.map((e) => e.toString()).toList()) ??
+          const <String>[],
+      educationRequirements: ((json['education_requirements'] as List?)
+              ?.map((e) => e.toString())
+              .toList()) ??
+          const <String>[],
+      experienceRequirements: (() {
+        final er = json['experience_requirements'] as Map<String, dynamic>?;
+        if (er != null) return ExperienceRequirementsModel.fromJson(er);
+        return ExperienceRequirementsModel(minYears: 0);
+      })(),
+      canonicalTitles: ((json['canonical_titles'] as List?)
+              ?.map((e) => e.toString())
+              .toList()) ??
+          const <String>[],
+      expenses: (() {
+        final ex = json['expenses'] as Map<String, dynamic>?;
+        if (ex != null) return ExpensesModel.fromJson(ex);
+        return ExpensesModel(
+          medical: const [],
+          insurance: const [],
+          travel: const [],
+          visaPermit: const [],
+          training: const [],
+          welfareService: const [],
+        );
+      })(),
+      interview: (json['interview'] as bool?) ?? false,
+      cutoutUrl: (json['cutout_url'] as String?) ?? '',
+      fitnessScore: (json['fitness_score'] as int?) ?? 0,
+      isFeatured: (json['is_featured'] as bool?) ?? false,
+      description: (json['description'] as String?) ?? '',
     );
   }
 }
@@ -60,8 +102,8 @@ class AgencyModel extends Agency {
 
   factory AgencyModel.fromJson(Map<String, dynamic> json) {
     return AgencyModel(
-      name: json['name'],
-      licenseNumber: json['license_number'],
+      name: (json['name'] as String?) ?? '',
+      licenseNumber: (json['license_number'] as String?) ?? '',
     );
   }
 }
@@ -76,10 +118,10 @@ class EmployerModel extends Employer {
 
   factory EmployerModel.fromJson(Map<String, dynamic> json) {
     return EmployerModel(
-      companyName: json['company_name'],
-      country: json['country'],
-      city: json['city'],
-      companyLogo: json['company_logo'],
+      companyName: (json['company_name'] as String?) ?? '',
+      country: (json['country'] as String?) ?? '',
+      city: (json['city'] as String?) ?? '',
+      companyLogo: (json['company_logo'] as String?) ?? '',
     );
   }
 }
@@ -101,16 +143,16 @@ class ContractModel extends Contract {
 
   factory ContractModel.fromJson(Map<String, dynamic> json) {
     return ContractModel(
-      periodYears: json['period_years'],
-      renewable: json['renewable'],
-      hoursPerDay: json['hours_per_day'],
-      daysPerWeek: json['days_per_week'],
-      overtimePolicy: json['overtime_policy'],
-      weeklyOffDays: json['weekly_off_days'],
-      food: json['food'],
-      accommodation: json['accommodation'],
-      transport: json['transport'],
-      annualLeaveDays: json['annual_leave_days'],
+      periodYears: (json['period_years'] as int?) ?? 0,
+      renewable: (json['renewable'] as bool?) ?? false,
+      hoursPerDay: (json['hours_per_day'] as int?) ?? 0,
+      daysPerWeek: (json['days_per_week'] as int?) ?? 0,
+      overtimePolicy: (json['overtime_policy'] as String?) ?? '',
+      weeklyOffDays: (json['weekly_off_days'] as int?) ?? 0,
+      food: (json['food'] as String?) ?? '',
+      accommodation: (json['accommodation'] as String?) ?? '',
+      transport: (json['transport'] as String?) ?? '',
+      annualLeaveDays: (json['annual_leave_days'] as int?) ?? 0,
     );
   }
 }
@@ -129,7 +171,11 @@ class PositionModel extends Position {
       title: json['title'],
       vacancies: VacanciesModel.fromJson(json['vacancies']),
       salary: SalaryModel.fromJson(json['salary']),
-      overrides: OverridesModel.fromJson(json['overrides']),
+      overrides: (() {
+        final ov = json['overrides'] as Map<String, dynamic>?;
+        if (ov != null) return OverridesModel.fromJson(ov);
+        return OverridesModel();
+      })(),
     );
   }
 }
@@ -141,9 +187,9 @@ class VacanciesModel extends Vacancies {
 
   factory VacanciesModel.fromJson(Map<String, dynamic> json) {
     return VacanciesModel(
-      male: json['male'],
-      female: json['female'],
-      total: json['total'],
+      male: (json['male'] as int?) ?? 0,
+      female: (json['female'] as int?) ?? 0,
+      total: (json['total'] as int?) ?? 0,
     );
   }
 }
@@ -157,10 +203,10 @@ class SalaryModel extends Salary {
 
   factory SalaryModel.fromJson(Map<String, dynamic> json) {
     return SalaryModel(
-      monthlyAmount: json['monthly_amount'].toDouble(),
-      currency: json['currency'],
-      converted: (json['converted'] as List)
-          .map((c) => ConvertedSalaryModel.fromJson(c))
+      monthlyAmount: ((json['monthly_amount'] as num?)?.toDouble()) ?? 0.0,
+      currency: (json['currency'] as String?) ?? '',
+      converted: ((json['converted'] as List?) ?? const [])
+          .map((c) => ConvertedSalaryModel.fromJson(c as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -172,8 +218,8 @@ class ConvertedSalaryModel extends ConvertedSalary {
 
   factory ConvertedSalaryModel.fromJson(Map<String, dynamic> json) {
     return ConvertedSalaryModel(
-      amount: json['amount'].toDouble(),
-      currency: json['currency'],
+      amount: ((json['amount'] as num?)?.toDouble()) ?? 0.0,
+      currency: (json['currency'] as String?) ?? '',
     );
   }
 }
@@ -192,13 +238,13 @@ class OverridesModel extends Overrides {
 
   factory OverridesModel.fromJson(Map<String, dynamic> json) {
     return OverridesModel(
-      hoursPerDay: json['hours_per_day'],
-      daysPerWeek: json['days_per_week'],
-      overtimePolicy: json['overtime_policy'],
-      weeklyOffDays: json['weekly_off_days'],
-      food: json['food'],
-      accommodation: json['accommodation'],
-      transport: json['transport'],
+      hoursPerDay: json['hours_per_day'] as int?,
+      daysPerWeek: json['days_per_week'] as int?,
+      overtimePolicy: json['overtime_policy'] as String?,
+      weeklyOffDays: json['weekly_off_days'] as int?,
+      food: json['food'] as String?,
+      accommodation: json['accommodation'] as String?,
+      transport: json['transport'] as String?,
     );
   }
 }
@@ -209,7 +255,7 @@ class ExperienceRequirementsModel extends ExperienceRequirements {
 
   factory ExperienceRequirementsModel.fromJson(Map<String, dynamic> json) {
     return ExperienceRequirementsModel(
-      minYears: json['min_years'],
+      minYears: (json['min_years'] as int?) ?? 0,
     );
   }
 }
@@ -227,23 +273,24 @@ class ExpensesModel extends Expenses {
 
   factory ExpensesModel.fromJson(Map<String, dynamic> json) {
     return ExpensesModel(
-      medical: (json['medical'] as List)
-          .map((m) => MedicalExpenseModel.fromJson(m))
+      medical: ((json['medical'] as List?) ?? const [])
+          .map((m) => MedicalExpenseModel.fromJson(m as Map<String, dynamic>))
           .toList(),
-      insurance: (json['insurance'] as List)
-          .map((i) => GenericExpenseModel.fromJson(i))
+      insurance: ((json['insurance'] as List?) ?? const [])
+          .map((i) => GenericExpenseModel.fromJson(i as Map<String, dynamic>))
           .toList(),
-      travel: (json['travel'] as List)
-          .map((t) => TravelExpenseModel.fromJson(t))
+      travel: ((json['travel'] as List?) ?? const [])
+          .map((t) => TravelExpenseModel.fromJson(t as Map<String, dynamic>))
           .toList(),
-      visaPermit: (json['visa_permit'] as List)
-          .map((v) => GenericExpenseModel.fromJson(v))
+      visaPermit: ((json['visa_permit'] as List?) ?? const [])
+          .map((v) => GenericExpenseModel.fromJson(v as Map<String, dynamic>))
           .toList(),
-      training: (json['training'] as List)
-          .map((tr) => TrainingExpenseModel.fromJson(tr))
+      training: ((json['training'] as List?) ?? const [])
+          .map(
+              (tr) => TrainingExpenseModel.fromJson(tr as Map<String, dynamic>))
           .toList(),
-      welfareService: (json['welfare_service'] as List)
-          .map((w) => WelfareExpenseModel.fromJson(w))
+      welfareService: ((json['welfare_service'] as List?) ?? const [])
+          .map((w) => WelfareExpenseModel.fromJson(w as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -255,8 +302,18 @@ class MedicalExpenseModel extends MedicalExpense {
 
   factory MedicalExpenseModel.fromJson(Map<String, dynamic> json) {
     return MedicalExpenseModel(
-      domestic: ExpenseDetailModel.fromJson(json['domestic']),
-      foreign: ExpenseDetailModel.fromJson(json['foreign']),
+      domestic: (() {
+        final d = json['domestic'] as Map<String, dynamic>?;
+        return d != null
+            ? ExpenseDetailModel.fromJson(d)
+            : ExpenseDetailModel(whoPays: '', isFree: false);
+      })(),
+      foreign: (() {
+        final f = json['foreign'] as Map<String, dynamic>?;
+        return f != null
+            ? ExpenseDetailModel.fromJson(f)
+            : ExpenseDetailModel(whoPays: '', isFree: false);
+      })(),
     );
   }
 }
@@ -273,11 +330,11 @@ class ExpenseDetailModel extends ExpenseDetail {
 
   factory ExpenseDetailModel.fromJson(Map<String, dynamic> json) {
     return ExpenseDetailModel(
-      whoPays: json['who_pays'],
-      isFree: json['is_free'],
-      amount: json['amount']?.toDouble(),
-      currency: json['currency'],
-      refundable: json['refundable'],
+      whoPays: (json['who_pays'] as String?) ?? '',
+      isFree: (json['is_free'] as bool?) ?? false,
+      amount: (json['amount'] as num?)?.toDouble(),
+      currency: (json['currency'] as String?),
+      refundable: json['refundable'] as bool?,
     );
   }
 }
@@ -288,8 +345,8 @@ class GenericExpenseModel extends GenericExpense {
 
   factory GenericExpenseModel.fromJson(Map<String, dynamic> json) {
     return GenericExpenseModel(
-      whoPays: json['who_pays'],
-      isFree: json['is_free'],
+      whoPays: (json['who_pays'] as String?) ?? '',
+      isFree: (json['is_free'] as bool?) ?? false,
     );
   }
 }
@@ -306,11 +363,11 @@ class TravelExpenseModel extends TravelExpense {
 
   factory TravelExpenseModel.fromJson(Map<String, dynamic> json) {
     return TravelExpenseModel(
-      whoProvides: json['who_provides'],
-      ticketType: json['ticket_type'],
-      isFree: json['is_free'],
-      amount: json['amount']?.toDouble(),
-      currency: json['currency'],
+      whoProvides: (json['who_provides'] as String?) ?? '',
+      ticketType: (json['ticket_type'] as String?) ?? '',
+      isFree: (json['is_free'] as bool?) ?? false,
+      amount: (json['amount'] as num?)?.toDouble(),
+      currency: (json['currency'] as String?),
     );
   }
 }
@@ -327,11 +384,11 @@ class TrainingExpenseModel extends TrainingExpense {
 
   factory TrainingExpenseModel.fromJson(Map<String, dynamic> json) {
     return TrainingExpenseModel(
-      whoPays: json['who_pays'],
-      isFree: json['is_free'],
-      amount: json['amount'].toDouble(),
-      currency: json['currency'],
-      durationDays: json['duration_days'],
+      whoPays: (json['who_pays'] as String?) ?? '',
+      isFree: (json['is_free'] as bool?) ?? false,
+      amount: ((json['amount'] as num?)?.toDouble()) ?? 0.0,
+      currency: (json['currency'] as String?) ?? '',
+      durationDays: (json['duration_days'] as int?) ?? 0,
     );
   }
 }
@@ -347,10 +404,10 @@ class WelfareExpenseModel extends WelfareExpense {
 
   factory WelfareExpenseModel.fromJson(Map<String, dynamic> json) {
     return WelfareExpenseModel(
-      welfareWhoPays: json['welfare_who_pays'],
-      welfareIsFree: json['welfare_is_free'],
-      welfareAmount: json['welfare_amount'].toDouble(),
-      welfareCurrency: json['welfare_currency'],
+      welfareWhoPays: (json['welfare_who_pays'] as String?) ?? '',
+      welfareIsFree: (json['welfare_is_free'] as bool?) ?? false,
+      welfareAmount: ((json['welfare_amount'] as num?)?.toDouble()) ?? 0.0,
+      welfareCurrency: (json['welfare_currency'] as String?) ?? '',
     );
   }
 }

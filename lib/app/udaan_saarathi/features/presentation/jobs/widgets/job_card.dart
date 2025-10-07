@@ -140,7 +140,7 @@ class _JobCardState extends State<JobCard> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  job.city,
+                  job.employer.city,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,

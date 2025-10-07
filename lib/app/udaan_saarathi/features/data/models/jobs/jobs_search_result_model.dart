@@ -1,3 +1,5 @@
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/model.dart';
+
 import '../../../domain/entities/jobs/jobs_search_results.dart';
 
 /// Model representing converted salary information with JSON serialization
@@ -44,7 +46,8 @@ class SalaryModel extends Salary {
     return {
       'monthly_amount': monthlyAmount,
       'currency': currency,
-      'converted': converted.map((e) => (e as ConvertedSalaryModel).toJson()).toList(),
+      'converted':
+          converted.map((e) => (e as ConvertedSalaryModel).toJson()).toList(),
     };
   }
 }
@@ -85,7 +88,8 @@ class PositionModel extends Position {
   factory PositionModel.fromJson(Map<String, dynamic> json) {
     return PositionModel(
       title: json['title'] as String,
-      vacancies: VacanciesModel.fromJson(json['vacancies'] as Map<String, dynamic>),
+      vacancies:
+          VacanciesModel.fromJson(json['vacancies'] as Map<String, dynamic>),
       salary: SalaryModel.fromJson(json['salary'] as Map<String, dynamic>),
     );
   }
@@ -164,9 +168,10 @@ class JobsSearchResultsModel extends JobsSearchResults {
       id: json['id'] as String,
       postingTitle: json['posting_title'] as String,
       country: json['country'] as String,
-      city: json['city'] as String,
+      city: json['city'] ?? "",
       postingDateAd: DateTime.parse(json['posting_date_ad'] as String),
-      employer: EmployerModel.fromJson(json['employer'] as Map<String, dynamic>),
+      employer:
+          EmployerModel.fromJson(json['employer'] as Map<String, dynamic>),
       agency: AgencyModel.fromJson(json['agency'] as Map<String, dynamic>),
       positions: (json['positions'] as List<dynamic>)
           .map((e) => PositionModel.fromJson(e as Map<String, dynamic>))
@@ -180,7 +185,8 @@ class JobsSearchResultsModel extends JobsSearchResults {
       'posting_title': postingTitle,
       'country': country,
       'city': city,
-      'posting_date_ad': postingDateAd.toIso8601String().split('T')[0], // Format as YYYY-MM-DD
+      'posting_date_ad':
+          postingDateAd.toIso8601String().split('T')[0], // Format as YYYY-MM-DD
       'employer': (employer as EmployerModel).toJson(),
       'agency': (agency as AgencyModel).toJson(),
       'positions': positions.map((e) => (e as PositionModel).toJson()).toList(),
@@ -200,7 +206,8 @@ class PaginatedJobsSearchResultsModel extends PaginatedJobsSearchResults {
   factory PaginatedJobsSearchResultsModel.fromJson(Map<String, dynamic> json) {
     return PaginatedJobsSearchResultsModel(
       data: (json['data'] as List<dynamic>)
-          .map((e) => JobsSearchResultsModel.fromJson(e as Map<String, dynamic>))
+          .map(
+              (e) => JobsModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       total: json['total'] as int,
       page: json['page'] as int,

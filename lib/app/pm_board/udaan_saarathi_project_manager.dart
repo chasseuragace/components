@@ -61,9 +61,9 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
       controller: PageController(viewportFraction: .3),
       children: [
         buildScreen(ApplicaitonsListPage()),
-      
-        if (false) ...[
-            buildScreen(InterviewsListPage()),
+        if (true) ...[
+          buildScreen(const JobsListPage()),
+          buildScreen(InterviewsListPage()),
           buildScreen(const ProfilePage()),
           buildScreen(const SplashScreen()),
           buildScreen(const OnboardingListPage()),
@@ -85,7 +85,6 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
           buildScreen(const SetPreferenceScreen()),
           buildScreen(const HomePageVariant1()),
           buildScreen(JobDetailPage(job: blueCollarJobQatar)),
-          buildScreen(const JobsListPage()),
         ]
       ].map((e) => KeepAlive(child: e)).toList(),
     );

@@ -1,18 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart'
+    as search_entities;
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/repositories/jobs/repository.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/job_card.dart';
 
-class JobListingsScreen extends StatefulWidget {
+class JobListingsScreen extends ConsumerStatefulWidget {
   const JobListingsScreen({super.key, required this.jobs});
   final List<JobsEntity> jobs;
   @override
-  State<JobListingsScreen> createState() => _JobListingsScreenState();
+  ConsumerState<JobListingsScreen> createState() => _JobListingsScreenState();
 }
 
-class _JobListingsScreenState extends State<JobListingsScreen> {
+class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
   String _searchQuery = '';
@@ -42,6 +47,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
         _searchQuery = _searchController.text;
         _applyFilters();
       });
+      _triggerSearch();
     });
   }
 
@@ -96,6 +102,23 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
         }
       }
 
+      // Salary range filter (expects Map {min: double, max: double} in NPR)
+      if (_activeFilters['salaryRange'] != null) {
+        final dynamic sr = _activeFilters['salaryRange'];
+        final double min = (sr['min'] as num).toDouble();
+        final double max = (sr['max'] as num).toDouble();
+
+        bool matches = false;
+        for (final position in job.positions) {
+          final npr = _extractSalaryNpr(position.salary);
+          if (npr != null && npr >= min && npr <= max) {
+            matches = true;
+            break;
+          }
+        }
+        if (!matches) return false;
+      }
+
       // Remote filter
       // if (_activeFilters['isRemote'] != null) {
       //   if (job.contract != _activeFilters['isRemote']) {
@@ -126,6 +149,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
             _activeFilters = filters;
             _applyFilters();
           });
+          _triggerSearch();
         },
       ),
     );
@@ -138,10 +162,13 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
       _searchQuery = '';
       _applyFilters();
     });
+    // Clear remote search results when nothing to search
+    ref.read(searchJobsProvider.notifier).clearResults();
   }
 
   @override
   Widget build(BuildContext context) {
+    final searchState = ref.watch(searchJobsProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: CustomScrollView(
@@ -276,21 +303,21 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${_filteredJobs.length} Jobs Found',
+                    '${_activeSearchResultsCount(searchState)} Jobs Found',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF1E293B),
                     ),
                   ),
-                  if (_filteredJobs.isNotEmpty)
+                  if (_hasAnyResults(searchState))
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withOpacity(0.1),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -324,22 +351,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
           // Job Listings
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: _filteredJobs.isEmpty
-                ? SliverToBoxAdapter(
-                    child: EmptyStateWidget(
-                      hasActiveFilters:
-                          _activeFilters.isNotEmpty || _searchQuery.isNotEmpty,
-                      onClearFilters: _clearAllFilters,
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: JobCard(job: _filteredJobs[index]),
-                      );
-                    }, childCount: _filteredJobs.length),
-                  ),
+            sliver: _buildResultSliver(searchState),
           ),
 
           // Bottom Padding
@@ -507,6 +519,321 @@ class SearchBarWidget extends StatelessWidget {
   }
 }
 
+// Helpers for remote search integration
+extension _RemoteSearchHelpers on _JobListingsScreenState {
+  void _triggerSearch() {
+    final hasSearch = _searchQuery.trim().isNotEmpty ||
+        (_activeFilters['country'] != null &&
+            (_activeFilters['country'] as String).trim().isNotEmpty);
+
+    if (!hasSearch) {
+      ref.read(searchJobsProvider.notifier).clearResults();
+      return;
+    }
+
+    final dto = JobSearchDTO(
+      keyword: _searchQuery.trim().isNotEmpty ? _searchQuery.trim() : null,
+      country: _activeFilters['country'],
+      page: 1,
+      limit: 20,
+    );
+    ref.read(searchJobsProvider.notifier).searchJobs(dto);
+  }
+
+  int _activeSearchResultsCount(
+      AsyncValue<search_entities.PaginatedJobsSearchResults?> searchState) {
+    return searchState.when(
+      data: (data) => data?.data.length ?? _filteredJobs.length,
+      loading: () => _filteredJobs.length,
+      error: (_, __) => 0,
+    );
+  }
+
+  bool _hasAnyResults(
+      AsyncValue<search_entities.PaginatedJobsSearchResults?> searchState) {
+    return searchState.when(
+      data: (data) =>
+          (data?.data.isNotEmpty ?? false) || _filteredJobs.isNotEmpty,
+      loading: () => _filteredJobs.isNotEmpty,
+      error: (_, __) => false,
+    );
+  }
+
+  // Extract a salary amount in NPR from a Position's Salary entity
+  double? _extractSalaryNpr(Salary salary) {
+    if (salary.currency.toUpperCase() == 'NPR') {
+      return salary.monthlyAmount;
+    }
+    try {
+      final match =
+          salary.converted.firstWhere((c) => c.currency.toUpperCase() == 'NPR');
+      return match.amount;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  SliverChildDelegate _buildLocalListDelegate() {
+    return SliverChildBuilderDelegate((context, index) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: JobCard(job: _filteredJobs[index]),
+      );
+    }, childCount: _filteredJobs.length);
+  }
+
+  Widget _buildError(Object error) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Center(
+        child: Text(
+          error.toString(),
+          style: const TextStyle(color: Colors.red),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchCard(search_entities.JobsSearchResults job) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: const Color(0xFFF1F5F9),
+                child: Text(
+                  job.employer.companyName.isNotEmpty
+                      ? job.employer.companyName[0].toUpperCase()
+                      : '?',
+                  style: const TextStyle(color: Color(0xFF64748B)),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      job.postingTitle,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1E293B),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      job.employer.companyName,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              const Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: Color(0xFF64748B),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                job.city,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.work_outline,
+                        size: 12, color: Color(0xFF64748B)),
+                    const SizedBox(width: 4),
+                    Text(
+                      job.positions.isNotEmpty
+                          ? job.positions.first.vacancies.total.toString()
+                          : 'N/A',
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: Color(0xFF64748B),
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.schedule,
+                        size: 12, color: Color(0xFF64748B)),
+                    const SizedBox(width: 4),
+                    Text(
+                      job.postingDateAd.toLocal().toString().split(' ').first,
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: Color(0xFF64748B),
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Salary',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    job.positions.isNotEmpty
+                        ? '${job.positions.first.salary.currency} ${job.positions.first.salary.monthlyAmount}'
+                        : '—',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.secondaryDarkColor,
+                    ),
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Apply',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultSliver(
+      AsyncValue<search_entities.PaginatedJobsSearchResults?> searchState) {
+    return searchState.when(
+      loading: () {
+        // if (_filteredJobs.isEmpty) {
+        //   return SliverToBoxAdapter(
+        //     child: EmptyStateWidget(
+        //       hasActiveFilters:
+        //           _activeFilters.isNotEmpty || _searchQuery.isNotEmpty,
+        //       onClearFilters: _clearAllFilters,
+        //     ),
+        //   );
+        // }
+        // return SliverList(delegate: _buildLocalListDelegate());
+        return SliverToBoxAdapter(
+            child: Center(child: CircularProgressIndicator()));
+      },
+      error: (err, _) => SliverToBoxAdapter(child: _buildError(err)),
+      data: (data) {
+        if (data == null) {
+          if (_filteredJobs.isEmpty) {
+            return SliverToBoxAdapter(
+              child: EmptyStateWidget(
+                hasActiveFilters:
+                    _activeFilters.isNotEmpty || _searchQuery.isNotEmpty,
+                onClearFilters: _clearAllFilters,
+              ),
+            );
+          }
+          return SliverList(delegate: _buildLocalListDelegate());
+        }
+
+        final results = data.data;
+        if (results.isEmpty) {
+          return SliverToBoxAdapter(
+            child: EmptyStateWidget(
+              hasActiveFilters: true,
+              onClearFilters: _clearAllFilters,
+            ),
+          );
+        }
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final item = results[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: JobCard(
+                  job: item,
+                ),
+              );
+            },
+            childCount: results.length,
+          ),
+        );
+      },
+    );
+  }
+}
+
 // Sticky Search Bar Header Delegate
 class _SearchBarHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double height;
@@ -599,10 +926,19 @@ class ActiveFiltersWidget extends StatelessWidget {
                 deleteIcon: const Icon(Icons.close, size: 16),
               ),
             ...activeFilters.entries.map((entry) {
+              String valueText;
+              if (entry.key == 'salaryRange' && entry.value is Map) {
+                final sr = entry.value as Map;
+                final min = (sr['min'] as num?)?.round();
+                final max = (sr['max'] as num?)?.round();
+                valueText = 'Rs ${min ?? '-'} - Rs ${max ?? '-'}';
+              } else {
+                valueText = entry.value.toString();
+              }
               return FilterChip(
                 onSelected: (value) {},
                 label: Text(
-                  '${_getFilterDisplayName(entry.key)}: ${entry.value}',
+                  '${_getFilterDisplayName(entry.key)}: $valueText',
                 ),
                 onDeleted: () => onRemoveFilter(entry.key),
                 deleteIcon: const Icon(Icons.close, size: 16),
@@ -624,6 +960,8 @@ class ActiveFiltersWidget extends StatelessWidget {
         return 'Job Type';
       case 'experience':
         return 'Experience';
+      case 'salaryRange':
+        return 'Salary';
       case 'isRemote':
         return 'Remote';
       case 'isFeatured':
@@ -819,6 +1157,115 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     '3-5',
                     '5+',
                   ]),
+                  // Salary Range (NPR)
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Salary Range (NPR)',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF374151),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFDC2626).withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Minimum',
+                              style: TextStyle(
+                                  fontSize: 12, color: Color(0xFF64748B)),
+                            ),
+                            Builder(builder: (context) {
+                              final sr = _tempFilters['salaryRange']
+                                  as Map<String, dynamic>?;
+                              final min =
+                                  (sr?['min'] as num?)?.toDouble() ?? 200.0;
+                              return Text(
+                                'Rs ${min.round()}',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFFDC2626),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                        Container(
+                            width: 1,
+                            height: 40,
+                            color: const Color(0xFFE2E8F0)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'Maximum',
+                              style: TextStyle(
+                                  fontSize: 12, color: Color(0xFF64748B)),
+                            ),
+                            Builder(builder: (context) {
+                              final sr = _tempFilters['salaryRange']
+                                  as Map<String, dynamic>?;
+                              final max =
+                                  (sr?['max'] as num?)?.toDouble() ?? 5000.0;
+                              return Text(
+                                'Rs ${max.round()}',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFFDC2626),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  Builder(builder: (context) {
+                    final sr =
+                        _tempFilters['salaryRange'] as Map<String, dynamic>?;
+                    final double currentMin =
+                        (sr?['min'] as num?)?.toDouble() ?? 200.0;
+                    final double currentMax =
+                        (sr?['max'] as num?)?.toDouble() ?? 5000.0;
+                    return RangeSlider(
+                      values: RangeValues(currentMin, currentMax),
+                      min: 200,
+                      max: 5000,
+                      divisions: 48,
+                      activeColor: const Color(0xFFDC2626),
+                      inactiveColor: const Color(0xFFE2E8F0),
+                      labels: RangeLabels(
+                        'Rs ${currentMin.round()}',
+                        'Rs ${currentMax.round()}',
+                      ),
+                      onChanged: (values) {
+                        setState(() {
+                          _tempFilters['salaryRange'] = {
+                            'min': values.start,
+                            'max': values.end,
+                          };
+                        });
+                      },
+                    );
+                  }),
                   _buildBooleanFilterSection('Remote Work', 'isRemote'),
                   _buildBooleanFilterSection('Featured Jobs', 'isFeatured'),
                 ],
