@@ -43,19 +43,20 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
   void _onSearchChanged() {
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        _searchQuery = _searchController.text;
-        _applyFilters();
-      });
+      // push to provider
+      ref.read(searchQueryProvider.notifier).state = _searchController.text;
+      _applyFilters();
       _triggerSearch();
     });
   }
 
   void _applyFilters() {
+    final filters = ref.read(filtersProvider);
+    final query = ref.read(searchQueryProvider);
     _filteredJobs = _allJobs.where((job) {
       // Search filter
-      if (_searchQuery.isNotEmpty) {
-        final searchLower = _searchQuery.toLowerCase();
+      if (query.isNotEmpty) {
+        final searchLower = query.toLowerCase();
         if (!job.postingTitle.toLowerCase().contains(searchLower) &&
             !job.employer.companyName.toLowerCase().contains(searchLower) &&
             !job.city.toLowerCase().contains(searchLower) &&
@@ -65,28 +66,20 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
       }
 
       // Country filter
-      if (_activeFilters['country'] != null &&
-          _activeFilters['country'].isNotEmpty) {
+      if (filters['country'] != null &&
+          filters['country'].isNotEmpty) {
         if (!job.country.toLowerCase().contains(
-              _activeFilters['country'].toLowerCase(),
+              filters['country'].toLowerCase(),
             )) {
           return false;
         }
       }
 
       // Position filter
-      if (_activeFilters['position'] != null &&
-          _activeFilters['position'].isNotEmpty) {
+      if (filters['position'] != null &&
+          filters['position'].isNotEmpty) {
         if (!job.postingTitle.toLowerCase().contains(
-              _activeFilters['position'].toLowerCase(),
-            )) {
-          return false;
-        }
-      }
-      if (_activeFilters['currency'] != null &&
-          _activeFilters['currency'].isNotEmpty) {
-        if (!job.postingTitle.toLowerCase().contains(
-              _activeFilters['currency'].toLowerCase(),
+              filters['position'].toLowerCase(),
             )) {
           return false;
         }
@@ -101,18 +94,18 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
       // }
 
       // Experience filter
-      if (_activeFilters['experience'] != null &&
-          _activeFilters['experience'].isNotEmpty) {
+      if (filters['experience'] != null &&
+          filters['experience'].isNotEmpty) {
         if (!job.experienceRequirements.minYears
             .toString()
-            .contains(_activeFilters['experience'])) {
+            .contains(filters['experience'])) {
           return false;
         }
       }
 
       // Salary range filter (expects Map {min: double, max: double} in NPR)
-      if (_activeFilters['salaryRange'] != null) {
-        final dynamic sr = _activeFilters['salaryRange'];
+      if (filters['salaryRange'] != null) {
+        final dynamic sr = filters['salaryRange'];
         final double min = (sr['min'] as num).toDouble();
         final double max = (sr['max'] as num).toDouble();
 
@@ -151,12 +144,10 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => FilterBottomSheet(
-        activeFilters: _activeFilters,
+        activeFilters: ref.read(filtersProvider),
         onFiltersChanged: (filters) {
-          setState(() {
-            _activeFilters = filters;
-            _applyFilters();
-          });
+          ref.read(filtersProvider.notifier).setAll(filters);
+          _applyFilters();
           _triggerSearch();
         },
       ),
@@ -164,12 +155,10 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
   }
 
   void _clearAllFilters() {
-    setState(() {
-      _activeFilters.clear();
-      _searchController.clear();
-      _searchQuery = '';
-      _applyFilters();
-    });
+    ref.read(filtersProvider.notifier).clear();
+    _searchController.clear();
+    ref.read(searchQueryProvider.notifier).state = '';
+    _applyFilters();
     // Clear remote search results when nothing to search
     ref.read(searchJobsProvider.notifier).clearResults();
   }
@@ -177,6 +166,8 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchJobsProvider);
+    final providerFilters = ref.watch(filtersProvider);
+    final providerQuery = ref.watch(searchQueryProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: CustomScrollView(
@@ -246,28 +237,24 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
           ),
 
           // Active Filters (scrolls with content)
-          if (_activeFilters.isNotEmpty || _searchQuery.isNotEmpty)
+          if (providerFilters.isNotEmpty || providerQuery.isNotEmpty)
             SliverToBoxAdapter(
               child: Container(
                 color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                 child: ActiveFiltersWidget(
-                  activeFilters: _activeFilters,
-                  searchQuery: _searchQuery,
+                  activeFilters: providerFilters,
+                  searchQuery: providerQuery,
                   onClearAll: _clearAllFilters,
                   onRemoveFilter: (key) {
-                    setState(() {
-                      _activeFilters.remove(key);
-                      _applyFilters();
-                    });
+                    ref.read(filtersProvider.notifier).remove(key);
+                    _applyFilters();
                     _triggerSearch();
                   },
                   onClearSearch: () {
-                    setState(() {
-                      _searchController.clear();
-                      _searchQuery = '';
-                      _applyFilters();
-                    });
+                    _searchController.clear();
+                    ref.read(searchQueryProvider.notifier).state = '';
+                    _applyFilters();
                     _triggerSearch();
                   },
                 ),
@@ -539,26 +526,27 @@ class SearchBarWidget extends StatelessWidget {
 // Helpers for remote search integration
 extension _RemoteSearchHelpers on _JobListingsScreenState {
   void _triggerSearch() {
-    final hasSearch = _searchQuery.trim().isNotEmpty ||
-        (_activeFilters['country'] != null &&
-            (_activeFilters['country'] as String).trim().isNotEmpty) ||
-        (_activeFilters['salaryRange'] != null) ||
-        (_activeFilters['currency'] != null &&
-            (_activeFilters['currency'] as String).trim().isNotEmpty);
+    final filters = ref.read(filtersProvider);
+    final query = ref.read(searchQueryProvider);
+    final hasSearch = query.trim().isNotEmpty ||
+        (filters['country'] != null &&
+            (filters['country'] as String).trim().isNotEmpty) ||
+        (filters['salaryRange'] != null) ||
+        (filters['currency'] != null &&
+            (filters['currency'] as String).trim().isNotEmpty);
 
     if (!hasSearch) {
       ref.read(searchJobsProvider.notifier).clearResults();
       return;
     }
 
-    final sr = _activeFilters['salaryRange'] as Map<String, dynamic>?;
+    final sr = filters['salaryRange'] as Map<String, dynamic>?;
     final dto = JobSearchDTO(
-      keyword: _searchQuery.trim().isNotEmpty ? _searchQuery.trim() : null,
-      country: _activeFilters['country'],
+      keyword: query.trim().isNotEmpty ? query.trim() : null,
+      country: filters['country'],
       minSalary: sr != null ? (sr['min'] as num?)?.toDouble() : null,
       maxSalary: sr != null ? (sr['max'] as num?)?.toDouble() : null,
-      currency: (_activeFilters['currency'] as String?) ??
-          (sr != null ? 'NPR' : null),
+      currency: filters['currency'] as String?,
       page: 1,
       limit: 10,
     );

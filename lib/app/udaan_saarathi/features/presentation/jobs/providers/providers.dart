@@ -10,6 +10,33 @@ import '../../../domain/entities/jobs/entity.dart';
 import '../../../domain/repositories/jobs/repository.dart';
 import './di.dart';
 
+// Search query (local UI state)
+final searchQueryProvider = StateProvider<String>((ref) => '');
+
+// Filters (local UI state)
+class FiltersNotifier extends StateNotifier<Map<String, dynamic>> {
+  FiltersNotifier() : super({});
+
+  void setAll(Map<String, dynamic> filters) => state = Map.of(filters);
+  void set(String key, dynamic value) {
+    final next = Map<String, dynamic>.from(state);
+    next[key] = value;
+    state = next;
+  }
+
+  void remove(String key) {
+    final next = Map<String, dynamic>.from(state);
+    next.remove(key);
+    state = next;
+  }
+
+  void clear() => state = {};
+}
+
+final filtersProvider =
+    StateNotifierProvider<FiltersNotifier, Map<String, dynamic>>(
+        (ref) => FiltersNotifier());
+
 class GetAllJobsNotifier extends AsyncNotifier<List<JobsEntity>> {
   @override
   Future<List<JobsEntity>> build() async {
