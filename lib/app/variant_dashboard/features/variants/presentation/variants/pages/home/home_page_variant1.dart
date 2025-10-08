@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package:provider/provider.dart
 import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/get_status.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/dashboard_header.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/interview_card.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
@@ -132,18 +136,6 @@ class ApplicationHistory {
     this.note,
     this.updatedBy,
   });
-}
-
-enum ApplicationStatus {
-  applied,
-  underReview,
-  interviewScheduled,
-  interviewRescheduled,
-  interviewPassed,
-  interviewFailed,
-  withdrawn,
-  rejected,
-  accepted,
 }
 
 class JobFilters {
@@ -826,7 +818,11 @@ class ApplicationsSection extends ConsumerWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const ApplicaitonsListPage();
+                  }));
+                },
                 child: Text(
                   'View All',
                   style: TextStyle(
@@ -842,7 +838,7 @@ class ApplicationsSection extends ConsumerWidget {
             _buildEmptyApplications(context)
           else
             ...recentApplications.map<Widget>(
-              (app) => ApplicationCard(application: app),
+              (app) => ApplicationCard2(application: app),
             ),
         ],
       ),
@@ -882,241 +878,29 @@ class ApplicationsSection extends ConsumerWidget {
   }
 }
 
-class ApplicationCard extends StatelessWidget {
-  final Application application;
+class StatusBadge extends StatelessWidget {
+  const StatusBadge({
+    super.key,
+    required this.status,
+  });
 
-  const ApplicationCard({super.key, required this.application});
+  final ApplicationStatus status;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: _getStatusColor(application.status).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  _getStatusIcon(application.status),
-                  color: _getStatusColor(application.status),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      application.posting.postingTitle,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2D3748),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      application.posting.employer,
-                      style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
-                    ),
-                  ],
-                ),
-              ),
-              _buildStatusBadge(application.status),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                'Applied ${_formatDate(application.appliedAt)}',
-                style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
-              ),
-              Spacer(),
-              if (_canWithdraw(application.status))
-                TextButton(
-                  onPressed: () => _withdrawApplication(context, application),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    minimumSize: Size.zero,
-                  ),
-                  child: Text(
-                    'Withdraw',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.red,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusBadge(ApplicationStatus status) {
-    return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: _getStatusColor(status).withOpacity(0.1),
+        color: getStatusColor(status).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        _getStatusText(status),
+        getStatusText(status),
         style: TextStyle(
           fontSize: 12,
-          color: _getStatusColor(status),
+          color: getStatusColor(status),
           fontWeight: FontWeight.w500,
         ),
-      ),
-    );
-  }
-
-  Color _getStatusColor(ApplicationStatus status) {
-    switch (status) {
-      case ApplicationStatus.applied:
-        return AppColors.primaryColor;
-      case ApplicationStatus.underReview:
-        return Color(0xFFF59E0B);
-      case ApplicationStatus.interviewScheduled:
-      case ApplicationStatus.interviewRescheduled:
-        return Color(0xFF10B981);
-      case ApplicationStatus.interviewPassed:
-      case ApplicationStatus.accepted:
-        return Color(0xFF059669);
-      case ApplicationStatus.interviewFailed:
-      case ApplicationStatus.rejected:
-      case ApplicationStatus.withdrawn:
-        return Color(0xFFEF4444);
-      default:
-        return Color(0xFF6B7280);
-    }
-  }
-
-  IconData _getStatusIcon(ApplicationStatus status) {
-    switch (status) {
-      case ApplicationStatus.applied:
-        return Icons.send_rounded;
-      case ApplicationStatus.underReview:
-        return Icons.visibility_rounded;
-      case ApplicationStatus.interviewScheduled:
-      case ApplicationStatus.interviewRescheduled:
-        return Icons.event_rounded;
-      case ApplicationStatus.interviewPassed:
-      case ApplicationStatus.accepted:
-        return Icons.check_circle_rounded;
-      case ApplicationStatus.interviewFailed:
-      case ApplicationStatus.rejected:
-      case ApplicationStatus.withdrawn:
-        return Icons.cancel_rounded;
-      default:
-        return Icons.help_rounded;
-    }
-  }
-
-  String _getStatusText(ApplicationStatus status) {
-    switch (status) {
-      case ApplicationStatus.applied:
-        return 'Applied';
-      case ApplicationStatus.underReview:
-        return 'Under Review';
-      case ApplicationStatus.interviewScheduled:
-        return 'Interview Scheduled';
-      case ApplicationStatus.interviewRescheduled:
-        return 'Interview Rescheduled';
-      case ApplicationStatus.interviewPassed:
-        return 'Interview Passed';
-      case ApplicationStatus.interviewFailed:
-        return 'Interview Failed';
-      case ApplicationStatus.withdrawn:
-        return 'Withdrawn';
-      case ApplicationStatus.rejected:
-        return 'Rejected';
-      case ApplicationStatus.accepted:
-        return 'Accepted';
-    }
-  }
-
-  bool _canWithdraw(ApplicationStatus status) {
-    return status == ApplicationStatus.applied ||
-        status == ApplicationStatus.underReview ||
-        status == ApplicationStatus.interviewScheduled ||
-        status == ApplicationStatus.interviewRescheduled;
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date).inDays;
-
-    if (difference == 0) return 'today';
-    if (difference == 1) return '1 day ago';
-    if (difference < 7) return '$difference days ago';
-    if (difference < 30) return '${(difference / 7).floor()} weeks ago';
-    return DateFormat.yMMMd().format(date);
-  }
-
-  void _withdrawApplication(BuildContext context, Application application) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Withdraw Application',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2D3748),
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to withdraw your application for ${application.posting.postingTitle}?',
-          style: TextStyle(fontSize: 14, color: Color(0xFF4B5563)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Application withdrawn successfully'),
-                  backgroundColor: Colors.orange,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              );
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.red.withOpacity(0.1),
-            ),
-            child: Text(
-              'Withdraw',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
       ),
     );
   }
