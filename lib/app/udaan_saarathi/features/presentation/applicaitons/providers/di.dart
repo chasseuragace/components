@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/applicaitons/apply_job.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/applicaitons/withdraw_job.dart';
 
 import '../../../data/datasources/applicaitons/local_data_source.dart';
 import '../../../data/datasources/applicaitons/remote_data_source.dart';
@@ -24,6 +25,10 @@ final getApplicaitonsByIdUseCaseProvider =
 
 final applyJobUseCaseProvider = Provider<ApplyJobUseCase>((ref) {
   return ApplyJobUseCase(ref.watch(rApplicaitonsRepositoryProvider));
+});
+
+final withdrawJobUseCaseProvider = Provider<WithdrawJobUseCase>((ref) {
+  return WithdrawJobUseCase(ref.watch(rApplicaitonsRepositoryProvider));
 });
 
 final updateApplicaitonsUseCaseProvider =

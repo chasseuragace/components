@@ -64,6 +64,22 @@ class ApplyJobNotifier extends AsyncNotifier {
     ref.invalidate(getAllApplicaitonsProvider);
   }
 }
+class WithdrawJobNotifier extends AsyncNotifier {
+  @override
+  build() {
+    return null;
+  }
+
+  Future<void> withdrawJob(String id) async {
+    state = const AsyncValue.loading();
+    final result = await ref.read(withdrawJobUseCaseProvider)(id);
+    state = result.fold(
+      (failure) => AsyncValue.error(failure, StackTrace.current),
+      (_) => AsyncValue.data(null),
+    );
+    ref.invalidate(getAllApplicaitonsProvider);
+  }
+}
 
 class UpdateApplicaitonsNotifier extends AsyncNotifier {
   @override
@@ -139,4 +155,7 @@ final deleteApplicaitonsProvider =
 // Apply job provider
 final applyJobProvider = AsyncNotifierProvider<ApplyJobNotifier, void>(() {
   return ApplyJobNotifier();
+});
+final withdrawJobProvider = AsyncNotifierProvider<WithdrawJobNotifier, void>(() {
+  return WithdrawJobNotifier();
 });

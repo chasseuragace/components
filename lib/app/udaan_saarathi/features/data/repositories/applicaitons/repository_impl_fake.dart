@@ -10,8 +10,6 @@ import '../../datasources/applicaitons/local_data_source.dart';
 import '../../datasources/applicaitons/remote_data_source.dart';
 import '../../models/applicaitons/model.dart';
 
-
-
 class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
   final ApplicaitonsLocalDataSource localDataSource;
   final ApplicaitonsRemoteDataSource remoteDataSource;
@@ -28,11 +26,18 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
   Future<Either<Failure, ApplicationPaginationWrapper>> getAllItems() async {
     try {
       final candidateId = await _storage.getCandidateId();
-  final  result = await  api.applicationControllerListForCandidate(id: candidateId!);
-      final items =  result.data?.items.map((e)=>ApplicaitonsModel.fromJson(e.toJson())).toList();
-      final wrapper = ApplicationPaginationWrapper(items: items??[], page: result.data?.page.toInt(), total: result.data?.total.toInt(),limit: result.data?.limit.toInt() );
+      final result =
+          await api.applicationControllerListForCandidate(id: candidateId!);
+      final items = result.data?.items
+          .map((e) => ApplicaitonsModel.fromJson(e.toJson()))
+          .toList();
+      final wrapper = ApplicationPaginationWrapper(
+          items: items ?? [],
+          page: result.data?.page.toInt(),
+          total: result.data?.total.toInt(),
+          limit: result.data?.limit.toInt());
       return right(wrapper);
-    } catch (error,s) {
+    } catch (error, s) {
       print(error);
       print(s);
       return left(ServerFailure(
@@ -43,16 +48,18 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
   }
 
   @override
-  Future<Either<Failure, ApplicationDetailsModel>> getItemById(String id) async {
-   
+  Future<Either<Failure, ApplicationDetailsModel>> getItemById(
+      String id) async {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-  final response =  await api.applicationControllerGetApplicationById(id: id);
-  final remoteItem = ApplicationDetailsModel.fromJson(response.data!.toJson());
+      final response =
+          await api.applicationControllerGetApplicationById(id: id);
+      final remoteItem =
+          ApplicationDetailsModel.fromJson(response.data!.toJson());
       return right(remoteItem);
-    } catch (error,stackTrace) {
+    } catch (error, stackTrace) {
       print(error);
       print(stackTrace);
       return left(ServerFailure(
@@ -61,7 +68,6 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
       ));
     }
   }
-
 
   @override
   Future<Either<Failure, Unit>> updateItem(ApplicaitonsEntity entity) async {
@@ -102,7 +108,6 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
         candidateId: candidateId, // Assuming entity.id is candidate_id
         jobPostingId: entity.jobPostingId, // Job ID from rawJson
         note: entity.note,
-      
       );
 
       final response = await api.applicationControllerApply(
@@ -118,6 +123,26 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
       print('❌ Job application failed: $error');
       return left(ServerFailure(
         message: 'Failed to apply for job',
+        details: error.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> withdrawJob(String id) async {
+    try {
+      // Simulate delay
+      await Future.delayed(Duration(milliseconds: 300));
+
+      final response = await api.applicationControllerWithdraw(id: id);
+      print(response.statusCode);
+
+      return right(unit);
+    } catch (error, stackTrace) {
+      print(error);
+      print(stackTrace);
+      return left(ServerFailure(
+        message: 'Failed to withdraw application',
         details: error.toString(),
       ));
     }

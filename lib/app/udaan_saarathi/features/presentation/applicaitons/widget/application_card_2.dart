@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/utils/get_status.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/detail_by_id.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/utils.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
-class ApplicationCard2 extends StatelessWidget {
+class ApplicationCard2 extends ConsumerWidget {
   final Application application;
   final bool isApplicaionList;
   const ApplicationCard2(
       {super.key, required this.application, this.isApplicaionList = false});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final rootNav = Navigator.of(context, rootNavigator: true);
+
+    ref.listen<AsyncValue<void>>(
+      withdrawJobProvider,
+      (AsyncValue<void>? previous, AsyncValue<void> next) {
+        if (previous?.isLoading == true && next.hasError) {
+          if (rootNav.canPop()) rootNav.pop();
+
+          CustomSnackbar.showFailureSnackbar(
+            context,
+            "Failed to withdraw job ${next.error}",
+          );
+        } else if (previous?.isLoading == true && next.hasValue) {
+          if (rootNav.canPop()) rootNav.pop();
+          CustomSnackbar.showSuccessSnackbar(
+            context,
+            "Successfully withdraw job",
+          );
+        }
+      },
+    );
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -141,7 +164,16 @@ class ApplicationCard2 extends StatelessWidget {
               if (isApplicaionList)
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      ref.read(selectedApplicationIdProvider.notifier).state =
+                          '9ec18bc4-ebef-4464-8a62-bb9c0de4c3bf';
+                      // Navigate to detail page
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const ApplicationDetailPage(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF006BA3),
                       foregroundColor: Colors.white,
@@ -164,7 +196,8 @@ class ApplicationCard2 extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => _withdrawApplication(context, application),
+                    onPressed: () =>
+                        _withdrawApplication(context, application, ref),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.red, width: 1),
                       backgroundColor: Colors.white,
@@ -191,7 +224,8 @@ class ApplicationCard2 extends StatelessWidget {
     );
   }
 
-  void _withdrawApplication(BuildContext context, Application application) {
+  void _withdrawApplication(
+      BuildContext context, Application application, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -215,17 +249,10 @@ class ApplicationCard2 extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Application withdrawn successfully'),
-                  backgroundColor: Colors.orange,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              );
+              // Navigator.pop(context);
+              ref
+                  .read(withdrawJobProvider.notifier)
+                  .withdrawJob(application.id);
             },
             style: TextButton.styleFrom(
               backgroundColor: Colors.red.withOpacity(0.1),
@@ -238,5 +265,14 @@ class ApplicationCard2 extends StatelessWidget {
         ],
       ),
     );
+    //  CustomDialog.showCustomDialog(
+    //                 context,
+    //                 onTap: () async {
+
+    //                 },
+    //                 negativeText: 'No',
+    //                 positiveText: 'Yes',
+    //                 title: 'Would you like to withdraw your application?',
+    //               );
   }
 }
