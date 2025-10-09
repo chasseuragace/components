@@ -14,4 +14,8 @@ class AppColors {
   static const errorColor = Color(0xFFdc2626);
   static const blackColor = Color(0x0A000000);
   static const cardColor = Color(0xFFF8FAFC);
+
+  static const Color kwhite = Color(0xffffffff);
+  static const Color kblack = Color(0xff0D0D0D);
+  static const Color ktransparent = Color(0x00000000);
 }

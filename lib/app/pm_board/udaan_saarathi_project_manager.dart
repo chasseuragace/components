@@ -63,7 +63,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
       children: [
         buildScreen(ApplicaitonsListPage()),
         buildScreen(ApplicationDetailsPage()),
-        if (false) ...[
+        if (true) ...[
           buildScreen(const JobsListPage()),
           buildScreen(InterviewsListPage()),
           buildScreen(const ProfilePage()),

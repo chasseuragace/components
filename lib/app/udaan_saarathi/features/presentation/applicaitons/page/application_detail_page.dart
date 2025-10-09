@@ -122,10 +122,9 @@ class _ApplicationDetailsPageState extends State<ApplicationDetailsPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 2,
+        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -134,7 +133,6 @@ class _ApplicationDetailsPageState extends State<ApplicationDetailsPage> {
             const Text(
               'Application Details',
               style: TextStyle(
-                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -142,7 +140,7 @@ class _ApplicationDetailsPageState extends State<ApplicationDetailsPage> {
             Text(
               'ID: ${application['id']}',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.black.withOpacity(0.8),
                 fontSize: 12,
               ),
             ),

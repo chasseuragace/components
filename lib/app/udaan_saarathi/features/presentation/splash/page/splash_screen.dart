@@ -85,40 +85,42 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             // App Logo/Icon
-                            Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    AppColors.primaryColor,
-                                    AppColors.primaryDarkColor,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(30),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.primaryColor
-                                        .withValues(alpha: 0.3),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.flight_takeoff_rounded,
-                                color: Colors.white,
-                                size: 60,
-                              ),
-                            ),
+                            // Container(
+                            //   width: 120,
+                            //   height: 120,
+                            //   decoration: BoxDecoration(
+                            //     gradient: const LinearGradient(
+                            //       colors: [
+                            //         AppColors.primaryColor,
+                            //         AppColors.primaryDarkColor,
+                            //       ],
+                            //       begin: Alignment.topLeft,
+                            //       end: Alignment.bottomRight,
+                            //     ),
+                            //     borderRadius: BorderRadius.circular(30),
+                            //     boxShadow: [
+                            //       BoxShadow(
+                            //         color: AppColors.primaryColor
+                            //             .withValues(alpha: 0.3),
+                            //         blurRadius: 20,
+                            //         offset: const Offset(0, 10),
+                            //       ),
+                            //     ],
+                            //   ),
+                            //   child: const Icon(
+                            //     Icons.flight_takeoff_rounded,
+                            //     color: Colors.white,
+                            //     size: 60,
+                            //   ),
+                            // ),
                             // SvgPicture.asset(
                             //   'assets/svg/sarathi_logo.svg',
                             //   width: 120,
                             //   height: 120,
                             // ),
-                            const SizedBox(height: 40),
+                            Image.asset('assets/images/svg_logo.png',
+                                width: 150, height: 150),
+                            // const SizedBox(height: 40),
                             const Text(
                               'UdaanSarathi',
                               textAlign: TextAlign.center,
