@@ -4,6 +4,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting_mapper.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_post_card.dart';
@@ -19,9 +20,9 @@ class RecommendedJobsSection extends ConsumerWidget {
       ref.invalidate(getGroupedJobsProvider);
     });
     return Padding(
-      padding: const EdgeInsets.all(24.0).copyWith(
-        bottom: 0,
-      ),
+      padding: EdgeInsets.symmetric(
+              horizontal: kHorizontalMargin, vertical: kVerticalMargin)
+          .copyWith(bottom: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,7 +49,7 @@ class RecommendedJobsSection extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16.0),
+          SizedBox(height: kVerticalMargin / 4),
           ...jobsState.when(data: (grouped) {
             // Render groups with their jobs mapped to JobPosting
             return grouped.groups.expand<Widget>((group) {

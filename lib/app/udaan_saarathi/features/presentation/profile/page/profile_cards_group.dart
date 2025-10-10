@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/profile/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
+    as cand;
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/pages.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart' as cand;
 
 import '../providers/profile_provider.dart';
 import '../providers/providers.dart';
@@ -30,17 +32,22 @@ class ProfileCardsGroup extends ConsumerWidget {
       // Personal Information completion count from Candidate profile
       final candState = ref.watch(cand.getCandidateByIdProvider);
       final candItem = candState.valueOrNull;
-      const personalTotal = 5; // full_name, phone, passport_number, gender, unified address
+      const personalTotal =
+          5; // full_name, phone, passport_number, gender, unified address
       int personalCompleted = 0;
       if (candItem != null) {
-        if ((candItem.fullName ?? '').toString().trim().isNotEmpty) personalCompleted++;
-        if ((candItem.phone ?? '').toString().trim().isNotEmpty) personalCompleted++;
-        if ((candItem.passportNumber ?? '').toString().trim().isNotEmpty) personalCompleted++;
-        if ((candItem.gender ?? '').toString().trim().isNotEmpty) personalCompleted++;
+        if ((candItem.fullName ?? '').toString().trim().isNotEmpty)
+          personalCompleted++;
+        if ((candItem.phone ?? '').toString().trim().isNotEmpty)
+          personalCompleted++;
+        if ((candItem.passportNumber ?? '').toString().trim().isNotEmpty)
+          personalCompleted++;
+        if ((candItem.gender ?? '').toString().trim().isNotEmpty)
+          personalCompleted++;
         // Address treated as a single unified field
         if (candItem.address != null &&
             ((candItem.address!.name ?? '').toString().trim().isNotEmpty ||
-             candItem.address!.coordinates != null)) {
+                candItem.address!.coordinates != null)) {
           personalCompleted++;
         }
       }
@@ -79,7 +86,9 @@ class ProfileCardsGroup extends ConsumerWidget {
       required int experienceCount,
       required int personalCompleted,
       required int personalTotal}) {
-    final progress = personalTotal == 0 ? 0.0 : (personalCompleted / personalTotal).clamp(0, 1).toDouble();
+    final progress = personalTotal == 0
+        ? 0.0
+        : (personalCompleted / personalTotal).clamp(0, 1).toDouble();
     return Column(
       children: [
         _ProfileMenuItem(
@@ -175,7 +184,7 @@ class ProfileCardsGroup extends ConsumerWidget {
           icon: Icons.settings,
           title: "Settings",
           subtitle: "Privacy and preferences",
-          iconColor: Colors.grey,
+          iconColor: AppColors.textSecondary,
           onTap: () {
             Navigator.push(
               context,
@@ -239,11 +248,12 @@ class _ProfileMenuItem extends StatelessWidget {
             subtitle,
             style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
-          trailing: trailingWidget ?? Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: Colors.grey[400],
-          ),
+          trailing: trailingWidget ??
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.grey[400],
+              ),
           onTap: onTap,
         ),
         if (showDivider)

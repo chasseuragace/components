@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
 
 class TrainingsFormPage extends ConsumerStatefulWidget {
   const TrainingsFormPage({super.key});
@@ -98,7 +98,7 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
         });
       }
     });
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
@@ -122,7 +122,8 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
                     index: index,
                     showRemoveButton: trainingCount > 1,
                     onRemove: () => _removeTraining(index),
-                    onCertificateChanged: (value) => _updateCertificate(index, value),
+                    onCertificateChanged: (value) =>
+                        _updateCertificate(index, value),
                   ),
                   if (index == trainingCount - 1) ...[
                     const SizedBox(height: 24),
@@ -179,7 +180,8 @@ class _TrainingsFormPageState extends ConsumerState<TrainingsFormPage> {
         final title = (values['title_${t.id}'] as String?)?.trim() ?? '';
         final provider = (values['provider_${t.id}'] as String?)?.trim() ?? '';
         final hoursStr = (values['hours_${t.id}'] as String?)?.trim() ?? '';
-        final certificate = (values['certificate_${t.id}'] as bool?) ?? t.certificate;
+        final certificate =
+            (values['certificate_${t.id}'] as bool?) ?? t.certificate;
         return {
           'title': title,
           'provider': provider,
@@ -224,7 +226,7 @@ class TrainingCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -282,8 +284,8 @@ class TrainingCard extends StatelessWidget {
             label: 'Provider',
             hint: 'e.g. Coursera',
             icon: Icons.business,
-            validator: (value) => CustomValidator.nameValidator(
-                type: 'Provider', input: value),
+            validator: (value) =>
+                CustomValidator.nameValidator(type: 'Provider', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
@@ -293,8 +295,8 @@ class TrainingCard extends StatelessWidget {
             hint: 'e.g. 40',
             icon: Icons.timelapse,
             keyboardType: TextInputType.number,
-            validator: (value) => CustomValidator.nameValidator(
-                type: 'Duration', input: value),
+            validator: (value) =>
+                CustomValidator.nameValidator(type: 'Duration', input: value),
           ),
           const SizedBox(height: 16),
           FormBuilderCheckbox(

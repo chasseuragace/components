@@ -180,7 +180,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
             elevation: 0,
             toolbarHeight: 0,
             collapsedHeight: 0,
-            flexibleSpace: FlexibleSpaceBar(                                                                                                                                                                                                                                                                                                                                                
+            flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -193,7 +193,8 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: kHorizontalMargin, vertical: kVerticalMargin),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -201,7 +202,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
                       Text(
                         'Find Your Dream Job',
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: -0.5,
@@ -211,7 +212,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
                       Text(
                         'Discover opportunities that match your skills',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white70,
                           fontWeight: FontWeight.w400,
                         ),
@@ -240,7 +241,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
             SliverToBoxAdapter(
               child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
                 child: ActiveFiltersWidget(
                   activeFilters: providerFilters,
                   searchQuery: providerQuery,
@@ -262,7 +263,8 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: kVerticalMargin / 2)
+                      horizontal: kHorizontalMargin,
+                      vertical: kVerticalMargin / 4)
                   .copyWith(top: kVerticalMargin),
               child: Row(
                 children: [
@@ -303,7 +305,8 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
           // Job Results Header
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.symmetric(
+                  horizontal: kHorizontalMargin, vertical: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -355,7 +358,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
 
           // Job Listings
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
             sliver: _buildResultSliver(searchState),
           ),
 
@@ -835,7 +838,7 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
             (context, index) {
               final item = results[index];
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: EdgeInsets.only(bottom: kVerticalMargin),
                 child: JobCard(
                   job: item,
                 ),

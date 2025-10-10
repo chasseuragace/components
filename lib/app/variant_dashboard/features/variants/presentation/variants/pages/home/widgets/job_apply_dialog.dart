@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
 
 class ApplyJobDialog extends ConsumerStatefulWidget {
   final MobileJobEntity posting;
@@ -343,7 +343,7 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
                                                 ),
                                                 SizedBox(width: 8),
                                                 Text(
-                                                  'Submit Application',
+                                                  'Submit',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 16,
@@ -373,7 +373,8 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
 
   void _submitApplication() async {
     // 1) Gate: ensure profile is complete before applying
-    final isComplete = await ref.read(profileProvider.notifier).isProfileComplete();
+    final isComplete =
+        await ref.read(profileProvider.notifier).isProfileComplete();
     if (!isComplete) {
       // Inform and redirect to ProfilePage
       if (!mounted) return;

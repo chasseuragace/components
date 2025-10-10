@@ -6,8 +6,8 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.d
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 
 // Import your custom form field
 // import 'custom_form_builder_text_field.dart';
@@ -64,7 +64,8 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
                 final form = SkillForm();
                 newForms.add(form);
                 init['title_${form.id}'] = s.title ?? '';
-                init['duration_months_${form.id}'] = s.durationMonths?.toString() ?? '';
+                init['duration_months_${form.id}'] =
+                    s.durationMonths?.toString() ?? '';
                 init['years_${form.id}'] = s.years?.toString() ?? '';
               }
               setState(() {
@@ -85,7 +86,8 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
                 _prefilled = true;
               });
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                _formKey.currentState?.patchValue(_initialValues,
+                _formKey.currentState?.patchValue(
+                  _initialValues,
                 );
               });
             }
@@ -103,7 +105,7 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
         });
       }
     });
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
@@ -222,7 +224,8 @@ class _SkillsFormPageState extends ConsumerState<SkillsFormPage> {
       final values = _formKey.currentState!.value;
       final List<Map<String, dynamic>> skillsData = skills.map((s) {
         final title = (values['title_${s.id}'] as String?)?.trim() ?? '';
-        final durationStr = (values['duration_months_${s.id}'] as String?)?.trim() ?? '';
+        final durationStr =
+            (values['duration_months_${s.id}'] as String?)?.trim() ?? '';
         final yearsStr = (values['years_${s.id}'] as String?)?.trim() ?? '';
         return {
           'title': title,
@@ -290,7 +293,7 @@ class SkillCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

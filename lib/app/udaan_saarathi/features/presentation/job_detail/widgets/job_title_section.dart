@@ -28,7 +28,7 @@ class JobTitleSection extends StatelessWidget {
           Text(
             job.postingTitle,
             style: const TextStyle(
-              fontSize: 28,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
               color: Color(0xFF1A1A1A),
               height: 1.2,

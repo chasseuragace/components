@@ -28,7 +28,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
     final job = widget.job;
 
     final jobdataprovider = ref.watch(getJobsByIdProvider);
-    final isApplied = ref.watch(jobAppliedProvider(widget.job.id));
+    final isApplied = ref.watch(jobAppliedProvider(job.id));
 
     return Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
@@ -74,13 +74,21 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
             // ),
           ],
         ),
-        body: jobdataprovider.when(data: (MobileJobEntity? data) {
-          return body(data!, isApplied);
-        }, error: (Object error, StackTrace stackTrace) {
-          return Center(child: Text("error : $error\n$stackTrace"));
-        }, loading: () {
-          return Center(child: CircularProgressIndicator());
-        }));
+        body: jobdataprovider.when(
+          data: (MobileJobEntity? data) {
+            // Prefer fetched data; fall back to the job passed into the page
+            final effective = data ?? job;
+            return body(effective, isApplied);
+          },
+          error: (Object error, StackTrace stackTrace) {
+            // Show the page with fallback data to avoid blank screen
+            return  Center(child: Text("error : $error\n$stackTrace"));
+          },
+          loading: () {
+            // Show the page with fallback data while loading
+            return const Center(child: CircularProgressIndicator());
+          },
+        ));
   }
 
   Column body(MobileJobEntity job, bool isApplied) {

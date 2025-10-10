@@ -6,8 +6,8 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.d
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 
 import 'skills_page.dart' hide DocumentPickerButton;
 
@@ -99,7 +99,7 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
         });
       }
     });
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
@@ -171,7 +171,8 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
 
       if (result != null) {
         PlatformFile file = result.files.first;
-        if (file.size <= 5 * 1024 * 1024) { // 5MB limit
+        if (file.size <= 5 * 1024 * 1024) {
+          // 5MB limit
           setState(() {
             educations[index].selectedFile = file;
             educations[index].fileError = null;
@@ -202,7 +203,8 @@ class _EducationFormPageState extends ConsumerState<EducationFormPage> {
       final values = _formKey.currentState!.value;
       final List<Map<String, dynamic>> educationItems = educations.map((e) {
         final degree = (values['degree_${e.id}'] as String?)?.trim() ?? '';
-        final institute = (values['institute_${e.id}'] as String?)?.trim() ?? '';
+        final institute =
+            (values['institute_${e.id}'] as String?)?.trim() ?? '';
         return {
           'degree': degree,
           'institute': institute,
@@ -248,7 +250,7 @@ class EducationCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -296,8 +298,8 @@ class EducationCard extends StatelessWidget {
             label: 'Degree',
             hint: 'e.g. Bachelor of Science',
             icon: Icons.school,
-            validator: (value) => CustomValidator.nameValidator(
-                type: 'Degree', input: value),
+            validator: (value) =>
+                CustomValidator.nameValidator(type: 'Degree', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(

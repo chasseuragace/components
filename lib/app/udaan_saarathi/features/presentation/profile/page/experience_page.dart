@@ -4,18 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/providers.dart';
 
 class WorkExperienceFormPage extends ConsumerStatefulWidget {
   const WorkExperienceFormPage({super.key});
 
   @override
-  ConsumerState<WorkExperienceFormPage> createState() => _WorkExperienceFormPageState();
+  ConsumerState<WorkExperienceFormPage> createState() =>
+      _WorkExperienceFormPageState();
 }
 
-class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage> {
+class _WorkExperienceFormPageState
+    extends ConsumerState<WorkExperienceFormPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   List<WorkExperienceForm> experiences = [WorkExperienceForm()];
   int experienceCount = 1;
@@ -103,7 +105,7 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
         });
       }
     });
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: CustomAppBar(
@@ -174,7 +176,8 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
       lastDate: DateTime.now(),
     );
     if (picked != null) {
-      final formattedDate = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      final formattedDate =
+          '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       setState(() {
         experiences[index].startDate = formattedDate;
       });
@@ -192,7 +195,8 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
       lastDate: DateTime.now(),
     );
     if (picked != null) {
-      final formattedDate = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      final formattedDate =
+          '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       setState(() {
         experiences[index].endDate = formattedDate;
       });
@@ -208,23 +212,25 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
       for (var i = 0; i < experienceCount; i++) {
         final startDate = experiences[i].startDate;
         final endDate = experiences[i].endDate;
-        
+
         if (startDate != null && endDate != null) {
           final start = DateTime.tryParse(startDate);
           final end = DateTime.tryParse(endDate);
-          
+
           if (start == null || end == null) {
-            CustomSnackbar.showFailureSnackbar(context, 'Invalid date format for experience ${i+1}');
+            CustomSnackbar.showFailureSnackbar(
+                context, 'Invalid date format for experience ${i + 1}');
             return;
           }
-          
+
           if (end.isBefore(start)) {
-            CustomSnackbar.showFailureSnackbar(context, 'End date must be after start date for experience ${i+1}');
+            CustomSnackbar.showFailureSnackbar(context,
+                'End date must be after start date for experience ${i + 1}');
             return;
           }
         }
       }
-      
+
       // Proceed with saving
       final values = _formKey.currentState!.value;
       final List<Map<String, dynamic>> experienceItems = experiences.map((e) {
@@ -233,8 +239,11 @@ class _WorkExperienceFormPageState extends ConsumerState<WorkExperienceFormPage>
           'employer': (values['employer_${e.id}'] as String?)?.trim() ?? '',
           'start_date_ad': e.startDate ?? '',
           'end_date_ad': e.endDate ?? '',
-          'months': int.tryParse((values['months_${e.id}'] as String?)?.trim() ?? '') ?? 0,
-          'description': (values['description_${e.id}'] as String?)?.trim() ?? '',
+          'months': int.tryParse(
+                  (values['months_${e.id}'] as String?)?.trim() ?? '') ??
+              0,
+          'description':
+              (values['description_${e.id}'] as String?)?.trim() ?? '',
         };
       }).toList();
 
@@ -275,7 +284,7 @@ class ExperienceCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -323,8 +332,8 @@ class ExperienceCard extends StatelessWidget {
             label: 'Job Title',
             hint: 'e.g. Software Engineer',
             icon: Icons.title,
-            validator: (value) => CustomValidator.nameValidator(
-                type: 'Job Title', input: value),
+            validator: (value) =>
+                CustomValidator.nameValidator(type: 'Job Title', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
@@ -333,8 +342,8 @@ class ExperienceCard extends StatelessWidget {
             label: 'Employer',
             hint: 'e.g. Acme Inc',
             icon: Icons.business,
-            validator: (value) => CustomValidator.nameValidator(
-                type: 'Employer', input: value),
+            validator: (value) =>
+                CustomValidator.nameValidator(type: 'Employer', input: value),
           ),
           const SizedBox(height: 16),
           Row(
@@ -370,8 +379,8 @@ class ExperienceCard extends StatelessWidget {
             hint: 'e.g. 24',
             icon: Icons.schedule,
             keyboardType: TextInputType.number,
-            validator: (value) => CustomValidator.nameValidator(
-                type: 'Duration', input: value),
+            validator: (value) =>
+                CustomValidator.nameValidator(type: 'Duration', input: value),
           ),
           const SizedBox(height: 16),
           CustomFormBuilderTextField(
@@ -392,7 +401,7 @@ class WorkExperienceForm {
   // Stable ID for field names
   final String id = UniqueKey().toString();
   String? startDate; // Store as 'yyyy-MM-dd'
-  String? endDate;   // Store as 'yyyy-MM-dd'
+  String? endDate; // Store as 'yyyy-MM-dd'
   // Stable key for the list item to prevent state shift on deletion
   final Key widgetKey = UniqueKey();
 }

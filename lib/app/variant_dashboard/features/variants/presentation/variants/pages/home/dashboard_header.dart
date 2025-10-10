@@ -4,6 +4,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/utils.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
 
 class DashboardHeader extends ConsumerWidget {
@@ -15,13 +16,25 @@ class DashboardHeader extends ConsumerWidget {
     // Added WidgetRef ref
 
     final analytics = ref.watch(getCandidatAnalytocseByIdProvider);
-    return analytics.when(data: (CandidateStatisticsEntity? data) {
-      return body(data!, context);
-    }, error: (Object error, StackTrace stackTrace) {
-      return SizedBox();
-    }, loading: () {
-      return SizedBox();
-    });
+    return analytics.when(
+      data: (CandidateStatisticsEntity? data) {
+        if (data == null) {
+          return const SizedBox.shrink();
+        }
+        return body(data, context);
+      },
+      error: (Object error, StackTrace stackTrace) {
+        return const Center(child: Text('Failed to load analytics'));
+      },
+      loading: () {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
   }
 
   Container body(CandidateStatisticsEntity analytics, BuildContext context) {
@@ -36,7 +49,8 @@ class DashboardHeader extends ConsumerWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.symmetric(
+              horizontal: kHorizontalMargin, vertical: kVerticalMargin),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -110,7 +124,7 @@ class DashboardHeader extends ConsumerWidget {
         child: InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),

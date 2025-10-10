@@ -28,7 +28,7 @@ class BottomActionButtons extends StatelessWidget {
             flex: 1,
             child: ElevatedButton.icon(
               onPressed: onApply ?? () {},
-              icon: const Icon(Icons.send, color: Colors.white, size: 18),
+              icon: const Icon(Icons.send, color: Colors.white, size: 14),
               label: const Text(
                 'Apply Now',
                 style: TextStyle(
@@ -55,7 +55,7 @@ class BottomActionButtons extends StatelessWidget {
             flex: 1,
             child: ElevatedButton.icon(
               onPressed: onContact ?? () {},
-              icon: const Icon(Icons.phone, color: Colors.white, size: 18),
+              icon: const Icon(Icons.phone, color: Colors.white, size: 14),
               label: const Text(
                 'Contact Us',
                 style: TextStyle(
@@ -82,7 +82,7 @@ class BottomActionButtons extends StatelessWidget {
             flex: 1,
             child: OutlinedButton.icon(
               onPressed: onWebView ?? () {},
-              icon: const Icon(Icons.web, color: Color(0xFF64748B), size: 18),
+              icon: const Icon(Icons.web, color: Color(0xFF64748B), size: 14),
               label: const Text(
                 'Web View',
                 style: TextStyle(
