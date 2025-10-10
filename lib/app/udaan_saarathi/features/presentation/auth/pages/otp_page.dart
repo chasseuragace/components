@@ -167,50 +167,57 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
   }
 
   Widget _buildOTPField(int index) {
-    return SizedBox(
-      width: 45,
-      height: 55,
-      child: TextField(
-        controller: _otpControllers[index],
-        focusNode: _focusNodes[index],
-        keyboardType: TextInputType.number,
-        textAlign: TextAlign.center,
-        maxLength: 1,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        decoration: InputDecoration(
-          counterText: '',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: AppColors.borderColor),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 1.5),
+      child: SizedBox(
+        width: 45,
+        height: 55,
+        child: TextField(
+          controller: _otpControllers[index],
+          focusNode: _focusNodes[index],
+          keyboardType: TextInputType.number,
+          textAlign: TextAlign.center,
+          maxLength: 1,
+          textAlignVertical: TextAlignVertical.center,
+          cursorHeight: 24,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide:
-                const BorderSide(color: AppColors.primaryColor, width: 2),
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            counterText: '',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: AppColors.borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide:
+                  const BorderSide(color: AppColors.primaryColor, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.white,
           ),
-          filled: true,
-          fillColor: Colors.white,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          onChanged: (value) {
+            if (value.isNotEmpty && index < 5) {
+              _focusNodes[index + 1].requestFocus();
+            } else if (value.isEmpty && index > 0) {
+              _focusNodes[index - 1].requestFocus();
+            }
+            // Update completion state without auto-submitting
+            final complete = _otpCode.length == 6;
+            setState(() => _isOtpComplete = complete);
+            if (complete) {
+              // Auto-submit when all 6 digits are entered
+              FocusScope.of(context).unfocus();
+              _verifyOTP();
+            }
+          },
         ),
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onChanged: (value) {
-          if (value.isNotEmpty && index < 5) {
-            _focusNodes[index + 1].requestFocus();
-          } else if (value.isEmpty && index > 0) {
-            _focusNodes[index - 1].requestFocus();
-          }
-          // Update completion state without auto-submitting
-          final complete = _otpCode.length == 6;
-          setState(() => _isOtpComplete = complete);
-          if (complete) {
-            // Auto-submit when all 6 digits are entered
-            FocusScope.of(context).unfocus();
-            _verifyOTP();
-          }
-        },
       ),
     );
   }
@@ -243,7 +250,7 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
               const SizedBox(height: 40),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceColor,
                   borderRadius: BorderRadius.circular(16),

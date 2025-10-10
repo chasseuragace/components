@@ -12,17 +12,20 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // todo starts here :
     // - profiver for app
-    return MaterialApp(
-      theme: ThemeData.dark(),
-      home: !true
-          ? Homepage()
-          : !false
-              ? Opacity(opacity: 1, child: UdaanSaarathiProjectManager())
-              : !true
-                  ? UdaanSaarathiApp()
-                  : VariantDashboardPage(),
-      // initialRoute: RouteConstants.kSplashScreen,
-      // onGenerateRoute: (settings) => AppRouter.generateRoute(ref, settings),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: MaterialApp(
+        theme: ThemeData.dark(),
+        home: !true
+            ? Homepage()
+            : false
+                ? Opacity(opacity: 1, child: UdaanSaarathiProjectManager())
+                : true
+                    ? UdaanSaarathiApp()
+                    : VariantDashboardPage(),
+        // initialRoute: RouteConstants.kSplashScreen,
+        // onGenerateRoute: (settings) => AppRouter.generateRoute(ref, settings),
+      ),
     );
   }
 }

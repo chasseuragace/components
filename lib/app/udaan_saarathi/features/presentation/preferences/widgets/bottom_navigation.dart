@@ -43,7 +43,7 @@ class PreferencesBottomNavigation extends StatelessWidget {
                   onPressed: onPrevious,
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: AppColors.lightBlueColor),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -69,7 +69,7 @@ class PreferencesBottomNavigation extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

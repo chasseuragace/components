@@ -26,9 +26,16 @@ class PhoneTextField extends StatelessWidget {
       // validator: CustomValidator.phoneValidator,
       controller: _phoneCtrl,
       keyboardType: TextInputType.phone,
+
       decoration: minimalistInputDecoration(
         'Phone number',
         icon: Icons.phone_outlined,
+        // prefixIcon: CountryCodePicker(
+        //   onChanged: (_) {},
+        //   initialSelection: 'NP',
+        //   favorite: const ['NP'],
+        //   flagWidth: 15,
+        // ),
       ),
     );
   }

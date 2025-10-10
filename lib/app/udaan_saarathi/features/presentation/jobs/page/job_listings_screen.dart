@@ -9,6 +9,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jo
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/repositories/jobs/repository.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/job_card.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/utils.dart';
 
 class JobListingsScreen extends ConsumerStatefulWidget {
   const JobListingsScreen({super.key, required this.jobs});
@@ -20,8 +21,8 @@ class JobListingsScreen extends ConsumerStatefulWidget {
 class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
-  String _searchQuery = '';
-  Map<String, dynamic> _activeFilters = {};
+  final String _searchQuery = '';
+  final Map<String, dynamic> _activeFilters = {};
   List<JobsEntity> _allJobs = [];
   List<JobsEntity> _filteredJobs = [];
 
@@ -66,8 +67,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
       }
 
       // Country filter
-      if (filters['country'] != null &&
-          filters['country'].isNotEmpty) {
+      if (filters['country'] != null && filters['country'].isNotEmpty) {
         if (!job.country.toLowerCase().contains(
               filters['country'].toLowerCase(),
             )) {
@@ -76,8 +76,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
       }
 
       // Position filter
-      if (filters['position'] != null &&
-          filters['position'].isNotEmpty) {
+      if (filters['position'] != null && filters['position'].isNotEmpty) {
         if (!job.postingTitle.toLowerCase().contains(
               filters['position'].toLowerCase(),
             )) {
@@ -94,8 +93,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
       // }
 
       // Experience filter
-      if (filters['experience'] != null &&
-          filters['experience'].isNotEmpty) {
+      if (filters['experience'] != null && filters['experience'].isNotEmpty) {
         if (!job.experienceRequirements.minYears
             .toString()
             .contains(filters['experience'])) {
@@ -174,12 +172,15 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
         slivers: [
           // Custom App Bar
           SliverAppBar(
-            expandedHeight: 120,
+            expandedHeight: 85,
             floating: false,
-            pinned: false,
+            leading: const SizedBox.shrink(),
+            pinned: true,
             backgroundColor: Colors.white,
             elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
+            toolbarHeight: 0,
+            collapsedHeight: 0,
+            flexibleSpace: FlexibleSpaceBar(                                                                                                                                                                                                                                                                                                                                                
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -191,33 +192,31 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child: const SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Find Your Dream Job',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: -0.5,
-                          ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Find Your Dream Job',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Discover opportunities that match your skills',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w400,
-                          ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Discover opportunities that match your skills',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w400,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -228,7 +227,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
           SliverPersistentHeader(
             pinned: true,
             delegate: _SearchBarHeaderDelegate(
-              height: 80,
+              height: 100,
               child: SearchBarWidget(
                 controller: _searchController,
                 onFilterTap: _showFilterModal,
@@ -262,7 +261,9 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
             ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: EdgeInsets.symmetric(
+                      horizontal: 20, vertical: kVerticalMargin / 2)
+                  .copyWith(top: kVerticalMargin),
               child: Row(
                 children: [
                   Container(
@@ -866,12 +867,9 @@ class _SearchBarHeaderDelegate extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       alignment: Alignment.center,
-      child: SafeArea(
-        bottom: false,
-        child: child,
-      ),
+      child: child,
     );
   }
 

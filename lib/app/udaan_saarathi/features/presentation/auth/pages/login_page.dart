@@ -57,6 +57,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Async status and errors will be driven by AuthState
     try {
       final devOtp = await auth.loginStart(phone: phone);
+      print(devOtp);
       if (devOtp.isNotEmpty && mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(

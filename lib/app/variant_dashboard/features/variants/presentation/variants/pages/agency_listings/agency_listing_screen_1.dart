@@ -25,10 +25,11 @@ class _AgencyListingScreen1State extends State<AgencyListingScreen1> {
           style: TextStyle(
             color: Colors.grey[900],
             fontWeight: FontWeight.w600,
-            fontSize: 24,
+            fontSize: 18,
           ),
         ),
-        centerTitle: false,
+        centerTitle: true,
+        leading: const SizedBox.shrink(),
       ),
       body: Column(
         children: [
