@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/domain/entities/manpower_agency.dart';
 
 class AgencyListingScreen1 extends StatefulWidget {
   const AgencyListingScreen1({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AgencyListingScreen1State createState() => _AgencyListingScreen1State();
 }
 
@@ -40,9 +42,9 @@ class _AgencyListingScreen1State extends State<AgencyListingScreen1> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
               child: TextField(
                 controller: _searchController,
@@ -52,11 +54,29 @@ class _AgencyListingScreen1State extends State<AgencyListingScreen1> {
                   });
                 },
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: 'Search agencies by name or location...',
-                  hintStyle: TextStyle(color: Colors.grey[500]),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
+                  hintStyle: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
+                    child: Icon(
+                      Icons.search,
+                      color: AppColors.textSecondary,
+                      size: 20,
+                    ),
+                  ),
+                  // Tighten default 48x48 constraints to reduce extra padding
+                  prefixIconConstraints:
+                      BoxConstraints(minWidth: 0, minHeight: 0),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 16),
+                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                ),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
@@ -128,7 +148,10 @@ class ManpowerCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
-                        colors: [Colors.blue[400]!, Colors.purple[400]!],
+                        colors: [
+                          AppColors.lightBlueColor,
+                          AppColors.primaryDarkColor
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -151,7 +174,7 @@ class ManpowerCard extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.blue[600],
+                          color: AppColors.primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(Icons.check, size: 12, color: Colors.white),
@@ -159,7 +182,7 @@ class ManpowerCard extends StatelessWidget {
                     ),
                 ],
               ),
-              SizedBox(width: 16),
+              SizedBox(width: kHorizontalMargin),
               // Agency Info
               Expanded(
                 child: Column(
@@ -168,25 +191,25 @@ class ManpowerCard extends StatelessWidget {
                     Text(
                       agency.name,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[900],
+                        // color: Colors.grey[900],
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: kVerticalMargin / 4),
                     Row(
                       children: [
                         Icon(
                           Icons.location_on,
                           size: 16,
-                          color: Colors.grey[500],
+                          color: AppColors.textSecondary,
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(width: kHorizontalMargin / 4),
                         Text(
                           agency.location,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[500],
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -196,7 +219,7 @@ class ManpowerCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          SizedBox(height: kVerticalMargin),
 
           // Description
           Text(
@@ -209,7 +232,7 @@ class ManpowerCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 16),
+          SizedBox(height: kVerticalMargin),
 
           // Trust Factors
           Wrap(
@@ -219,7 +242,7 @@ class ManpowerCard extends StatelessWidget {
               return TrustBadge(trustFactor: factor);
             }).toList(),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: kVerticalMargin),
 
           // Specializations
           Wrap(
@@ -261,7 +284,7 @@ class ManpowerCard extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: 20),
+          SizedBox(height: kVerticalMargin * 1.2),
 
           // Stats and Action Row
           Row(
@@ -272,32 +295,33 @@ class ManpowerCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.work, size: 16, color: Colors.grey[500]),
+                        Icon(Icons.work,
+                            size: 16, color: AppColors.textSecondary),
                         SizedBox(width: 4),
                         Text(
                           '${agency.activeJobs} jobs',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(width: 16),
+                    SizedBox(width: kHorizontalMargin),
                     Row(
                       children: [
                         Icon(
                           Icons.trending_up,
                           size: 16,
-                          color: Colors.grey[500],
+                          color: AppColors.textSecondary,
                         ),
                         SizedBox(width: 4),
                         Text(
                           '${agency.successRate}% success',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -306,18 +330,19 @@ class ManpowerCard extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(width: kHorizontalMargin / 2),
               // Action Button
               ElevatedButton(
                 onPressed: () {
                   // Navigate to agency detail
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[600],
+                  backgroundColor: AppColors.primaryColor,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: Text(
@@ -372,14 +397,14 @@ class TrustBadge extends StatelessWidget {
       case TrustFactorType.established:
         return {
           'bgColor': Colors.blue[50],
-          'textColor': Colors.blue[700],
+          'textColor': AppColors.primaryColor,
           'borderColor': Colors.blue[200],
           'icon': Icons.calendar_today,
         };
       case TrustFactorType.employees:
         return {
           'bgColor': Colors.green[50],
-          'textColor': Colors.green[700],
+          'textColor': AppColors.secondaryDarkColor,
           'borderColor': Colors.green[200],
           'icon': Icons.groups,
         };
@@ -393,7 +418,7 @@ class TrustBadge extends StatelessWidget {
       case TrustFactorType.verified:
         return {
           'bgColor': Colors.blue[50] ?? Colors.green[50],
-          'textColor': Colors.blue[700] ?? Colors.green[700],
+          'textColor': AppColors.primaryColor,
           'borderColor': Colors.blue[200] ?? Colors.green[200],
           'icon': Icons.verified_user,
         };
