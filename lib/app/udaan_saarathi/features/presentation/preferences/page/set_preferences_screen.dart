@@ -66,6 +66,17 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
     // No need to apply default template here
   }
 
+  void _navigateAfterSave() {
+    // Always navigate to the main app navigation and clear the back stack.
+    // This prevents returning to login/onboarding/splash when preferences
+    // were completed from an auth flow.
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      RouteConstants.kAppNavigation,
+      (route) => false,
+    );
+  }
+
   /// Apply user preferences (job titles only) from server data
   /// This handles the user's selected job titles with priorities
   void _applyUserPreferences(List<PreferencesEntity> userPrefs) {
@@ -1043,14 +1054,6 @@ class _SetPreferenceScreenState extends ConsumerState<SetPreferenceScreen> {
     );
   }
 
-  void _navigateAfterSave() {
-    // Check if we can pop, otherwise navigate to app navigation
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    } else {
-      Navigator.pushReplacementNamed(context, RouteConstants.kAppNavigation);
-    }
-  }
 
   void _showJobTitleOperationSuccess(String? operation) {
     String message = 'Job title preference updated successfully!';

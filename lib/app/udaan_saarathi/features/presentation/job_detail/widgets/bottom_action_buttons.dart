@@ -23,15 +23,19 @@ class BottomActionButtons extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Apply Now Button - Blue Background
+          // Apply Now Button - Shows 'Applied' and disables when onApply is null
           Expanded(
             flex: 1,
             child: ElevatedButton.icon(
-              onPressed: onApply ?? () {},
-              icon: const Icon(Icons.send, color: Colors.white, size: 14),
-              label: const Text(
-                'Apply Now',
-                style: TextStyle(
+              onPressed: onApply,
+              icon: Icon(
+                onApply == null ? Icons.check_circle : Icons.send,
+                color: Colors.white,
+                size: 14,
+              ),
+              label: Text(
+                onApply == null ? 'Applied' : 'Apply Now',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -40,6 +44,8 @@ class BottomActionButtons extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey,
+                disabledForegroundColor: Colors.white70,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),

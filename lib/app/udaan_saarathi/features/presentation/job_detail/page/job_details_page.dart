@@ -5,6 +5,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/favor
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart'
     show getJobsByIdProvider;
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
@@ -82,7 +83,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
           },
           error: (Object error, StackTrace stackTrace) {
             // Show the page with fallback data to avoid blank screen
-            return  Center(child: Text("error : $error\n$stackTrace"));
+            return Center(child: Text("error : $error\n$stackTrace"));
           },
           loading: () {
             // Show the page with fallback data while loading
@@ -176,6 +177,19 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
     );
     if (result == true) {
       ref.read(jobAppliedProvider(posting.id).notifier).state = true;
+      if (context.mounted) {
+        CustomSnackbar.showSuccessSnackbar(
+          context,
+          "Successfully applied to job",
+        );
+      }
+    } else {
+      if (context.mounted) {
+        CustomSnackbar.showFailureSnackbar(
+          context,
+          "Failed to apply job ",
+        );
+      }
     }
   }
 }

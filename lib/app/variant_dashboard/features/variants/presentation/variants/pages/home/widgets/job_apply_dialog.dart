@@ -58,16 +58,23 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
       applyJobProvider,
       (AsyncValue<void>? previous, AsyncValue<void> next) {
         if (previous?.isLoading == true && next.hasError) {
-          CustomSnackbar.showFailureSnackbar(
-            context,
-            "Failed to apply job ${next.error}",
-          );
+          print('eror ${next.error}');
+          // if (!mounted) return;
+
+          // CustomSnackbar.showFailureSnackbar(
+          //   context,
+          //   "Failed to apply job ${next.error}",
+          // );
+          Navigator.pop(context);
         } else if (previous?.isLoading == true && next.hasValue) {
+          if (!mounted) return;
+          // Show snackbar first while the context is still mounted,
+          // then close the dialog.
+          // CustomSnackbar.showSuccessSnackbar(
+          //   context,
+          //   "Successfully applied to job",
+          // );
           Navigator.of(context).pop(true);
-          CustomSnackbar.showSuccessSnackbar(
-            context,
-            "Successfully applied to job",
-          );
         }
       },
     );

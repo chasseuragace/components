@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
@@ -489,6 +490,19 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
     );
     if (result == true) {
       ref.read(jobAppliedProvider(posting.id).notifier).state = true;
+      if (context.mounted) {
+        CustomSnackbar.showSuccessSnackbar(
+          context,
+          "Successfully applied to job",
+        );
+      }
+    } else {
+      if (context.mounted) {
+        CustomSnackbar.showFailureSnackbar(
+          context,
+          "Failed to apply job ",
+        );
+      }
     }
   }
 }
