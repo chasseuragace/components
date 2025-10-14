@@ -5,6 +5,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/candidate_stats.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_cards_group.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_content_widget.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_dialog.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 
 class ProfilePage extends ConsumerWidget {
@@ -67,14 +68,27 @@ class ProfilePage extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    await ref.read(authControllerProvider.notifier).logout();
-                    if (context.mounted) {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                        (route) => false,
-                      );
-                    }
+                    CustomDialog.showCustomDialog(
+                      context,
+                      title: 'Confirm Logout?',
+                      subtitle: 'Are you sure you want to logout?',
+                      negativeText: 'Cancel',
+                      positiveText: 'Logout',
+                      onTap: () async {
+                        await ref
+                            .read(authControllerProvider.notifier)
+                            .logout();
+                        if (context.mounted) {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginPage()),
+                            (route) => false,
+                          );
+                        }
+                      },
+                      barrierDismissible: true,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red[50],
