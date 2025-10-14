@@ -170,26 +170,49 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
     ]);
   }
 
+  // void _applyToJob(BuildContext context, MobileJobEntity posting) async {
+  //   final result = await showDialog<bool>(
+  //     context: context,
+  //     builder: (context) => ApplyJobDialog(posting: posting),
+  //   );
+  //   if (result == true) {
+  //     ref.read(jobAppliedProvider(posting.id).notifier).state = true;
+  //     if (context.mounted) {
+  //       CustomSnackbar.showSuccessSnackbar(
+  //         context,
+  //         "Successfully applied to job",
+  //       );
+  //     }
+  //   } else {
+  //     if (context.mounted) {
+  //       CustomSnackbar.showFailureSnackbar(
+  //         context,
+  //         "Failed to apply job ",
+  //       );
+  //     }
+  //   }
+  // }
+// file: `app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart`
   void _applyToJob(BuildContext context, MobileJobEntity posting) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => ApplyJobDialog(posting: posting),
     );
+
+    if (!context.mounted) return;
+
     if (result == true) {
       ref.read(jobAppliedProvider(posting.id).notifier).state = true;
-      if (context.mounted) {
+
+      // Delay showing snackbar until dialog is fully popped
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         CustomSnackbar.showSuccessSnackbar(
-          context,
-          "Successfully applied to job",
-        );
-      }
-    } else {
-      if (context.mounted) {
-        CustomSnackbar.showFailureSnackbar(
-          context,
-          "Failed to apply job ",
-        );
-      }
+            context, "Successfully applied to job");
+      });
+    } else if (result == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        CustomSnackbar.showFailureSnackbar(context, "Failed to apply job");
+      });
     }
   }
 }

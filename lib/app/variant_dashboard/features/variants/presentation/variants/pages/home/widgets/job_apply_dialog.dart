@@ -65,7 +65,8 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
           //   context,
           //   "Failed to apply job ${next.error}",
           // );
-          Navigator.pop(context);
+          // Close dialog and signal explicit failure to caller
+          Navigator.of(context).pop(false);
         } else if (previous?.isLoading == true && next.hasValue) {
           if (!mounted) return;
           // Show snackbar first while the context is still mounted,

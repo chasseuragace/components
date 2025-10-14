@@ -9,8 +9,6 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/appli
 import 'package:variant_dashboard/app/udaan_saarathi/utils/get_status.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/dashboard_header.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart'
-    as v1;
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/interview_card.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_section.dart';
@@ -65,8 +63,6 @@ class JobProfile {
     required this.updatedAt,
   });
 }
-
-
 
 class Application {
   final String id;

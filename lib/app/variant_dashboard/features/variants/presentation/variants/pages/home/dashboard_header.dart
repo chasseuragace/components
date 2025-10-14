@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
@@ -22,7 +23,7 @@ class DashboardHeader extends ConsumerWidget {
         if (data == null) {
           return const SizedBox.shrink();
         }
-        return body(data, context);
+        return body(data, context, ref);
       },
       error: (Object error, StackTrace stackTrace) {
         return const Center(child: Text('Failed to load analytics'));
@@ -38,7 +39,8 @@ class DashboardHeader extends ConsumerWidget {
     );
   }
 
-  Container body(CandidateStatisticsEntity analytics, BuildContext context) {
+  Container body(CandidateStatisticsEntity analytics, BuildContext context,
+      WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -61,21 +63,26 @@ class DashboardHeader extends ConsumerWidget {
                   Expanded(
                     child: Greetings(),
                   ),
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.2),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        width: 2,
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(appHomeNavIndexProvider.notifier).state = 3;
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.2),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
                       ),
-                    ),
-                    child: Icon(
-                      Icons.person_rounded,
-                      color: Colors.white,
-                      size: 30,
+                      child: Icon(
+                        Icons.person_rounded,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
                   ),
                 ],

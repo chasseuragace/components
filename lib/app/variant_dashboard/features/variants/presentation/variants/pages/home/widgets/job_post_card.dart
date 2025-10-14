@@ -6,7 +6,6 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/ho
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
@@ -490,21 +489,21 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
       context: context,
       builder: (context) => ApplyJobDialog(posting: posting),
     );
+
+    if (!context.mounted) return;
+
     if (result == true) {
       ref.read(jobAppliedProvider(posting.id).notifier).state = true;
-      if (context.mounted) {
+
+      // Delay showing snackbar until dialog is fully popped
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         CustomSnackbar.showSuccessSnackbar(
-          context,
-          "Successfully applied to job",
-        );
-      }
-    } else {
-      if (context.mounted) {
-        CustomSnackbar.showFailureSnackbar(
-          context,
-          "Failed to apply job ",
-        );
-      }
+            context, "Successfully applied to job");
+      });
+    } else if (result == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        CustomSnackbar.showFailureSnackbar(context, "Failed to apply job");
+      });
     }
   }
 }
