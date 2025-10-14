@@ -1,16 +1,15 @@
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
-
 
 class ContractTerms {
   final String type;
   final String duration;
-  final String? salary;           // Optional: e.g., "50000-70000"
-  final bool? isRenewable;        // Optional: Whether the contract can be renewed
-  final String? noticePeriod;     // Optional: e.g., "1 month"
-  final String? workingHours;     // Optional: e.g., "40 hours/week"
-  final String? probationPeriod;  // Optional: e.g., "3 months"
-  final String? benefits;         // Optional: Comma-separated benefits
+  final String? salary; // Optional: e.g., "50000-70000"
+  final bool? isRenewable; // Optional: Whether the contract can be renewed
+  final String? noticePeriod; // Optional: e.g., "1 month"
+  final String? workingHours; // Optional: e.g., "40 hours/week"
+  final String? probationPeriod; // Optional: e.g., "3 months"
+  final String? benefits; // Optional: Comma-separated benefits
 
   const ContractTerms({
     required this.type,
@@ -24,19 +23,18 @@ class ContractTerms {
   });
 
   // Factory constructor from JSON
-factory ContractTerms.fromJson(Map<String, dynamic> json) {
-  return ContractTerms(
-    type: json['type'] as String? ?? 'Full-time',
-    duration: json['duration'] as String? ?? 'Not specified',
-    salary: json['salary'] as String? ?? 'Not specified',
-    isRenewable: json['isRenewable'] as bool? ?? false,
-    noticePeriod: json['noticePeriod'] as String? ?? 'Not specified',
-    workingHours: json['workingHours'] as String? ?? 'Not specified',
-    probationPeriod: json['probationPeriod'] as String? ?? 'Not specified',
-    benefits: json['benefits'] as String? ?? 'None',
-  );
-}
-
+  factory ContractTerms.fromJson(Map<String, dynamic> json) {
+    return ContractTerms(
+      type: json['type'] as String? ?? 'Full-time',
+      duration: json['duration'] as String? ?? 'Not specified',
+      salary: json['salary'] as String? ?? 'Not specified',
+      isRenewable: json['isRenewable'] as bool? ?? false,
+      noticePeriod: json['noticePeriod'] as String? ?? 'Not specified',
+      workingHours: json['workingHours'] as String? ?? 'Not specified',
+      probationPeriod: json['probationPeriod'] as String? ?? 'Not specified',
+      benefits: json['benefits'] as String? ?? 'None',
+    );
+  }
 
   // Convert to JSON
   Map<String, dynamic> toJson() {
@@ -92,9 +90,10 @@ factory ContractTerms.fromJson(Map<String, dynamic> json) {
   // Helper methods
   bool get hasProbation => probationPeriod != null;
   bool get isPermanent => type.toLowerCase().contains('permanent');
-  bool isContractType(String typeToCheck) => 
+  bool isContractType(String typeToCheck) =>
       type.toLowerCase() == typeToCheck.toLowerCase();
 }
+
 // ✅ JobPosition Model
 class JobPositionModel extends JobPosition {
   JobPositionModel({
@@ -106,20 +105,19 @@ class JobPositionModel extends JobPosition {
     super.requirements,
   });
 
- factory JobPositionModel.fromJson(Map<String, dynamic> json) {
-  return JobPositionModel(
-    id: json['id'] as String? ?? '',
-    title: json['title'] as String? ?? 'Untitled Position',
-    baseSalary: json['baseSalary'] as String? ?? 'Not specified',
-    convertedSalary: json['convertedSalary'] as String? ?? 'Not available',
-    currency: json['currency'] as String? ?? 'N/A',
-    requirements: (json['requirements'] as List<dynamic>?)
-            ?.map((e) => e as String)
-            .toList() ??
-        [],
-  );
-}
-
+  factory JobPositionModel.fromJson(Map<String, dynamic> json) {
+    return JobPositionModel(
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? 'Untitled Position',
+      baseSalary: json['baseSalary'] as String? ?? 'Not specified',
+      convertedSalary: json['convertedSalary'] as String? ?? 'Not available',
+      currency: json['currency'] as String? ?? 'N/A',
+      requirements: (json['requirements'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -144,7 +142,7 @@ class MobileJobModel extends MobileJobEntity {
     required super.employer,
     required List<JobPositionModel> super.positions,
     required super.description,
-    required ContractTerms super.contractTerms,
+    required super.contractTerms,
     super.isActive = true,
     required super.postedDate,
     super.preferencePriority,
@@ -162,42 +160,42 @@ class MobileJobModel extends MobileJobEntity {
     super.policy,
   });
 
-factory MobileJobModel.fromJson(Map<String, dynamic> json) {
-  return MobileJobModel(
-    id: json['id'] as String? ?? '',
-    postingTitle: json['postingTitle'] as String? ?? 'Untitled Job',
-    country: json['country'] as String? ?? 'Unknown',
-    city: json['city'] as String? ?? 'Unknown',
-    agency: json['agency'] as String? ?? 'Unknown',
-    employer: json['employer'] as String? ?? 'Unknown',
-    positions: (json['positions'] as List<dynamic>?)
-            ?.map((e) => JobPositionModel.fromJson(e))
-            .toList() ??
-        [],
-    description: json['description'] as String? ?? 'No description provided',
-    contractTerms: ContractTerms.fromJson(
-        json['contractTerms'] as Map<String, dynamic>? ?? {}),
-    isActive: json['isActive'] as bool? ?? true,
-    postedDate: json['postedDate'] != null
-        ? DateTime.parse(json['postedDate'] as String)
-        : DateTime.now(),
-    preferencePriority: json['preferencePriority'] as String? ?? 'Normal',
-    preferenceText: json['preferenceText'] as String? ?? 'N/A',
-    location: json['location'] as String? ?? 'Not specified',
-    experience: json['experience'] as String? ?? 'Not specified',
-    salary: json['salary'] as String? ?? 'Not specified',
-    type: json['type'] as String? ?? 'Full-time',
-    isRemote: json['isRemote'] as bool? ?? false,
-    isFeatured: json['isFeatured'] as bool? ?? false,
-    companyLogo: json['companyLogo'] as String? ?? '',
-    matchPercentage: json['matchPercentage'] as String? ?? '0',
-    // Note: Backend doesn't provide job-level convertedSalary, only position-level
-    // This field will typically be null - use positions[].convertedSalary instead
-    convertedSalary: json['convertedSalary'] as String?,
-    applications: json['applications'] as int? ?? 0,
-    policy: json['policy'] as String? ?? 'Standard',
-  );
-}
+  factory MobileJobModel.fromJson(Map<String, dynamic> json) {
+    return MobileJobModel(
+      id: json['id'] as String? ?? '',
+      postingTitle: json['postingTitle'] as String? ?? 'Untitled Job',
+      country: json['country'] as String? ?? 'Unknown',
+      city: json['city'] as String? ?? 'Unknown',
+      agency: json['agency'] as String? ?? 'Unknown',
+      employer: json['employer'] as String? ?? 'Unknown',
+      positions: (json['positions'] as List<dynamic>?)
+              ?.map((e) => JobPositionModel.fromJson(e))
+              .toList() ??
+          [],
+      description: json['description'] as String? ?? 'No description provided',
+      contractTerms: ContractTerms.fromJson(
+          json['contractTerms'] as Map<String, dynamic>? ?? {}),
+      isActive: json['isActive'] as bool? ?? true,
+      postedDate: json['postedDate'] != null
+          ? DateTime.parse(json['postedDate'] as String)
+          : DateTime.now(),
+      preferencePriority: json['preferencePriority'] as String? ?? 'Normal',
+      preferenceText: json['preferenceText'] as String? ?? 'N/A',
+      location: json['location'] as String? ?? 'Not specified',
+      experience: json['experience'] as String? ?? 'Not specified',
+      salary: json['salary'] as String? ?? 'Not specified',
+      type: json['type'] as String? ?? 'Full-time',
+      isRemote: json['isRemote'] as bool? ?? false,
+      isFeatured: json['isFeatured'] as bool? ?? false,
+      companyLogo: json['companyLogo'] as String? ?? '',
+      matchPercentage: json['matchPercentage'] as String? ?? '0',
+      // Note: Backend doesn't provide job-level convertedSalary, only position-level
+      // This field will typically be null - use positions[].convertedSalary instead
+      convertedSalary: json['convertedSalary'] as String?,
+      applications: json['applications'] as int? ?? 0,
+      policy: json['policy'] as String? ?? 'Standard',
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -207,7 +205,8 @@ factory MobileJobModel.fromJson(Map<String, dynamic> json) {
       'city': city,
       'agency': agency,
       'employer': employer,
-      'positions': positions.map((e) => (e as JobPositionModel).toJson()).toList(),
+      'positions':
+          positions.map((e) => (e as JobPositionModel).toJson()).toList(),
       'description': description,
       'contractTerms': contractTerms.toJson(),
       'isActive': isActive,

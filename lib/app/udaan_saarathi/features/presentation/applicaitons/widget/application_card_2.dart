@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/detail_by_id.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/utils.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
 class ApplicationCard2 extends ConsumerWidget {
-  final Application application;
+  final ApplicaitonsEntity application;
   final bool isApplicaionList;
   const ApplicationCard2(
       {super.key, required this.application, this.isApplicaionList = false});
@@ -57,7 +58,7 @@ class ApplicationCard2 extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Applied ${application.appliedAt.timeAgo}',
+                'Applied ${DateTime.parse(application.appliedAt!).timeAgo}',
                 style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
               ),
               StatusBadge(status: application.status),
@@ -85,7 +86,7 @@ class ApplicationCard2 extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    application.posting.postingTitle,
+                    application.posting?.postingTitle ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -95,7 +96,7 @@ class ApplicationCard2 extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    application.posting.employer,
+                    application.posting?.employer ?? "",
                     style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
                   ),
                   Row(
@@ -107,7 +108,7 @@ class ApplicationCard2 extends ConsumerWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        application.posting.country,
+                        application.posting?.country ?? "",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[700],
@@ -225,7 +226,7 @@ class ApplicationCard2 extends ConsumerWidget {
   }
 
   void _withdrawApplication(
-      BuildContext context, Application application, WidgetRef ref) {
+      BuildContext context, ApplicaitonsEntity application, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -239,7 +240,7 @@ class ApplicationCard2 extends ConsumerWidget {
           ),
         ),
         content: Text(
-          'Are you sure you want to withdraw your application for ${application.posting.postingTitle}?',
+          'Are you sure you want to withdraw your application for ${application.posting?.postingTitle}?',
           style: TextStyle(fontSize: 14, color: Color(0xFF4B5563)),
         ),
         actions: [

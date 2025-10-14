@@ -54,14 +54,14 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
                 child: ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
+                    print(items);
                     final item = items[index];
                     return ApplicationCard2(
-                        isApplicaionList: true,
-                        application: recentApplications[index]);
+                        isApplicaionList: true, application: items[index]);
                     return ListTile(
                       subtitle: Text(item.id),
-                      title: Text(item
-                          .status), // Adjust this based on your entity properties
+                      title: Text(item.status
+                          .name), // Adjust this based on your entity properties
 
                       onTap: () {
                         // Set the selected application ID

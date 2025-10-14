@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
 
 /// Data model for a single UI variant.
@@ -332,7 +333,7 @@ class VariantDashboardPage extends StatelessWidget {
       variants: <VariantItem>[
         VariantItem(
           name: 'Home V1 - Basic',
-          builder: (BuildContext context) => const HomePageVariant1(),
+          builder: (BuildContext context) => const HomePage(),
         ),
         VariantItem(
           name: 'Home V2 - List View',

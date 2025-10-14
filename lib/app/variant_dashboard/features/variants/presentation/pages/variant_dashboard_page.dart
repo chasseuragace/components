@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page_2.dart';
@@ -35,7 +37,6 @@ import 'package:variant_dashboard/app/variant_dashboard/home_page_variant_4/pres
 
 import '../../domain/entities/variant_group.dart';
 import '../../domain/entities/variant_item.dart';
-import '../variants/pages/home/home_page_variant1.dart';
 import '../variants/pages/home/home_page_variant2.dart';
 import '../widgets/variant_preview.dart';
 
@@ -381,7 +382,7 @@ class _VariantDashboardPageState extends State<VariantDashboardPage> {
       variants: <VariantItem>[
         VariantItem(
           name: 'Home V1 - Bassic',
-          builder: (BuildContext context) => const HomePageVariant1(),
+          builder: (BuildContext context) => const HomePage(),
         ),
         VariantItem(
           name: 'Home V2 - List View',

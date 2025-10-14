@@ -1,39 +1,53 @@
+import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 
-
-
-class ApplicaitonsEntity  {
+class ApplicaitonsEntity {
   final String id;
   final String candidateId;
   final String jobPostingId;
-  final String status;
+  // final String status;
   final String? updatedBy;
+  final MobileJobEntity? posting;
+  final ApplicationStatus status;
+  final String? note;
+  // final List<ApplicationHistory> history;
+  final String? appliedAt;
+  final InterviewDetail? interviewDetail;
 
   ApplicaitonsEntity({
-   
     required this.id,
     required this.candidateId,
     required this.jobPostingId,
     required this.status,
-     this.updatedBy,
+    this.updatedBy,
+    this.appliedAt,
+    this.interviewDetail,
+    this.posting,
+    this.note,
   });
 }
 
-
 class ApplyJobDTOEntity {
-    final String candidateId;
+  final String candidateId;
   final String jobPostingId;
   final String note;
-final String name ;
-  ApplyJobDTOEntity({required this.candidateId, required this.jobPostingId, required this.note,required this.name, });
+  final String name;
+  ApplyJobDTOEntity({
+    required this.candidateId,
+    required this.jobPostingId,
+    required this.note,
+    required this.name,
+  });
 }
 
-class ApplicationPaginationWrapper{
-  List <ApplicaitonsEntity> items;
-  int? total,page,limit;
+class ApplicationPaginationWrapper {
+  List<ApplicaitonsEntity> items;
+  int? total, page, limit;
 
-  ApplicationPaginationWrapper({required this.items,this.total,this.page,this.limit});
+  ApplicationPaginationWrapper(
+      {required this.items, this.total, this.page, this.limit});
 }
-
 
 class ApplicationDetailsEntity {
   final String id;
@@ -105,8 +119,8 @@ class ApplicationHistoryEntity {
     this.prevStatus,
     required this.nextStatus,
     required this.updatedAt,
-     this.updatedBy,
-     this.note,
+    this.updatedBy,
+    this.note,
   });
 
   @override

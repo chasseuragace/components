@@ -1,8 +1,5 @@
-
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
-
-import 'domain/entities/home_screen_entity.dart';
-import 'home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 
 class MobileJobEntity {
   final String id;
@@ -11,7 +8,8 @@ class MobileJobEntity {
   final String city;
   final String agency;
   final String employer;
-  final List<JobPosition> positions; // Each position has its own convertedSalary
+  final List<JobPosition>
+      positions; // Each position has its own convertedSalary
   final String description;
   final ContractTerms contractTerms;
   final bool isActive;
@@ -26,11 +24,11 @@ class MobileJobEntity {
   final bool? isFeatured;
   final String? companyLogo;
   final String? matchPercentage; // Skills alignment percentage (0-100)
-  
+
   /// @deprecated Use positions[].convertedSalary instead
   /// Backend does not provide job-level converted salary, only position-level
   final String? convertedSalary;
-  
+
   final int? applications;
   final String? policy;
   MobileJobEntity({

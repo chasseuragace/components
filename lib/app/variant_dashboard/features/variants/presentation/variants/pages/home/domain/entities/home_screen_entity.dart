@@ -1,5 +1,5 @@
 // ENHANCED DATA MODELS (matching backend)
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 
 class Candidate {
   final String id;
@@ -73,7 +73,6 @@ class JobPosting {
     required this.postedDate,
   });
 }
-
 
 class Application {
   final String id;

@@ -232,7 +232,9 @@ class _JobCardState extends State<JobCard> {
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // _applyToJob(context, job);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                         foregroundColor: Colors.white,
@@ -263,6 +265,28 @@ class _JobCardState extends State<JobCard> {
     );
   }
 
+// void _applyToJob(BuildContext context, MobileJobEntity posting) async {
+//     final result = await showDialog<bool>(
+//       context: context,
+//       builder: (context) => ApplyJobDialog(posting: posting),
+//     );
+//     if (result == true) {
+//       ref.read(jobAppliedProvider(posting.id).notifier).state = true;
+//       if (context.mounted) {
+//         CustomSnackbar.showSuccessSnackbar(
+//           context,
+//           "Successfully applied to job",
+//         );
+//       }
+//     } else {
+//       if (context.mounted) {
+//         CustomSnackbar.showFailureSnackbar(
+//           context,
+//           "Failed to apply job ",
+//         );
+//       }
+//     }
+//   }
   Widget _buildJobTag(String text, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

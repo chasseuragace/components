@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
@@ -38,7 +39,14 @@ class RecommendedJobsSection extends ConsumerWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  //                   Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => const JobsListPage()),
+                  // );
+                  // Switch to Jobs tab (index 1) in bottom navigation
+                  ref.read(appHomeNavIndexProvider.notifier).state = 1;
+                },
                 child: Text(
                   'View All',
                   style: TextStyle(

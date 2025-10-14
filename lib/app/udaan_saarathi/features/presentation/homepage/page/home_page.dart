@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package
 import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/get_status.dart';
@@ -65,23 +66,7 @@ class JobProfile {
   });
 }
 
-class JobPosition {
-  final String id;
-  final String title;
-  final String? baseSalary;
-  final String? convertedSalary;
-  final String? currency;
-  final List<String> requirements;
 
-  JobPosition({
-    required this.id,
-    required this.title,
-    this.baseSalary,
-    this.convertedSalary,
-    this.currency,
-    this.requirements = const [],
-  });
-}
 
 class Application {
   final String id;
@@ -656,7 +641,7 @@ class JobDetailsModal extends StatelessWidget {
     );
   }
 
-  Widget _buildPositionCard(v1.JobPosition position) {
+  Widget _buildPositionCard(JobPosition position) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),

@@ -7,5 +7,13 @@ enum ApplicationStatus {
   interviewFailed,
   withdrawn,
   rejected,
-  accepted,
+  accepted;
+
+  static ApplicationStatus fromValue(String? string) {
+    if (string == null) return ApplicationStatus.applied;
+    return ApplicationStatus.values.firstWhere(
+      (e) => e.name.toLowerCase() == string.toLowerCase(),
+      orElse: () => ApplicationStatus.applied,
+    );
+  }
 }

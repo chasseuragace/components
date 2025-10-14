@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 final jobAppliedProvider = StateProvider.family<bool, String>((ref, jobId) {
@@ -19,7 +21,7 @@ class HomeScreenProvider extends ChangeNotifier {
   final List<CandidatePreference> _preferences;
   final List<JobProfile> _jobProfiles;
   final List<MobileJobEntity> _recommendedJobs;
-  final List<Application> _applications;
+  final List<ApplicaitonsEntity> _applications;
   final DashboardAnalytics _analytics;
   JobFilters _currentFilters;
 
@@ -134,10 +136,11 @@ class HomeScreenProvider extends ChangeNotifier {
           ),
         ],
         _applications = [
-          Application(
+          ApplicaitonsEntity(
             id: 'app_001',
             candidateId: 'cand_001',
-            postingId: 'post_001',
+            jobPostingId: 'post_001',
+            status: ApplicationStatus.interviewScheduled,
             posting: MobileJobEntity(
               id: 'post_003',
               postingTitle: 'Hospitality Staff Recruitment - Multiple Roles',
@@ -153,8 +156,8 @@ class HomeScreenProvider extends ChangeNotifier {
               preferenceText: 'Electrician',
               positions: [],
             ),
-            status: ApplicationStatus.interviewScheduled,
-            appliedAt: DateTime.now().subtract(Duration(days: 5)),
+            // status: ApplicationStatus.interviewScheduled,
+            appliedAt: '2023-01-01',
             interviewDetail: InterviewDetail(
               id: 'int_001',
               scheduledAt: DateTime.now().add(Duration(days: 3)),
@@ -162,23 +165,6 @@ class HomeScreenProvider extends ChangeNotifier {
               contact: 'HR Team - +977-61-123456',
               notes: 'Interview with the founding team',
             ),
-            history: [
-              ApplicationHistory(
-                id: 'hist_001',
-                status: ApplicationStatus.applied,
-                timestamp: DateTime.now().subtract(Duration(days: 5)),
-              ),
-              ApplicationHistory(
-                id: 'hist_002',
-                status: ApplicationStatus.underReview,
-                timestamp: DateTime.now().subtract(Duration(days: 3)),
-              ),
-              ApplicationHistory(
-                id: 'hist_003',
-                status: ApplicationStatus.interviewScheduled,
-                timestamp: DateTime.now().subtract(Duration(days: 1)),
-              ),
-            ],
           ),
         ],
         _analytics = DashboardAnalytics(
@@ -205,7 +191,7 @@ class HomeScreenProvider extends ChangeNotifier {
   List<CandidatePreference> get preferences => _preferences;
   List<JobProfile> get jobProfiles => _jobProfiles;
   List<MobileJobEntity> get recommendedJobs => _recommendedJobs;
-  List<Application> get applications => _applications;
+  List<ApplicaitonsEntity> get applications => _applications;
   DashboardAnalytics get analytics => _analytics;
   JobFilters get currentFilters => _currentFilters;
 
@@ -238,16 +224,16 @@ class HomeScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Application> getApplicationsByStatus(ApplicationStatus? status) {
+  List<ApplicaitonsEntity> getApplicationsByStatus(ApplicationStatus? status) {
     if (status == null) return _applications;
     return _applications.where((app) => app.status == status).toList();
   }
 
-  List<Application> getUpcomingInterviews() {
+  List<ApplicaitonsEntity> getUpcomingInterviews() {
     return _applications
         .where(
           (app) =>
-              app.status == ApplicationStatus.interviewScheduled &&
+              app.status == "interview_scheduled" &&
               app.interviewDetail != null &&
               app.interviewDetail!.scheduledAt.isAfter(DateTime.now()),
         )

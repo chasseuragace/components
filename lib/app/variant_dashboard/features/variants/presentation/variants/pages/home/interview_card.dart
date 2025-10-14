@@ -3,142 +3,142 @@ import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/Interviews/model.dart'
     as interviews_model;
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/home_page_variant1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 
 class InterviewCard extends StatelessWidget {
-  final Application application;
+  final ApplicaitonsEntity application;
 
   const InterviewCard({super.key, required this.application});
 
   @override
   Widget build(BuildContext context) {
     return DummyInterviewCardPreview();
-    final interview = application.interviewDetail!;
+    // final interview = application.interviewDetail!;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title Section
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4F7DF9).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.event_rounded,
-                  color: const Color(0xFF4F7DF9),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  application.posting.postingTitle,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+    // return Container(
+    //   margin: const EdgeInsets.only(bottom: 16),
+    //   padding: const EdgeInsets.all(20),
+    //   decoration: BoxDecoration(
+    //     color: Colors.white,
+    //     borderRadius: BorderRadius.circular(12),
+    //     border: Border.all(color: Colors.grey.shade200),
+    //     boxShadow: [
+    //       BoxShadow(
+    //         color: Colors.black.withOpacity(0.04),
+    //         blurRadius: 8,
+    //         offset: const Offset(0, 2),
+    //       ),
+    //     ],
+    //   ),
+    //   child: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: [
+    //       // Title Section
+    //       Row(
+    //         children: [
+    //           Container(
+    //             padding: const EdgeInsets.all(8),
+    //             decoration: BoxDecoration(
+    //               color: const Color(0xFF4F7DF9).withOpacity(0.1),
+    //               borderRadius: BorderRadius.circular(8),
+    //             ),
+    //             child: Icon(
+    //               Icons.event_rounded,
+    //               color: const Color(0xFF4F7DF9),
+    //               size: 20,
+    //             ),
+    //           ),
+    //           const SizedBox(width: 12),
+    //           Expanded(
+    //             child: Text(
+    //               application.posting.postingTitle,
+    //               style: const TextStyle(
+    //                 fontSize: 16,
+    //                 fontWeight: FontWeight.w600,
+    //                 color: Color(0xFF1A1A1A),
+    //               ),
+    //               maxLines: 2,
+    //               overflow: TextOverflow.ellipsis,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
 
-          const SizedBox(height: 16),
-          Divider(color: Colors.grey.shade200, height: 1),
-          const SizedBox(height: 16),
+    //       const SizedBox(height: 16),
+    //       Divider(color: Colors.grey.shade200, height: 1),
+    //       const SizedBox(height: 16),
 
-          // Schedule Section
-          Row(
-            children: [
-              Icon(
-                Icons.schedule_rounded,
-                color: Colors.grey.shade600,
-                size: 18,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                DateFormat('MMM dd, yyyy • hh:mm a')
-                    .format(interview.scheduledAt),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
+    //       // Schedule Section
+    //       Row(
+    //         children: [
+    //           Icon(
+    //             Icons.schedule_rounded,
+    //             color: Colors.grey.shade600,
+    //             size: 18,
+    //           ),
+    //           const SizedBox(width: 12),
+    //           Text(
+    //             DateFormat('MMM dd, yyyy • hh:mm a')
+    //                 .format(interview.scheduledAt),
+    //             style: TextStyle(
+    //               fontSize: 14,
+    //               color: Colors.grey.shade700,
+    //               fontWeight: FontWeight.w500,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
 
-          const SizedBox(height: 12),
+    //       const SizedBox(height: 12),
 
-          // Location Section
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_rounded,
-                color: Colors.grey.shade600,
-                size: 18,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  interview.location,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
+    //       // Location Section
+    //       Row(
+    //         children: [
+    //           Icon(
+    //             Icons.location_on_rounded,
+    //             color: Colors.grey.shade600,
+    //             size: 18,
+    //           ),
+    //           const SizedBox(width: 12),
+    //           Expanded(
+    //             child: Text(
+    //               interview.location,
+    //               style: TextStyle(
+    //                 fontSize: 14,
+    //                 color: Colors.grey.shade700,
+    //                 fontWeight: FontWeight.w500,
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
 
-          // Notes Section
-          if (interview.notes != null) ...[
-            const SizedBox(height: 16),
-            Divider(color: Colors.grey.shade200, height: 1),
-            const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Text(
-                interview.notes!,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade700,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
+    //       // Notes Section
+    //       if (interview.notes != null) ...[
+    //         const SizedBox(height: 16),
+    //         Divider(color: Colors.grey.shade200, height: 1),
+    //         const SizedBox(height: 16),
+    //         Container(
+    //           width: double.infinity,
+    //           padding: const EdgeInsets.all(16),
+    //           decoration: BoxDecoration(
+    //             color: Colors.grey.shade50,
+    //             borderRadius: BorderRadius.circular(8),
+    //             border: Border.all(color: Colors.grey.shade200),
+    //           ),
+    //           child: Text(
+    //             interview.notes!,
+    //             style: TextStyle(
+    //               fontSize: 13,
+    //               color: Colors.grey.shade700,
+    //               height: 1.4,
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ],
+    //   ),
+    // );
   }
 }
 
