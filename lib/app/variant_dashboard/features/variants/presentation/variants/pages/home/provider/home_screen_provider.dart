@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 final jobAppliedProvider = StateProvider.family<bool, String>((ref, jobId) {
@@ -233,7 +233,7 @@ class HomeScreenProvider extends ChangeNotifier {
     return _applications
         .where(
           (app) =>
-              app.status == "interview_scheduled" &&
+              app.status == ApplicationStatus.interviewScheduled &&
               app.interviewDetail != null &&
               app.interviewDetail!.scheduledAt.isAfter(DateTime.now()),
         )

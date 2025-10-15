@@ -1,6 +1,6 @@
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/entity.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
 import '../../../domain/entities/applicaitons/entity.dart';

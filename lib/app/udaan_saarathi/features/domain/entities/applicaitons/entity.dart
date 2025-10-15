@@ -1,6 +1,6 @@
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 
 class ApplicaitonsEntity {
   final String id;

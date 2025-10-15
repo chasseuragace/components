@@ -6,6 +6,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_statu
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/get_status.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/dashboard_header.dart';
@@ -19,148 +20,148 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 // Global Riverpod provider for JobDashboardData
 
 // ENHANCED DATA MODELS (matching backend)
-class Candidate {
-  final String id;
-  final String fullName;
-  final String phone;
-  final Map<String, dynamic>? address;
-  final String? passportNumber;
-  final List<String> skills;
-  final List<Map<String, dynamic>> education;
-  final bool isActive;
+// class Candidate {
+//   final String id;
+//   final String fullName;
+//   final String phone;
+//   final Map<String, dynamic>? address;
+//   final String? passportNumber;
+//   final List<String> skills;
+//   final List<Map<String, dynamic>> education;
+//   final bool isActive;
 
-  Candidate({
-    required this.id,
-    required this.fullName,
-    required this.phone,
-    this.address,
-    this.passportNumber,
-    this.skills = const [],
-    this.education = const [],
-    this.isActive = true,
-  });
-}
+//   Candidate({
+//     required this.id,
+//     required this.fullName,
+//     required this.phone,
+//     this.address,
+//     this.passportNumber,
+//     this.skills = const [],
+//     this.education = const [],
+//     this.isActive = true,
+//   });
+// }
 
-class CandidatePreference {
-  final String title;
-  final int? priority;
+// class CandidatePreference {
+//   final String title;
+//   final int? priority;
 
-  CandidatePreference({required this.title, this.priority});
-}
+//   CandidatePreference({required this.title, this.priority});
+// }
 
-class JobProfile {
-  final String id;
-  final String candidateId;
-  final Map<String, dynamic> profileBlob;
-  final String? label;
-  final DateTime updatedAt;
+// class JobProfile {
+//   final String id;
+//   final String candidateId;
+//   final Map<String, dynamic> profileBlob;
+//   final String? label;
+//   final DateTime updatedAt;
 
-  JobProfile({
-    required this.id,
-    required this.candidateId,
-    required this.profileBlob,
-    this.label,
-    required this.updatedAt,
-  });
-}
+//   JobProfile({
+//     required this.id,
+//     required this.candidateId,
+//     required this.profileBlob,
+//     this.label,
+//     required this.updatedAt,
+//   });
+// }
 
-class Application {
-  final String id;
-  final String candidateId;
-  final String postingId;
-  final MobileJobEntity posting;
-  final ApplicationStatus status;
-  final String? note;
-  final List<ApplicationHistory> history;
-  final DateTime appliedAt;
-  final InterviewDetail? interviewDetail;
+// class Application {
+//   final String id;
+//   final String candidateId;
+//   final String postingId;
+//   final MobileJobEntity posting;
+//   final ApplicationStatus status;
+//   final String? note;
+//   final List<ApplicationHistory> history;
+//   final DateTime appliedAt;
+//   final InterviewDetail? interviewDetail;
 
-  Application({
-    required this.id,
-    required this.candidateId,
-    required this.postingId,
-    required this.posting,
-    required this.status,
-    this.note,
-    this.history = const [],
-    required this.appliedAt,
-    this.interviewDetail,
-  });
-}
+//   Application({
+//     required this.id,
+//     required this.candidateId,
+//     required this.postingId,
+//     required this.posting,
+//     required this.status,
+//     this.note,
+//     this.history = const [],
+//     required this.appliedAt,
+//     this.interviewDetail,
+//   });
+// }
 
-class InterviewDetail {
-  final String id;
-  final DateTime scheduledAt;
-  final String location;
-  final String contact;
-  final String? notes;
-  final bool isRescheduled;
+// class InterviewDetail {
+//   final String id;
+//   final DateTime scheduledAt;
+//   final String location;
+//   final String contact;
+//   final String? notes;
+//   final bool isRescheduled;
 
-  InterviewDetail({
-    required this.id,
-    required this.scheduledAt,
-    required this.location,
-    required this.contact,
-    this.notes,
-    this.isRescheduled = false,
-  });
-}
+//   InterviewDetail({
+//     required this.id,
+//     required this.scheduledAt,
+//     required this.location,
+//     required this.contact,
+//     this.notes,
+//     this.isRescheduled = false,
+//   });
+// }
 
-class ApplicationHistory {
-  final String id;
-  final ApplicationStatus status;
-  final DateTime timestamp;
-  final String? note;
-  final String? updatedBy;
+// class ApplicationHistory {
+//   final String id;
+//   final ApplicationStatus status;
+//   final DateTime timestamp;
+//   final String? note;
+//   final String? updatedBy;
 
-  ApplicationHistory({
-    required this.id,
-    required this.status,
-    required this.timestamp,
-    this.note,
-    this.updatedBy,
-  });
-}
+//   ApplicationHistory({
+//     required this.id,
+//     required this.status,
+//     required this.timestamp,
+//     this.note,
+//     this.updatedBy,
+//   });
+// }
 
-class JobFilters {
-  final List<String>? countries;
-  final SalaryFilter? salary;
-  final String combineWith; // 'AND' or 'OR'
+// class JobFilters {
+//   final List<String>? countries;
+//   final SalaryFilter? salary;
+//   final String combineWith; // 'AND' or 'OR'
 
-  JobFilters({this.countries, this.salary, this.combineWith = 'OR'});
-}
+//   JobFilters({this.countries, this.salary, this.combineWith = 'OR'});
+// }
 
-class SalaryFilter {
-  final double? min;
-  final double? max;
-  final String currency;
-  final String source; // 'base' or 'converted'
+// class SalaryFilter {
+//   final double? min;
+//   final double? max;
+//   final String currency;
+//   final String source; // 'base' or 'converted'
 
-  SalaryFilter({
-    this.min,
-    this.max,
-    required this.currency,
-    this.source = 'base',
-  });
-}
+//   SalaryFilter({
+//     this.min,
+//     this.max,
+//     required this.currency,
+//     this.source = 'base',
+//   });
+// }
 
-class DashboardAnalytics {
-  final int recommendedJobsCount;
-  final List<String> topMatchedTitles;
-  final Map<String, int> countriesDistribution;
-  final int recentlyAppliedCount;
-  final int totalApplications;
-  final int interviewsScheduled;
+// class DashboardAnalytics {
+//   final int recommendedJobsCount;
+//   final List<String> topMatchedTitles;
+//   final Map<String, int> countriesDistribution;
+//   final int recentlyAppliedCount;
+//   final int totalApplications;
+//   final int interviewsScheduled;
 
-  DashboardAnalytics({
-    required this.recommendedJobsCount,
-    required this.topMatchedTitles,
-    required this.countriesDistribution,
-    required this.recentlyAppliedCount,
-    required this.totalApplications,
-    required this.interviewsScheduled,
-  });
-}
+//   DashboardAnalytics({
+//     required this.recommendedJobsCount,
+//     required this.topMatchedTitles,
+//     required this.countriesDistribution,
+//     required this.recentlyAppliedCount,
+//     required this.totalApplications,
+//     required this.interviewsScheduled,
+//   });
+// }
 
 // class JobPostingCard extends StatelessWidget {
 //   final JobPosting posting;
@@ -773,7 +774,12 @@ class ApplicationsSection extends ConsumerWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return InterviewsListPage();
+                    }));
+                  },
                   child: Text(
                     'View All',
                     style: TextStyle(
