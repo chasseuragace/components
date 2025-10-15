@@ -5,7 +5,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/profil
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
     as cand;
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/pages.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/settings/user_settings_1.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/settings/page/settings_page.dart';
 
 import '../providers/profile_provider.dart';
 import '../providers/providers.dart';
@@ -189,7 +189,7 @@ class ProfileCardsGroup extends ConsumerWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const SettingsScreen1(),
+                builder: (context) => const SettingsPage(),
               ),
             );
           },
