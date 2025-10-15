@@ -43,7 +43,7 @@ class _AgencyListingScreenState extends State<AgencyListingScreen> {
               // padding: EdgeInsets.all(16),
               color: Colors.white,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8FAFC),
                   borderRadius: BorderRadius.circular(16),
@@ -341,14 +341,14 @@ class ManpowerCard extends StatelessWidget {
                   // Navigate to agency detail
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    // backgroundColor: AppColors.primaryColor,
+                    // foregroundColor: Colors.white,
+                    // elevation: 0,
+                    // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    // shape: RoundedRectangleBorder(
+                    //   borderRadius: BorderRadius.circular(12),
+                    // ),
+                    ),
                 child: Text(
                   'View Profile',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),

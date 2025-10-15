@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:variant_dashboard/app/variant_dashboard/core/theme/app_theme.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/theme/theme.dart';
 import 'package:variant_dashboard/variant_item.dart';
 
 class VariantDashboard extends StatelessWidget {

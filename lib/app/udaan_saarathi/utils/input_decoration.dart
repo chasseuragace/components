@@ -25,3 +25,4 @@ InputDecoration minimalistInputDecoration(String label, {IconData? icon}) {
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
   );
 }
+

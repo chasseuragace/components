@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/app_router.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/theme/theme.dart';
 
 class UdaanSaarathiApp extends StatelessWidget {
   const UdaanSaarathiApp({super.key});
@@ -8,8 +9,9 @@ class UdaanSaarathiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: AppTheme.build(),
       initialRoute: RouteConstants.kSplashScreen,
-      onGenerateRoute: AppRouter.generateRoute,
+      onGenerateRoute: (settings) => AppRouter.generateRoute(settings),
     );
   }
 }
