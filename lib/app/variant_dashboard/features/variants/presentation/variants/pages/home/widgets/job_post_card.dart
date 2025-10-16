@@ -487,7 +487,10 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
   void _applyToJob(BuildContext context, MobileJobEntity posting) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => ApplyJobDialog(posting: posting),
+      builder: (context) => ApplyJobDialog(
+        postingTitle: posting.postingTitle,
+        postingId: posting.id,
+      ),
     );
 
     if (!context.mounted) return;

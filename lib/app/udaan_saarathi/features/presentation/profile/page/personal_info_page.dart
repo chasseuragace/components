@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/candidate/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/address.dart';
+// Swap to candidate providers
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
+    as cand;
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
-// Swap to candidate providers
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart' as cand;
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/candidate/model.dart';
 
 class PersonalInfoFormPage extends ConsumerStatefulWidget {
   const PersonalInfoFormPage({super.key});
 
   @override
-  ConsumerState<PersonalInfoFormPage> createState() => _PersonalInfoFormPageState();
+  ConsumerState<PersonalInfoFormPage> createState() =>
+      _PersonalInfoFormPageState();
 }
 
 class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
@@ -35,10 +37,14 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
     if (address == null) return '';
     final parts = <String>[];
     if ((address.name ?? '').trim().isNotEmpty) parts.add(address.name!.trim());
-    if ((address.ward ?? '').trim().isNotEmpty) parts.add('Ward ${address.ward!.trim()}');
-    if ((address.municipality ?? '').trim().isNotEmpty) parts.add(address.municipality!.trim());
-    if ((address.district ?? '').trim().isNotEmpty) parts.add(address.district!.trim());
-    if ((address.province ?? '').trim().isNotEmpty) parts.add(address.province!.trim());
+    if ((address.ward ?? '').trim().isNotEmpty)
+      parts.add('Ward ${address.ward!.trim()}');
+    if ((address.municipality ?? '').trim().isNotEmpty)
+      parts.add(address.municipality!.trim());
+    if ((address.district ?? '').trim().isNotEmpty)
+      parts.add(address.district!.trim());
+    if ((address.province ?? '').trim().isNotEmpty)
+      parts.add(address.province!.trim());
     return parts.join(', ');
   }
 
@@ -98,7 +104,10 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                 final mun = (a.municipality ?? '').toLowerCase();
                 final dist = (a.district ?? '').toLowerCase();
                 final prov = (a.province ?? '').toLowerCase();
-                return name.contains(query) || mun.contains(query) || dist.contains(query) || prov.contains(query);
+                return name.contains(query) ||
+                    mun.contains(query) ||
+                    dist.contains(query) ||
+                    prov.contains(query);
               }).toList();
               setModalState(() {});
             }
@@ -116,7 +125,8 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                           const Expanded(
                             child: Text(
                               'Pick location',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
                             ),
                           ),
                           IconButton(
@@ -132,7 +142,8 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                         controller: searchController,
                         onChanged: applyFilter,
                         decoration: InputDecoration(
-                          hintText: 'Search province, district, municipality or place',
+                          hintText:
+                              'Search province, district, municipality or place',
                           prefixIcon: const Icon(Icons.search),
                           filled: true,
                           fillColor: Colors.grey[50],
@@ -146,22 +157,26 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF2196F3), width: 2),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF2196F3), width: 2),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Expanded(
                       child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 8),
                         itemCount: filtered.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (_, i) {
                           final addr = filtered[i];
                           return ListTile(
-                            leading: const Icon(Icons.place_outlined, color: Colors.blueGrey),
+                            leading: const Icon(Icons.place_outlined,
+                                color: Colors.blueGrey),
                             title: Text(addr.name ?? 'Unknown'),
                             subtitle: Text(_formatAddress(addr)),
                             onTap: () => Navigator.of(ctx).pop(addr),
@@ -184,7 +199,8 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
         _initialValues['address_display'] = _formatAddress(picked);
       });
       // Ensure form reflects new address display value
-      _formKey.currentState?.patchValue({'address_display': _initialValues['address_display']});
+      _formKey.currentState
+          ?.patchValue({'address_display': _initialValues['address_display']});
     }
   }
 
@@ -254,8 +270,8 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                   label: 'Full Name',
                   hint: 'e.g. John Doe',
                   icon: Icons.person,
-                  validator: (value) =>
-                      CustomValidator.nameValidator(input: value, type: 'Full Name'),
+                  validator: (value) => CustomValidator.nameValidator(
+                      input: value, type: 'Full Name'),
                 ),
                 const SizedBox(height: 16),
                 // Phone
@@ -264,25 +280,22 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                   label: 'Phone',
                   hint: 'e.g. +977 9841000000',
                   icon: Icons.phone,
-
                   keyboardType: TextInputType.phone,
-                  validator: (value) =>
-                      CustomValidator.phoneValidator(value),
+                  validator: (value) => CustomValidator.phoneValidator(value),
                 ),
                 const SizedBox(height: 16),
                 // Gender (required) - Choice chips in a row (custom styled)
                 CustomChoiceChipsField<String>(
-                  
                   name: 'gender',
                   label: 'Gender',
-
                   icon: Icons.wc_outlined,
                   validator: (value) => (value == null || value.trim().isEmpty)
                       ? 'Please select gender'
                       : null,
                   options: const [
                     FormBuilderChipOption(value: 'Male', child: Text('Male')),
-                    FormBuilderChipOption(value: 'Female', child: Text('Female')),
+                    FormBuilderChipOption(
+                        value: 'Female', child: Text('Female')),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -303,9 +316,8 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                   readOnly: true,
                   onTap: _openFakeLocationPicker,
                   suffixIcon: const Icon(Icons.place_outlined),
-                  validator: (v) => (_selectedAddress == null)
-                      ? 'Please pick address'
-                      : null,
+                  validator: (v) =>
+                      (_selectedAddress == null) ? 'Please pick address' : null,
                 ),
               ],
             ),
@@ -341,11 +353,15 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
         fullName: v['full_name'],
         phone: v['phone'],
         passportNumber: v['passport_number'],
-        gender: (v['gender'] as String?)?.trim().isEmpty == true ? null : v['gender'] as String?,
+        gender: (v['gender'] as String?)?.trim().isEmpty == true
+            ? null
+            : v['gender'] as String?,
         address: address,
       );
 
-      await ref.read(cand.updateCandidateProvider.notifier).updateCandidate(model);
+      await ref
+          .read(cand.updateCandidateProvider.notifier)
+          .updateCandidate(model);
     }
   }
 }
@@ -378,7 +394,7 @@ class SectionCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

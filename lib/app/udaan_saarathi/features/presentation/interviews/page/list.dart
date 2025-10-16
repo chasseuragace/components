@@ -1,11 +1,15 @@
 // lib/features/interviews/presentation/pages/list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/usecases/interviews/get_all.dart';
+
 import '../../../domain/entities/interviews/entity.dart';
 import '../providers/providers.dart';
 
 class InterviewsListPage extends ConsumerStatefulWidget {
+  const InterviewsListPage({super.key});
+
   @override
   _InterviewsListPageState createState() => _InterviewsListPageState();
 }
@@ -13,18 +17,16 @@ class InterviewsListPage extends ConsumerStatefulWidget {
 class _InterviewsListPageState extends ConsumerState<InterviewsListPage> {
   BuildContext? barrierContext;
 
-
-
   @override
   Widget build(BuildContext context) {
     final paginationState = ref.watch(getAllInterviewsProvider);
     final p = ref.watch(interviewPaginaionProvider);
-      listenToDeleteInterviewsAction(context);
-      // TODO: Set up listeners for other actions
-      // listenToAddInterviewsAction(context);
-      // listenToUpdateInterviewsAction(context);
+    listenToDeleteInterviewsAction(context);
+    // TODO: Set up listeners for other actions
+    // listenToAddInterviewsAction(context);
+    // listenToUpdateInterviewsAction(context);
     return Scaffold(
-      appBar: AppBar(
+      appBar: SarathiAppBar(
         title: Text('Interviews List'),
       ),
       body: paginationState.when(
@@ -88,7 +90,9 @@ class _InterviewsListPageState extends ConsumerState<InterviewsListPage> {
                           onPressed: page <= 1
                               ? null
                               : () {
-                                  ref.read(interviewPaginaionProvider.notifier).state =
+                                  ref
+                                          .read(interviewPaginaionProvider.notifier)
+                                          .state =
                                       Pagination(page: page - 1, take: limit);
                                   ref.invalidate(getAllInterviewsProvider);
                                 },
@@ -99,7 +103,9 @@ class _InterviewsListPageState extends ConsumerState<InterviewsListPage> {
                           onPressed: page >= totalPages
                               ? null
                               : () {
-                                  ref.read(interviewPaginaionProvider.notifier).state =
+                                  ref
+                                          .read(interviewPaginaionProvider.notifier)
+                                          .state =
                                       Pagination(page: page + 1, take: limit);
                                   ref.invalidate(getAllInterviewsProvider);
                                 },
@@ -174,12 +180,14 @@ class _InterviewsListPageState extends ConsumerState<InterviewsListPage> {
     // Implementation remains the same
   }
 
-  void _showEditDialog(BuildContext context, WidgetRef ref, InterviewsEntity item) {
+  void _showEditDialog(
+      BuildContext context, WidgetRef ref, InterviewsEntity item) {
     // Implementation remains the same
   }
 
-  void _showDeleteConfirmation(BuildContext context, WidgetRef ref, String itemId)async  {
-  final result = await   showDialog(
+  void _showDeleteConfirmation(
+      BuildContext context, WidgetRef ref, String itemId) async {
+    final result = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirm Deletion'),
@@ -191,7 +199,6 @@ class _InterviewsListPageState extends ConsumerState<InterviewsListPage> {
           ),
           TextButton(
             onPressed: () {
-              
               Navigator.of(context).pop(true);
             },
             child: Text('Delete'),
@@ -199,8 +206,8 @@ class _InterviewsListPageState extends ConsumerState<InterviewsListPage> {
         ],
       ),
     );
-    if(result==true){
-    ref.read(deleteInterviewsProvider.notifier).delete(itemId);
+    if (result == true) {
+      ref.read(deleteInterviewsProvider.notifier).delete(itemId);
     }
   }
 }

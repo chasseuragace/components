@@ -6,13 +6,14 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/appli
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
 
 class ApplyJobDialog extends ConsumerStatefulWidget {
-  final MobileJobEntity posting;
-
-  const ApplyJobDialog({super.key, required this.posting});
+  // final MobileJobEntity posting;
+  final String postingTitle;
+  final String postingId;
+  const ApplyJobDialog(
+      {super.key, required this.postingTitle, required this.postingId});
 
   @override
   _ApplyJobDialogState createState() => _ApplyJobDialogState();
@@ -158,7 +159,7 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        widget.posting.postingTitle,
+                                        widget.postingTitle,
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -405,7 +406,7 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
         : _noteController.text.trim();
     final application = ApplyJobDTOEntity(
       candidateId: candidateId,
-      jobPostingId: widget.posting.id,
+      jobPostingId: widget.postingId,
       note: note,
       name: 'candidate-mobile-app',
     );

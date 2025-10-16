@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/favorites/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/widgets/widgets.dart';
@@ -33,14 +34,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 
     return Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+        appBar: SarathiAppBar(
           title: Text("Job Detail"),
           actions: [
             Container(
@@ -196,7 +190,10 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
   void _applyToJob(BuildContext context, MobileJobEntity posting) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => ApplyJobDialog(posting: posting),
+      builder: (context) => ApplyJobDialog(
+        postingTitle: posting.postingTitle,
+        postingId: posting.id,
+      ),
     );
 
     if (!context.mounted) return;

@@ -64,6 +64,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     phoneNumber: phone,
                     fullName: name,
                     isLogin: false,
+                    devOtp: devOtp,
                   )),
         );
       }

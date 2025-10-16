@@ -64,6 +64,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               builder: (_) => OTPVerificationPage(
                     phoneNumber: phone,
                     isLogin: true,
+                    devOtp: devOtp,
                   )),
         );
       }

@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/logo_widget.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
 
-class JobCard extends StatefulWidget {
+class JobCard extends ConsumerStatefulWidget {
   final JobsEntity job;
 
   const JobCard({super.key, required this.job});
 
   @override
-  State<JobCard> createState() => _JobCardState();
+  ConsumerState<JobCard> createState() => _JobCardState();
 }
 
-class _JobCardState extends State<JobCard> {
+class _JobCardState extends ConsumerState<JobCard> {
   bool isSaved = false;
 
   @override
@@ -24,7 +28,7 @@ class _JobCardState extends State<JobCard> {
       onTap: () {
         // Navigator.push(
         //   context,
-        //   MaterialPageRoute(builder: (context) => JobDetailScreen(job: job)),
+        //   MaterialPageRoute(builder: (context) => JobDetailPage(job: job)),
         // );
       },
       child: Container(
@@ -233,7 +237,7 @@ class _JobCardState extends State<JobCard> {
                     const SizedBox(width: 12),
                     ElevatedButton(
                       onPressed: () {
-                        // _applyToJob(context, job);
+                        _applyToJob(context, job.postingTitle, job.id);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
@@ -265,28 +269,33 @@ class _JobCardState extends State<JobCard> {
     );
   }
 
-// void _applyToJob(BuildContext context, MobileJobEntity posting) async {
-//     final result = await showDialog<bool>(
-//       context: context,
-//       builder: (context) => ApplyJobDialog(posting: posting),
-//     );
-//     if (result == true) {
-//       ref.read(jobAppliedProvider(posting.id).notifier).state = true;
-//       if (context.mounted) {
-//         CustomSnackbar.showSuccessSnackbar(
-//           context,
-//           "Successfully applied to job",
-//         );
-//       }
-//     } else {
-//       if (context.mounted) {
-//         CustomSnackbar.showFailureSnackbar(
-//           context,
-//           "Failed to apply job ",
-//         );
-//       }
-//     }
-//   }
+  void _applyToJob(
+      BuildContext context, String postingTitle, String postingId) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ApplyJobDialog(
+        postingTitle: postingTitle,
+        postingId: postingId,
+      ),
+    );
+
+    if (!context.mounted) return;
+
+    if (result == true) {
+      ref.read(jobAppliedProvider(postingId).notifier).state = true;
+
+      // Delay showing snackbar until dialog is fully popped
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        CustomSnackbar.showSuccessSnackbar(
+            context, "Successfully applied to job");
+      });
+    } else if (result == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        CustomSnackbar.showFailureSnackbar(context, "Failed to apply job");
+      });
+    }
+  }
+
   Widget _buildJobTag(String text, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

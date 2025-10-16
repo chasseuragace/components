@@ -1,6 +1,7 @@
 // lib/features/Applicaitons/presentation/pages/list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/empty_application_widget.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
@@ -31,14 +32,14 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
     // listenToAddApplicaitonsAction(context);
     // listenToUpdateApplicaitonsAction(context);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      appBar: SarathiAppBar(
+        // backgroundColor: Colors.white,
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         title: Text("Applications List"),
       ),
       body: ApplicaitonsState.when(

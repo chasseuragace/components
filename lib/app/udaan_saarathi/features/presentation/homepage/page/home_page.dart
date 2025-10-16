@@ -570,7 +570,7 @@ class JobDetailsModal extends StatelessWidget {
               onPressed: posting.isActive
                   ? () {
                       Navigator.pop(context);
-                      _applyToJob(context, posting);
+                      _applyToJob(context, posting.postingTitle, posting.id);
                     }
                   : null,
               child: Text(
@@ -735,10 +735,14 @@ class JobDetailsModal extends StatelessWidget {
     return DateFormat.yMMMd().format(date);
   }
 
-  void _applyToJob(BuildContext context, MobileJobEntity posting) {
+  void _applyToJob(
+      BuildContext context, String postingTitle, String postingId) {
     showDialog(
       context: context,
-      builder: (context) => ApplyJobDialog(posting: posting),
+      builder: (context) => ApplyJobDialog(
+        postingTitle: postingTitle,
+        postingId: postingId,
+      ),
     );
   }
 }

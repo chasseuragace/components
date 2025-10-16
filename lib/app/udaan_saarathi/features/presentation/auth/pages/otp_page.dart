@@ -14,12 +14,14 @@ class OTPVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
   final String? fullName;
   final bool isLogin;
+  final String? devOtp;
 
   const OTPVerificationPage({
     super.key,
     required this.phoneNumber,
     this.fullName,
     this.isLogin = false,
+    this.devOtp,
   });
 
   @override
@@ -247,6 +249,17 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
                 subtitle:
                     'Enter the 6-digit code sent to ${widget.phoneNumber}',
               ),
+              if (widget.devOtp != null && widget.devOtp!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Code: ${widget.devOtp}',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
               const SizedBox(height: 40),
               Container(
                 width: double.infinity,
