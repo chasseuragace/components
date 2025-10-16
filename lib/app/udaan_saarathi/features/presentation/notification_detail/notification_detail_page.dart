@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
 
 // Enhanced JobNotification model
@@ -189,7 +190,7 @@ class NotificationDetailPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
+              color: AppColors.textPrimary2,
             ),
           ),
           const SizedBox(height: 8),
@@ -231,7 +232,7 @@ class NotificationDetailPage extends StatelessWidget {
                       req,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF374151),
+                        color: AppColors.textPrimary2,
                       ),
                     ),
                   ),
@@ -356,7 +357,7 @@ class NotificationDetailPage extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF374151),
+              color: AppColors.textPrimary2,
             ),
           ),
           Expanded(

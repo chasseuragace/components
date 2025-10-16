@@ -1292,7 +1292,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF374151),
+                  color: AppColors.textPrimary2,
                 ),
               ),
               const SizedBox(height: 16),
@@ -1326,7 +1326,7 @@ class _AgencyDetailScreen2State extends State<AgencyDetailScreen2>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF374151),
+                  color: AppColors.textPrimary2,
                 ),
               ),
               const SizedBox(height: 12),

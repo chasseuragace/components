@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/logo_widget.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 
@@ -103,7 +104,7 @@ class _CompanyMetric extends StatelessWidget {
           value,
           style: const TextStyle(
             fontSize: 13,
-            color: Color(0xFF374151),
+            color: AppColors.textPrimary2,
             fontWeight: FontWeight.w600,
           ),
         ),

@@ -189,7 +189,7 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF374151),
+                                color: AppColors.textPrimary2,
                                 height: 1.4,
                               ),
                             ),

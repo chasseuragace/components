@@ -21,7 +21,7 @@ class InterviewCard extends StatelessWidget {
     //   decoration: BoxDecoration(
     //     color: Colors.white,
     //     borderRadius: BorderRadius.circular(12),
-    //     border: Border.all(color: Colors.grey.shade200),
+    //     border: Border.all(color: AppColors.kgreyShade300),
     //     boxShadow: [
     //       BoxShadow(
     //         color: Colors.black.withOpacity(0.04),
@@ -65,7 +65,7 @@ class InterviewCard extends StatelessWidget {
     //       ),
 
     //       const SizedBox(height: 16),
-    //       Divider(color: Colors.grey.shade200, height: 1),
+    //       Divider(color: AppColors.kgreyShade300, height: 1),
     //       const SizedBox(height: 16),
 
     //       // Schedule Section
@@ -73,7 +73,7 @@ class InterviewCard extends StatelessWidget {
     //         children: [
     //           Icon(
     //             Icons.schedule_rounded,
-    //             color: Colors.grey.shade600,
+    //             color: AppColors.kgreyShade600,
     //             size: 18,
     //           ),
     //           const SizedBox(width: 12),
@@ -96,7 +96,7 @@ class InterviewCard extends StatelessWidget {
     //         children: [
     //           Icon(
     //             Icons.location_on_rounded,
-    //             color: Colors.grey.shade600,
+    //             color: AppColors.kgreyShade600,
     //             size: 18,
     //           ),
     //           const SizedBox(width: 12),
@@ -116,7 +116,7 @@ class InterviewCard extends StatelessWidget {
     //       // Notes Section
     //       if (interview.notes != null) ...[
     //         const SizedBox(height: 16),
-    //         Divider(color: Colors.grey.shade200, height: 1),
+    //         Divider(color: AppColors.kgreyShade300, height: 1),
     //         const SizedBox(height: 16),
     //         Container(
     //           width: double.infinity,
@@ -124,7 +124,7 @@ class InterviewCard extends StatelessWidget {
     //           decoration: BoxDecoration(
     //             color: Colors.grey.shade50,
     //             borderRadius: BorderRadius.circular(8),
-    //             border: Border.all(color: Colors.grey.shade200),
+    //             border: Border.all(color: AppColors.kgreyShade300),
     //           ),
     //           child: Text(
     //             interview.notes!,
@@ -219,7 +219,7 @@ class InterviewCardFromModel extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: AppColors.kgreyShade300),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -288,7 +288,7 @@ class InterviewCardFromModel extends StatelessWidget {
           ),
 
           const SizedBox(height: 16),
-          Divider(color: Colors.grey.shade200, height: 1),
+          Divider(color: AppColors.kgreyShade300, height: 1),
           const SizedBox(height: 16),
 
           // Company Info Section
@@ -298,7 +298,7 @@ class InterviewCardFromModel extends StatelessWidget {
               children: [
                 Icon(
                   Icons.apartment_rounded,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                   size: 18,
                 ),
                 const SizedBox(width: 12),
@@ -311,7 +311,7 @@ class InterviewCardFromModel extends StatelessWidget {
                     ].join(' • '),
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade700,
+                      color: AppColors.kgreyShade700,
                       fontWeight: FontWeight.w500,
                     ),
                     maxLines: 2,
@@ -328,7 +328,7 @@ class InterviewCardFromModel extends StatelessWidget {
             children: [
               Icon(
                 Icons.schedule_rounded,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondary,
                 size: 18,
               ),
               const SizedBox(width: 12),
@@ -336,7 +336,7 @@ class InterviewCardFromModel extends StatelessWidget {
                 _formatDate(scheduledAt),
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey.shade700,
+                  color: AppColors.kgreyShade700,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -350,7 +350,7 @@ class InterviewCardFromModel extends StatelessWidget {
             children: [
               Icon(
                 Icons.location_on_rounded,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondary,
                 size: 18,
               ),
               const SizedBox(width: 12),
@@ -359,7 +359,7 @@ class InterviewCardFromModel extends StatelessWidget {
                   location,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey.shade700,
+                    color: AppColors.kgreyShade700,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -374,7 +374,7 @@ class InterviewCardFromModel extends StatelessWidget {
               children: [
                 Icon(
                   Icons.person_rounded,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                   size: 18,
                 ),
                 const SizedBox(width: 12),
@@ -383,7 +383,7 @@ class InterviewCardFromModel extends StatelessWidget {
                     contact,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade700,
+                      color: AppColors.kgreyShade700,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -395,13 +395,13 @@ class InterviewCardFromModel extends StatelessWidget {
           // Documents Section
           if (showFullData && docs.isNotEmpty) ...[
             const SizedBox(height: 16),
-            Divider(color: Colors.grey.shade200, height: 1),
+            Divider(color: AppColors.kgreyShade300, height: 1),
             const SizedBox(height: 16),
             Row(
               children: [
                 Icon(
                   Icons.description_rounded,
-                  color: Colors.grey.shade600,
+                  color: AppColors.kgreyShade600,
                   size: 18,
                 ),
                 const SizedBox(width: 12),
@@ -410,7 +410,7 @@ class InterviewCardFromModel extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade800,
+                    color: AppColors.kgreyShade800,
                   ),
                 ),
               ],
@@ -432,7 +432,7 @@ class InterviewCardFromModel extends StatelessWidget {
                         d,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade700,
+                          color: AppColors.kgreyShade700,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -442,7 +442,7 @@ class InterviewCardFromModel extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: AppColors.kgreyShade300,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
@@ -450,7 +450,7 @@ class InterviewCardFromModel extends StatelessWidget {
                       '+${docs.length - 3} more',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade700,
+                        color: AppColors.kgreyShade700,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -462,13 +462,13 @@ class InterviewCardFromModel extends StatelessWidget {
           // Expenses Section
           if (showFullData && expenses.isNotEmpty) ...[
             const SizedBox(height: 16),
-            Divider(color: Colors.grey.shade200, height: 1),
+            Divider(color: AppColors.kgreyShade300, height: 1),
             const SizedBox(height: 16),
             Row(
               children: [
                 Icon(
                   Icons.receipt_long_rounded,
-                  color: Colors.grey.shade600,
+                  color: AppColors.kgreyShade600,
                   size: 18,
                 ),
                 const SizedBox(width: 12),
@@ -477,7 +477,7 @@ class InterviewCardFromModel extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade800,
+                    color: AppColors.kgreyShade800,
                   ),
                 ),
               ],
@@ -500,7 +500,7 @@ class InterviewCardFromModel extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.cardColor,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: AppColors.kgreyShade300),
                 ),
                 child: Row(
                   children: [
@@ -513,7 +513,7 @@ class InterviewCardFromModel extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade800,
+                              color: AppColors.kgreyShade800,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -521,7 +521,7 @@ class InterviewCardFromModel extends StatelessWidget {
                             '$payer • $amountStr',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: AppColors.kgreyShade600,
                             ),
                           ),
                         ],
@@ -559,7 +559,7 @@ class InterviewCardFromModel extends StatelessWidget {
                   '+${expenses.length - 3} more expenses',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: AppColors.kgreyShade600,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -569,7 +569,7 @@ class InterviewCardFromModel extends StatelessWidget {
           // Notes Section
           if (notes != null) ...[
             const SizedBox(height: 16),
-            Divider(color: Colors.grey.shade200, height: 1),
+            Divider(color: AppColors.kgreyShade300, height: 1),
             const SizedBox(height: 16),
             Container(
               width: double.infinity,
@@ -577,7 +577,7 @@ class InterviewCardFromModel extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardColor,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: AppColors.kgreyShade300),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,7 +586,7 @@ class InterviewCardFromModel extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.note_rounded,
-                        color: Colors.grey.shade600,
+                        color: AppColors.kgreyShade600,
                         size: 16,
                       ),
                       const SizedBox(width: 8),
@@ -595,7 +595,7 @@ class InterviewCardFromModel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade800,
+                          color: AppColors.kgreyShade800,
                         ),
                       ),
                     ],
@@ -605,7 +605,7 @@ class InterviewCardFromModel extends StatelessWidget {
                     notes,
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.grey.shade700,
+                      color: AppColors.kgreyShade700,
                       height: 1.4,
                     ),
                   ),

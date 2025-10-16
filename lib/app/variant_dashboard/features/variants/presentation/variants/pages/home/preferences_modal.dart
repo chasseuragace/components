@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/job_title_preferences_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/selected_job_title_card.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/job_titles_by_category.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/job_title/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/models/job_title_models.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/job_title_preferences_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/job_titles_by_category.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/selected_job_title_card.dart';
 
 class PreferencesModal extends ConsumerStatefulWidget {
   const PreferencesModal({super.key});
@@ -54,7 +55,7 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3748),
+                  color: AppColors.textPrimary,
                 ),
               ),
               IconButton(
@@ -106,10 +107,8 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           onReorder: _reorderJobTitles,
-                          children: selectedJobTitles
-                              .asMap()
-                              .entries
-                              .map((entry) {
+                          children:
+                              selectedJobTitles.asMap().entries.map((entry) {
                             final index = entry.key;
                             final item = entry.value;
                             return SelectedJobTitleCard(
@@ -168,7 +167,8 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
           });
         }
       }
-      jobTitles.sort((a, b) => (a['priority'] as int).compareTo(b['priority'] as int));
+      jobTitles.sort(
+          (a, b) => (a['priority'] as int).compareTo(b['priority'] as int));
       _applyJobTitlesOnly({'jobTitles': jobTitles});
       setState(() {});
     } catch (_) {}
@@ -185,7 +185,8 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
                   title: (m['title'] ?? '').toString(),
                   isActive: true,
                 ),
-                priority: (m['priority'] is num) ? (m['priority'] as num).toInt() : 0,
+                priority:
+                    (m['priority'] is num) ? (m['priority'] as num).toInt() : 0,
                 preferenceId: m['preferenceId']?.toString(),
               ))
           .toList();
@@ -201,7 +202,8 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
 
   // ---- Actions: add / remove / reorder ----
   void _addJobTitle(JobTitle jobTitle) {
-    final existingIndex = selectedJobTitles.indexWhere((jt) => jt.jobTitle.id == jobTitle.id);
+    final existingIndex =
+        selectedJobTitles.indexWhere((jt) => jt.jobTitle.id == jobTitle.id);
     if (existingIndex != -1) {
       setState(() {
         final existing = selectedJobTitles.removeAt(existingIndex);
@@ -217,7 +219,8 @@ class _PreferencesModalState extends ConsumerState<PreferencesModal> {
       }
     } else {
       setState(() {
-        selectedJobTitles.insert(0, JobTitleWithPriority(jobTitle: jobTitle, priority: 0));
+        selectedJobTitles.insert(
+            0, JobTitleWithPriority(jobTitle: jobTitle, priority: 0));
         _reindexPriorities();
       });
       _addJobTitlePreference(jobTitle, 0);

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/widgets/job_card_widget.dart';
 
 class JobListings1 extends StatefulWidget {
@@ -527,7 +528,7 @@ class ActiveFiltersWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
               ),
             ),
             GestureDetector(
@@ -629,7 +630,7 @@ class EmptyStateWidget extends StatelessWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
+              color: AppColors.textPrimary2,
             ),
           ),
           const SizedBox(height: 8),
@@ -855,7 +856,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF374151),
+            color: AppColors.textPrimary2,
           ),
         ),
         const SizedBox(height: 12),
@@ -916,10 +917,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
               ),
             ),
             Switch(

@@ -215,7 +215,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 //                         style: TextStyle(
 //                           fontSize: 18,
 //                           fontWeight: FontWeight.bold,
-//                           color: Color(0xFF2D3748),
+//                           color: AppColors.textPrimary,
 //                         ),
 //                         maxLines: 2,
 //                         overflow: TextOverflow.ellipsis,
@@ -258,7 +258,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 //               style: TextStyle(
 //                 fontSize: 16,
 //                 fontWeight: FontWeight.w600,
-//                 color: Color(0xFF2D3748),
+//                 color: AppColors.textPrimary,
 //               ),
 //             ),
 //             const SizedBox(height: 12.0),
@@ -415,7 +415,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 //                   style: TextStyle(
 //                     fontSize: 14,
 //                     fontWeight: FontWeight.w600,
-//                     color: Color(0xFF2D3748),
+//                     color: AppColors.textPrimary,
 //                   ),
 //                 ),
 //                 if (position.convertedSalary != null) ...[
@@ -494,7 +494,7 @@ class JobDetailsModal extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3748),
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -597,7 +597,7 @@ class JobDetailsModal extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF2D3748),
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -628,7 +628,7 @@ class JobDetailsModal extends StatelessWidget {
               value,
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -659,7 +659,7 @@ class JobDetailsModal extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3748),
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -688,7 +688,7 @@ class JobDetailsModal extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
               ),
             ),
             const SizedBox(height: 8),
@@ -770,7 +770,7 @@ class ApplicationsSection extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3748),
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 TextButton(
@@ -804,7 +804,7 @@ class ApplicationsSection extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3748),
+                  color: AppColors.textPrimary,
                 ),
               ),
               TextButton(

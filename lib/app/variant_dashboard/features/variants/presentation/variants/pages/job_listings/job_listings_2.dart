@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class JobListings2 extends StatefulWidget {
   const JobListings2({super.key});
@@ -310,7 +311,7 @@ class _JobListings2State extends State<JobListings2> {
                   text: TextSpan(
                     style: const TextStyle(
                       fontSize: 16,
-                      color: Color(0xFF374151),
+                      color: AppColors.textPrimary2,
                     ),
                     children: [
                       TextSpan(
@@ -591,7 +592,7 @@ class ActiveFiltersWidgetV2 extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF374151),
+                      color: AppColors.textPrimary2,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -623,7 +624,7 @@ class ActiveFiltersWidgetV2 extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF374151),
+                      color: AppColors.textPrimary2,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -832,7 +833,7 @@ class SortBottomSheet extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               color: isSelected
                                   ? const Color(0xFF1F2937)
-                                  : const Color(0xFF374151),
+                                  : AppColors.textPrimary2,
                             ),
                           ),
                           Text(
@@ -1056,7 +1057,7 @@ class _FilterBottomSheetV2State extends State<FilterBottomSheetV2> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF374151),
+            color: AppColors.textPrimary2,
           ),
         ),
         const SizedBox(height: 12),
@@ -1120,7 +1121,7 @@ class _FilterBottomSheetV2State extends State<FilterBottomSheetV2> {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
               ),
             ),
             Switch(

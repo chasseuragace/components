@@ -912,7 +912,7 @@ class ActiveFiltersWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
               ),
             ),
             GestureDetector(
@@ -1023,7 +1023,7 @@ class EmptyStateWidget extends StatelessWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
+              color: AppColors.textPrimary2,
             ),
           ),
           const SizedBox(height: 8),
@@ -1183,7 +1183,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF374151),
+                      color: AppColors.textPrimary2,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -1362,7 +1362,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF374151),
+            color: AppColors.textPrimary2,
           ),
         ),
         const SizedBox(height: 12),
@@ -1426,7 +1426,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                color: AppColors.textPrimary2,
               ),
             ),
             Switch(

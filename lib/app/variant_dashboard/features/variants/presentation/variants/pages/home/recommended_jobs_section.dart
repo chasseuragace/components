@@ -33,10 +33,9 @@ class RecommendedJobsSection extends ConsumerWidget {
               Text(
                 'Recommended Jobs',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3748),
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary),
               ),
               TextButton(
                 onPressed: () {
@@ -74,7 +73,7 @@ class RecommendedJobsSection extends ConsumerWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF374151),
+                        color: AppColors.textPrimary2,
                       ),
                     ),
                   ),

@@ -557,7 +557,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   //                         style: const TextStyle(
   //                           fontSize: 12,
   //                           fontWeight: FontWeight.w500,
-  //                           color: Color(0xFF374151),
+  //                           color: AppColors.textPrimary2,
   //                         ),
   //                       ),
   //                     ],
@@ -892,7 +892,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
                         requirement.toString(),
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF374151),
+                          color: AppColors.textPrimary2,
                           height: 1.5,
                         ),
                       ),
@@ -983,7 +983,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
   //                     style: const TextStyle(
   //                       fontSize: 14,
   //                       fontWeight: FontWeight.w500,
-  //                       color: Color(0xFF374151),
+  //                       color: AppColors.textPrimary2,
   //                       height: 1.4,
   //                     ),
   //                   ),
@@ -1082,7 +1082,7 @@ class _JobDetailScreen1State extends State<JobDetailScreen1> {
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF374151),
+                        color: AppColors.textPrimary2,
                       ),
                     ),
                   ),

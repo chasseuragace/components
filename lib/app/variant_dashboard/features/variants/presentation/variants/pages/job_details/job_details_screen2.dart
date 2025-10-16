@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
 class JobDetailScreen2 extends StatefulWidget {
   final Map<String, dynamic> job;
@@ -773,7 +774,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
                       requirement.toString(),
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF374151),
+                        color: AppColors.textPrimary2,
                         height: 1.4,
                       ),
                     ),
@@ -857,7 +858,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF374151),
+                            color: AppColors.textPrimary2,
                           ),
                         ),
                       ],
@@ -982,7 +983,7 @@ class _JobDetailScreen2State extends State<JobDetailScreen2> {
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
             style: const TextStyle(
               fontSize: 14,
-              color: Color(0xFF374151),
+              color: AppColors.textPrimary2,
               height: 1.6,
             ),
             textAlign: TextAlign.justify,

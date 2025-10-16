@@ -81,7 +81,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D3748),
+                          color: AppColors.textPrimary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -91,7 +91,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                         '${widget.posting.employer} via ${widget.posting.agency}',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF718096),
+                          color: AppColors.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                         maxLines: 1,
@@ -126,7 +126,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2D3748),
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 Spacer(),
@@ -347,7 +347,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF2D3748),
+                        color: AppColors.textPrimary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -435,7 +435,7 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2D3748),
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 if (position.convertedSalary != null) ...[

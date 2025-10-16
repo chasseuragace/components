@@ -35,7 +35,7 @@ class PreferencesSection extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3748),
+                  color: AppColors.textPrimary,
                 ),
               ),
               TextButton(

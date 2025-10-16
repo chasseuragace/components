@@ -101,7 +101,7 @@ class RequirementsSection extends StatelessWidget {
                                 requirement.toString(),
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFF374151),
+                                  color: AppColors.textPrimary2,
                                   height: 1.5,
                                 ),
                               ),

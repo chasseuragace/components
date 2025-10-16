@@ -231,7 +231,7 @@
 // //                         style: TextStyle(
 // //                           fontSize: 18,
 // //                           fontWeight: FontWeight.bold,
-// //                           color: Color(0xFF2D3748),
+// //                           color: AppColors.textPrimary,
 // //                         ),
 // //                         maxLines: 2,
 // //                         overflow: TextOverflow.ellipsis,
@@ -274,7 +274,7 @@
 // //               style: TextStyle(
 // //                 fontSize: 16,
 // //                 fontWeight: FontWeight.w600,
-// //                 color: Color(0xFF2D3748),
+// //                 color: AppColors.textPrimary,
 // //               ),
 // //             ),
 // //             const SizedBox(height: 12.0),
@@ -431,7 +431,7 @@
 // //                   style: TextStyle(
 // //                     fontSize: 14,
 // //                     fontWeight: FontWeight.w600,
-// //                     color: Color(0xFF2D3748),
+// //                     color: AppColors.textPrimary,
 // //                   ),
 // //                 ),
 // //                 if (position.convertedSalary != null) ...[
@@ -510,7 +510,7 @@
 //                   style: TextStyle(
 //                     fontSize: 24,
 //                     fontWeight: FontWeight.bold,
-//                     color: Color(0xFF2D3748),
+//                     color: AppColors.textPrimary,
 //                   ),
 //                 ),
 //               ),
@@ -613,7 +613,7 @@
 //           style: TextStyle(
 //             fontSize: 18,
 //             fontWeight: FontWeight.bold,
-//             color: Color(0xFF2D3748),
+//             color: AppColors.textPrimary,
 //           ),
 //         ),
 //         const SizedBox(height: 12),
@@ -644,7 +644,7 @@
 //               value,
 //               style: TextStyle(
 //                 fontSize: 14,
-//                 color: Color(0xFF374151),
+//                 color: AppColors.textPrimary2,
 //                 fontWeight: FontWeight.w500,
 //               ),
 //             ),
@@ -675,7 +675,7 @@
 //                   style: TextStyle(
 //                     fontSize: 16,
 //                     fontWeight: FontWeight.bold,
-//                     color: Color(0xFF2D3748),
+//                     color: AppColors.textPrimary,
 //                   ),
 //                 ),
 //               ),
@@ -704,7 +704,7 @@
 //               style: TextStyle(
 //                 fontSize: 14,
 //                 fontWeight: FontWeight.w600,
-//                 color: Color(0xFF374151),
+//                 color: AppColors.textPrimary2,
 //               ),
 //             ),
 //             const SizedBox(height: 8),
@@ -786,7 +786,7 @@
 //                   style: TextStyle(
 //                     fontSize: 20,
 //                     fontWeight: FontWeight.bold,
-//                     color: Color(0xFF2D3748),
+//                     color: AppColors.textPrimary,
 //                   ),
 //                 ),
 //                 TextButton(
@@ -815,7 +815,7 @@
 //                 style: TextStyle(
 //                   fontSize: 20,
 //                   fontWeight: FontWeight.bold,
-//                   color: Color(0xFF2D3748),
+//                   color: AppColors.textPrimary,
 //                 ),
 //               ),
 //               TextButton(
@@ -924,9 +924,9 @@
 //         appBarTheme: AppBarTheme(
 //           elevation: 0,
 //           backgroundColor: Colors.transparent,
-//           iconTheme: IconThemeData(color: Color(0xFF2D3748)),
+//           iconTheme: IconThemeData(color: AppColors.textPrimary),
 //           titleTextStyle: TextStyle(
-//             color: Color(0xFF2D3748),
+//             color: AppColors.textPrimary,
 //             fontSize: 18,
 //             fontWeight: FontWeight.w600,
 //           ),

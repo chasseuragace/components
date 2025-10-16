@@ -59,7 +59,7 @@ class ApplicationCard2 extends ConsumerWidget {
             children: [
               Text(
                 'Applied ${DateTime.parse(application.appliedAt!).timeAgo}',
-                style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+                style: TextStyle(fontSize: 12, color: AppColors.kgreyShade600),
               ),
               StatusBadge(status: application.status),
             ],
@@ -90,28 +90,29 @@ class ApplicationCard2 extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF2D3748),
+                      color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     application.posting?.employer ?? "",
-                    style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+                    style:
+                        TextStyle(fontSize: 14, color: AppColors.textSecondary),
                   ),
                   Row(
                     children: [
                       Icon(
                         Icons.location_on_outlined,
                         size: 16,
-                        color: Colors.grey[600],
+                        color: AppColors.kgreyShade600,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         application.posting?.country ?? "",
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[700],
+                          color: AppColors.kgreyShade700,
                         ),
                       ),
                     ],
@@ -149,7 +150,7 @@ class ApplicationCard2 extends ConsumerWidget {
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF5D4037),
+                            color: AppColors.kgreyShade700,
                           ),
                         ),
                       ],
@@ -236,17 +237,18 @@ class ApplicationCard2 extends ConsumerWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF2D3748),
+            color: AppColors.textPrimary,
           ),
         ),
         content: Text(
           'Are you sure you want to withdraw your application for ${application.posting?.postingTitle}?',
-          style: TextStyle(fontSize: 14, color: Color(0xFF4B5563)),
+          style: TextStyle(fontSize: 14, color: AppColors.kgreyShade700),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
+            child: Text('Cancel',
+                style: TextStyle(color: AppColors.kgreyShade600)),
           ),
           TextButton(
             onPressed: () {

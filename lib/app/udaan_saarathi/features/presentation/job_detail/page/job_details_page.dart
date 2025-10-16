@@ -843,7 +843,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 //                         requirement.toString(),
 //                         style: const TextStyle(
 //                           fontSize: 14,
-//                           color: Color(0xFF374151),
+//                           color: AppColors.textPrimary2,
 //                           height: 1.5,
 //                         ),
 //                       ),
@@ -934,7 +934,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 //   //                     style: const TextStyle(
 //   //                       fontSize: 14,
 //   //                       fontWeight: FontWeight.w500,
-//   //                       color: Color(0xFF374151),
+//   //                       color: AppColors.textPrimary2,
 //   //                       height: 1.4,
 //   //                     ),
 //   //                   ),
@@ -1033,7 +1033,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 //                       style: const TextStyle(
 //                         fontSize: 14,
 //                         fontWeight: FontWeight.w600,
-//                         color: Color(0xFF374151),
+//                         color: AppColors.textPrimary2,
 //                       ),
 //                     ),
 //                   ),
@@ -1602,7 +1602,7 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 //           value,
 //           style: const TextStyle(
 //             fontSize: 13,
-//             color: Color(0xFF374151),
+//             color: AppColors.textPrimary2,
 //             fontWeight: FontWeight.w600,
 //           ),
 //         ),
