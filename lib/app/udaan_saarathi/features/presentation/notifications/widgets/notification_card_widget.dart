@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
 
 class NotificationCardWidget extends StatefulWidget {
   final JobNotificationEntity notification;
@@ -38,14 +38,16 @@ class _NotificationCardWidgetState extends State<NotificationCardWidget>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NotificationDetailPage(
-              notification: widget.notification,
-            ),
-          ),
-        );
+        Navigator.pushNamed(context, RouteConstants.kNotificationDetailScreen,
+            arguments: widget.notification);
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => NotificationDetailPage(
+        //       notification: widget.notification,
+        //     ),
+        //   ),
+        // );
       },
       onTapDown: (_) {
         setState(() => _isHovered = true);

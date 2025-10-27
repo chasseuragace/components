@@ -15,21 +15,20 @@ class OnboardingListPage extends ConsumerStatefulWidget {
 class _OnboardingListPageState extends ConsumerState<OnboardingListPage> {
   BuildContext? barrierContext;
 
-
-
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(getAllOnboardingProvider);
-      listenToDeleteOnboardingAction(context);
-      // TODO: Set up listeners for other actions
-      // listenToAddOnboardingAction(context);
-      // listenToUpdateOnboardingAction(context);
+    // listenToDeleteOnboardingAction(context);
+    // TODO: Set up listeners for other actions
+    // listenToAddOnboardingAction(context);
+    // listenToUpdateOnboardingAction(context);
     return Scaffold(
-      
       body: onboardingState.when(
         data: (items) => items.isEmpty
             ? Center(child: Text('No items available'))
-            : OnboardingScreen1(onboardingData: items,),
+            : OnboardingScreen1(
+                onboardingData: items,
+              ),
         loading: () => Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(child: Text(error.toString())),
       ),
@@ -91,12 +90,14 @@ class _OnboardingListPageState extends ConsumerState<OnboardingListPage> {
     // Implementation remains the same
   }
 
-  void _showEditDialog(BuildContext context, WidgetRef ref, OnboardingEntity item) {
+  void _showEditDialog(
+      BuildContext context, WidgetRef ref, OnboardingEntity item) {
     // Implementation remains the same
   }
 
-  void _showDeleteConfirmation(BuildContext context, WidgetRef ref, String itemId)async  {
-  final result = await   showDialog(
+  void _showDeleteConfirmation(
+      BuildContext context, WidgetRef ref, String itemId) async {
+    final result = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirm Deletion'),
@@ -108,7 +109,6 @@ class _OnboardingListPageState extends ConsumerState<OnboardingListPage> {
           ),
           TextButton(
             onPressed: () {
-              
               Navigator.of(context).pop(true);
             },
             child: Text('Delete'),
@@ -116,8 +116,8 @@ class _OnboardingListPageState extends ConsumerState<OnboardingListPage> {
         ],
       ),
     );
-    if(result==true){
-    ref.read(deleteOnboardingProvider.notifier).delete(itemId);
+    if (result == true) {
+      ref.read(deleteOnboardingProvider.notifier).delete(itemId);
     }
   }
 }

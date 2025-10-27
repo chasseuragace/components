@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/candidate_stats.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_cards_group.dart';
@@ -79,12 +79,14 @@ class ProfilePage extends ConsumerWidget {
                             .read(authControllerProvider.notifier)
                             .logout();
                         if (context.mounted) {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const LoginPage()),
-                            (route) => false,
-                          );
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, RouteConstants.kLogin, (route) => false);
+                          // Navigator.pushAndRemoveUntil(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (_) => const LoginPage()),
+                          //   (route) => false,
+                          // );
                         }
                       },
                       barrierDismissible: true,

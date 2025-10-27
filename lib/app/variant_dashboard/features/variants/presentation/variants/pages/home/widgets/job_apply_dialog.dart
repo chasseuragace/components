@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/providers/profile_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
 
 class ApplyJobDialog extends ConsumerStatefulWidget {
@@ -387,14 +386,64 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
     if (!isComplete) {
       // Inform and redirect to ProfilePage
       if (!mounted) return;
-      CustomSnackbar.showFailureSnackbar(
-        context,
-        'Please complete your profile before applying.',
-      );
       Navigator.of(context).pop();
-      // redirect to profile screen
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ProfilePage()),
+
+      await showModalBottomSheet(
+        context: context,
+        useRootNavigator: true,
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (ctx) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.info_outline_rounded,
+                        color: Colors.redAccent),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Action required',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Please complete your profile before applying.',
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      if (mounted) {
+                        ref.read(appHomeNavIndexProvider.notifier).state = 3;
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    icon: const Icon(Icons.person_outline),
+                    label: const Text('Go to Profile'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       );
       return;
     }

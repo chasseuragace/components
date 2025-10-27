@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'; // Changed from package
 import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/application_status.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/get_status.dart';
@@ -813,9 +813,8 @@ class ApplicationsSection extends ConsumerWidget {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const ApplicaitonsListPage();
-                  }));
+                  Navigator.pushNamed(
+                      context, RouteConstants.kApplicationsListScreen);
                 },
                 child: Text(
                   'View All',

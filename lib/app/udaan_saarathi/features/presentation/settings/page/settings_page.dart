@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'widgets/settings_section.dart';
-import 'widgets/settings_item.dart';
-import 'widgets/notification_toggle.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
+
 import 'widgets/language_option.dart';
+import 'widgets/notification_toggle.dart';
+import 'widgets/settings_item.dart';
+import 'widgets/settings_section.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -11,7 +13,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
+      appBar: SarathiAppBar(
         title: const Text(
           "Settings",
         ),

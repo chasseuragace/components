@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 
+ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 class CustomSnackbar {
   static showSuccessSnackbar(BuildContext context, String message) {
     final snackbar = SnackBar(

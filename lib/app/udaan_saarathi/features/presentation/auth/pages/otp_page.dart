@@ -3,10 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/widgets/widgets.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/providers/onboarding_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 
@@ -100,13 +99,9 @@ class _OTPVerificationPageState extends ConsumerState<OTPVerificationPage>
     if (!mounted) return;
 
     if (shouldShowOnboarding) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => OnboardingListPage()),
-      );
+      Navigator.of(context).pushReplacementNamed(RouteConstants.kOnboarding);
     } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const AppHomeNavigationPage()),
-      );
+      Navigator.of(context).pushReplacementNamed(RouteConstants.kAppNavigation);
     }
   }
 

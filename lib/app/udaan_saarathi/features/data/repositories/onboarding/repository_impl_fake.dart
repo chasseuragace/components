@@ -57,6 +57,7 @@ class OnboardingRepositoryFake implements OnboardingRepository {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
+      print("remote $remoteItems");
 
       return right(remoteItems.map((model) => model).toList());
     } catch (error) {

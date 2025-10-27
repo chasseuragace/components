@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
@@ -96,10 +97,9 @@ class DashboardHeader extends ConsumerWidget {
                     analytics.byStatus.applied.toString(),
                     Icons.send_rounded,
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ApplicaitonsListPage(),
-                        ),
+                      Navigator.pushNamed(
+                        context,
+                        RouteConstants.kApplicationsListScreen,
                       );
                     },
                   ),
@@ -116,10 +116,9 @@ class DashboardHeader extends ConsumerWidget {
                     analytics.byStatus.interviewScheduled.toString(),
                     Icons.event_rounded,
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => InterviewsListPage(),
-                        ),
+                      Navigator.pushNamed(
+                        context,
+                        RouteConstants.kInterviewListScreen,
                       );
                     },
                   ),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/otp_page.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/register_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
@@ -57,7 +57,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Async status and errors will be driven by AuthState
     try {
       final devOtp = await auth.loginStart(phone: phone);
-      print(devOtp);
       if (devOtp.isNotEmpty && mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -164,10 +163,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (_) => const RegisterPage()),
-                                );
+                                Navigator.pushReplacementNamed(
+                                    context, RouteConstants.kSignup);
                               },
                               style: TextButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(

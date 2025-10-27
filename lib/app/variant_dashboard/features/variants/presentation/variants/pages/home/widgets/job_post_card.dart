@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/homepage/job_position.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/job_posting.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
@@ -210,11 +210,16 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                     child: TextButton(
                       onPressed: () =>
                           //  _showJobDetails(context, widget.posting),
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      JobDetailPage(job: widget.posting))),
+                          Navigator.pushNamed(
+                              context, RouteConstants.kJobDetailScreen,
+                              arguments: widget.posting)
+
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             JobDetailPage(job: widget.posting)))
+                      ,
                       child: Text(
                         'View Details',
                         style: TextStyle(

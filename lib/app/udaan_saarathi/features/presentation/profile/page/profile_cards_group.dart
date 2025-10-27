@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/profile/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
     as cand;
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/pages.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/settings/page/settings_page.dart';
 
 import '../providers/profile_provider.dart';
 import '../providers/providers.dart';
@@ -109,11 +108,9 @@ class ProfileCardsGroup extends ConsumerWidget {
             ),
           ),
           onTap: () {
-            Navigator.push(
+            Navigator.pushNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) => const PersonalInfoFormPage(),
-              ),
+              RouteConstants.kPersonalInfoScreen,
             );
           },
         ),
@@ -123,11 +120,9 @@ class ProfileCardsGroup extends ConsumerWidget {
           subtitle: "Manage your work history",
           iconColor: Colors.green,
           onTap: () {
-            Navigator.push(
+            Navigator.pushNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) => const WorkExperienceFormPage(),
-              ),
+              RouteConstants.kWorkExperienceScreen,
             );
           },
         ),
@@ -137,11 +132,9 @@ class ProfileCardsGroup extends ConsumerWidget {
           subtitle: "Add your qualifications",
           iconColor: Colors.orange,
           onTap: () {
-            Navigator.push(
+            Navigator.pushNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) => const EducationFormPage(),
-              ),
+              RouteConstants.kEducationScreen,
             );
           },
         ),
@@ -151,11 +144,9 @@ class ProfileCardsGroup extends ConsumerWidget {
           subtitle: "Add your trainings",
           iconColor: Colors.teal,
           onTap: () {
-            Navigator.push(
+            Navigator.pushNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) => const TrainingsFormPage(),
-              ),
+              RouteConstants.kTrainingScreen,
             );
           },
         ),
@@ -165,11 +156,9 @@ class ProfileCardsGroup extends ConsumerWidget {
           subtitle: "Showcase your abilities",
           iconColor: Colors.purple,
           onTap: () {
-            Navigator.push(
+            Navigator.pushNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) => const SkillsFormPage(),
-              ),
+              RouteConstants.kSkillsScreen,
             );
           },
         ),
@@ -186,12 +175,7 @@ class ProfileCardsGroup extends ConsumerWidget {
           subtitle: "Privacy and preferences",
           iconColor: AppColors.textSecondary,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SettingsPage(),
-              ),
-            );
+            Navigator.pushNamed(context, RouteConstants.kSettingsScreen);
           },
           showDivider: false,
         ),

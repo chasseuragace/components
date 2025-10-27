@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/enum/response_states.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/services/custom_validator.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/otp_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/widgets/widgets.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
@@ -58,15 +57,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       final devOtp = await auth.register(fullName: name, phone: phone);
 
       if (devOtp.isNotEmpty && mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (_) => OTPVerificationPage(
-                    phoneNumber: phone,
-                    fullName: name,
-                    isLogin: false,
-                    devOtp: devOtp,
-                  )),
+        Navigator.of(context).pushNamed(
+          RouteConstants.kOtpScreen,
+          arguments: [phone, false, devOtp, name],
         );
+
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //       builder: (_) => OTPVerificationPage(
+        //             phoneNumber: phone,
+        //             fullName: name,
+        //             isLogin: false,
+        //             devOtp: devOtp,
+        //           )),
+        // );
       }
     } catch (e) {
       // AuthController will set error
@@ -218,9 +222,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (_) => const LoginPage()),
+                              Navigator.of(context).pushReplacementNamed(
+                                RouteConstants.kLogin,
                               );
                             },
                             style: TextButton.styleFrom(
