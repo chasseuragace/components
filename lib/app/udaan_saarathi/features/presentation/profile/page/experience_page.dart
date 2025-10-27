@@ -169,9 +169,17 @@ class _WorkExperienceFormPageState
   }
 
   Future<void> _selectStartDate(BuildContext context, int index) async {
+    DateTime initialDate = DateTime.now();
+    final existing = experiences[index].startDate;
+    if (existing != null && existing.isNotEmpty) {
+      final parsed = DateTime.tryParse(existing);
+      if (parsed != null) {
+        initialDate = parsed;
+      }
+    }
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -188,9 +196,17 @@ class _WorkExperienceFormPageState
   }
 
   Future<void> _selectEndDate(BuildContext context, int index) async {
+    DateTime initialDate = DateTime.now();
+    final existing = experiences[index].endDate;
+    if (existing != null && existing.isNotEmpty) {
+      final parsed = DateTime.tryParse(existing);
+      if (parsed != null) {
+        initialDate = parsed;
+      }
+    }
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );

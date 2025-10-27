@@ -16,7 +16,7 @@ class ImageSourceSelectionPrompt extends StatelessWidget {
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Selct Image",
+                "Select Image",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
               const SizedBox(
