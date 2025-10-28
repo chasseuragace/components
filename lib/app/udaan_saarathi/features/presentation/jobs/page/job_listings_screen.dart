@@ -545,6 +545,21 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
     }
 
     final sr = filters['salaryRange'] as Map<String, dynamic>?;
+    // Map UI values to API values for sort and order
+    final String? sortByUi = filters['sortBy'] as String?;
+    final String? orderUi = filters['order'] as String?;
+    final String? sortBy = sortByUi == null
+        ? null
+        : (sortByUi == 'Posted at'
+            ? 'posted_at'
+            : (sortByUi == 'Salary'
+                ? 'salary'
+                : (sortByUi == 'Relevance' ? 'relevance' : null)));
+    final String? order = orderUi == null
+        ? null
+        : (orderUi == 'Ascending'
+            ? 'asc'
+            : (orderUi == 'Descending' ? 'desc' : null));
     final dto = JobSearchDTO(
       keyword: query.trim().isNotEmpty ? query.trim() : null,
       country: filters['country'],
@@ -553,6 +568,8 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
       currency: filters['currency'] as String?,
       page: 1,
       limit: 10,
+      sortBy: sortBy,
+      order: order,
     );
     print(dto.currency);
     ref.read(searchJobsProvider.notifier).searchJobs(dto);
@@ -1153,6 +1170,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     'UAE',
                     'Kuwait',
                   ]),
+                  _buildFilterSection('Sort by', 'sortBy', [
+                    'Posted at',
+                    'Salary',
+                    'Relevance',
+                  ]),
+                  _buildFilterSection('Order by', 'order', [
+                    'Ascending',
+                    'Descending',
+                  ]),
                   // _buildFilterSection('Position', 'position', [
                   //   'Developer',
                   //   'Designer',
@@ -1172,10 +1198,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   //   '3-5',
                   //   '5+',
                   // ]),
-                  _buildFilterSection('Currency', 'currency', [
-                    'NPR',
-                    'USD',
-                  ]),
+                  // _buildFilterSection('Currency', 'currency', [
+                  //   'NPR',
+                  //   'USD',
+                  // ]),
                   // Salary Range (NPR)
                   const SizedBox(height: 8),
                   const Text(
@@ -1212,7 +1238,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               final sr = _tempFilters['salaryRange']
                                   as Map<String, dynamic>?;
                               final min =
-                                  (sr?['min'] as num?)?.toDouble() ?? 200.0;
+                                  (sr?['min'] as num?)?.toDouble() ?? 1000.0;
                               return Text(
                                 'Rs ${min.round()}',
                                 style: const TextStyle(
@@ -1240,7 +1266,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               final sr = _tempFilters['salaryRange']
                                   as Map<String, dynamic>?;
                               final max =
-                                  (sr?['max'] as num?)?.toDouble() ?? 5000.0;
+                                  (sr?['max'] as num?)?.toDouble() ?? 999999.0;
                               return Text(
                                 'Rs ${max.round()}',
                                 style: const TextStyle(
@@ -1261,13 +1287,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     final sr =
                         _tempFilters['salaryRange'] as Map<String, dynamic>?;
                     final double currentMin =
-                        (sr?['min'] as num?)?.toDouble() ?? 200.0;
+                        (sr?['min'] as num?)?.toDouble() ?? 1000.0;
                     final double currentMax =
-                        (sr?['max'] as num?)?.toDouble() ?? 5000.0;
+                        (sr?['max'] as num?)?.toDouble() ?? 999999.0;
                     return RangeSlider(
                       values: RangeValues(currentMin, currentMax),
-                      min: 200,
-                      max: 5000,
+                      min: 1000,
+                      max: 999999,
                       divisions: 48,
                       activeColor: const Color(0xFFDC2626),
                       inactiveColor: const Color(0xFFE2E8F0),
@@ -1285,8 +1311,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       },
                     );
                   }),
-                  _buildBooleanFilterSection('Remote Work', 'isRemote'),
-                  _buildBooleanFilterSection('Featured Jobs', 'isFeatured'),
+                  // _buildBooleanFilterSection('Remote Work', 'isRemote'),
+                  // _buildBooleanFilterSection('Featured Jobs', 'isFeatured'),
                 ],
               ),
             ),

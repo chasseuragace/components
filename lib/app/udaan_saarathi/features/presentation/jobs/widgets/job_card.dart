@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/widgets/logo_widget.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_snackbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/string_utils.dart';
@@ -26,10 +29,13 @@ class _JobCardState extends ConsumerState<JobCard> {
 
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => JobDetailPage(job: job)),
-        // );
+        ref.read(selectedJobIdProvider.notifier).update((cb) => job.id);
+        ref.read(getJobsByIdProvider.notifier).getJobsById(job.id);
+
+        Navigator.pushNamed(
+          context,
+          RouteConstants.kJobDetailScreen,
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(20),

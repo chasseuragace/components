@@ -4,9 +4,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/utils.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
 
@@ -66,11 +64,35 @@ class DashboardHeader extends ConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
+                      Navigator.pushNamed(
+                          context, RouteConstants.kNotificationScreen);
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.2),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.notifications,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: kHorizontalMargin / 2),
+                  GestureDetector(
+                    onTap: () {
                       ref.read(appHomeNavIndexProvider.notifier).state = 3;
                     },
                     child: Container(
-                      width: 60,
-                      height: 60,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white.withValues(alpha: 0.2),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
@@ -157,12 +156,12 @@ class _GroupPostingsPagerState extends State<_GroupPostingsPager> {
                   child: Consumer(builder: (context, ref, _) {
                     return GestureDetector(
                         onTap: () {
-                          ref
-                              .read(selectedJobIdProvider.notifier)
-                              .update((cb) => p.id);
-                          ref
-                              .read(getJobsByIdProvider.notifier)
-                              .getJobsById(p.id);
+                          // ref
+                          //     .read(selectedJobIdProvider.notifier)
+                          //     .update((cb) => p.id);
+                          // ref
+                          //     .read(getJobsByIdProvider.notifier)
+                          //     .getJobsById(p.id);
                         },
                         child: JobPostingCard(posting: p));
                   }),

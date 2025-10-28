@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/widgets/notification_card_widget.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 
 class JobNotificationsPage2 extends StatelessWidget {
   const JobNotificationsPage2({super.key});
@@ -10,16 +11,12 @@ class JobNotificationsPage2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FC),
-      appBar: AppBar(
+      appBar: SarathiAppBar(
         title: const Text('Notifications'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => Navigator.pop(context),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0F172A),
-        surfaceTintColor: Colors.transparent,
+
+        // backgroundColor: Colors.white,
+        // foregroundColor: const Color(0xFF0F172A),
+        // surfaceTintColor: Colors.transparent,
       ),
       body: const NotificationsList(),
     );
@@ -68,8 +65,9 @@ class _NotificationsListState extends State<NotificationsList>
               children: [
                 // Stats Header
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.all(20),
+                  margin: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: kHorizontalMargin, vertical: kVerticalMargin),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -112,7 +110,7 @@ class _NotificationsListState extends State<NotificationsList>
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
                   itemCount: notifications.length,
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 16),
@@ -147,7 +145,7 @@ class _NotificationsListState extends State<NotificationsList>
                   },
                 ),
 
-                const SizedBox(height: 40),
+                SizedBox(height: kVerticalMargin * 2),
               ],
             ),
           ),

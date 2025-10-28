@@ -52,4 +52,7 @@ class AppColors {
   static const Color kredShade700 = Color(0xffD32F2F);
   static const Color kredShade800 = Color(0xffC62828);
   static const Color kredShade900 = Color(0xffB71C1C);
+
+  //orage
+  static const Color korange = Color(0xFFF59E0B);
 }

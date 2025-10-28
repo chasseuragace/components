@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
@@ -10,6 +9,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/page/set_preferences_screen.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/education_page.dart';
@@ -70,11 +70,7 @@ final class AppRouter {
         return MaterialPageRoute(
             builder: (context) => const InterviewsListPage());
       case RouteConstants.kJobDetailScreen:
-       
-        return MaterialPageRoute(
-            builder: (context) => JobDetailPage(
-                
-                ));
+        return MaterialPageRoute(builder: (context) => JobDetailPage());
       case RouteConstants.kOtpScreen:
         final args = settings.arguments as List;
         return MaterialPageRoute(
@@ -84,6 +80,9 @@ final class AppRouter {
                   devOtp: args[2] as String,
                   fullName: args[3] as String?,
                 ));
+      case RouteConstants.kNotificationScreen:
+        return MaterialPageRoute(
+            builder: (context) => const JobNotificationsPage2());
       default:
         return MaterialPageRoute(builder: (context) => const SplashScreen());
     }

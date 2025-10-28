@@ -13,10 +13,6 @@ import './di.dart';
 // Search query (local UI state)
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
-// Pagination state
-final currentPageProvider = StateProvider<int>((ref) => 1);
-final pageLimitProvider = StateProvider<int>((ref) => 10);
-
 // Filters (local UI state)
 class FiltersNotifier extends StateNotifier<Map<String, dynamic>> {
   FiltersNotifier() : super({});
@@ -41,7 +37,8 @@ final filtersProvider =
     StateNotifierProvider<FiltersNotifier, Map<String, dynamic>>(
         (ref) => FiltersNotifier());
 
-class GetAllJobsNotifier extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
+class GetAllJobsNotifier
+    extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
   @override
   Future<search_entities.PaginatedJobsSearchResults?> build() async {
     final result = await ref.read(getAllJobsUseCaseProvider)(NoParm());
@@ -144,27 +141,6 @@ class SearchJobsNotifier
     );
   }
 
-  Future<void> searchWithPagination() async {
-    final query = ref.read(searchQueryProvider);
-    final filters = ref.read(filtersProvider);
-    final currentPage = ref.read(currentPageProvider);
-    final limit = ref.read(pageLimitProvider);
-
-    final searchParams = JobSearchDTO(
-      keyword: query.isNotEmpty ? query : null,
-      country: filters['country'],
-      minSalary: filters['minSalary']?.toDouble(),
-      maxSalary: filters['maxSalary']?.toDouble(),
-      currency: filters['currency'],
-      page: currentPage,
-      limit: limit,
-      sortBy: filters['sortBy'],
-      order: filters['order'],
-    );
-
-    await searchJobs(searchParams);
-  }
-
   void clearResults() {
     state = const AsyncValue.data(null);
   }
@@ -180,8 +156,8 @@ Exception _mapFailureToException(Failure failure) {
   }
 }
 
-final getAllJobsProvider =
-    AsyncNotifierProvider<GetAllJobsNotifier,  search_entities.PaginatedJobsSearchResults?>(() {
+final getAllJobsProvider = AsyncNotifierProvider<GetAllJobsNotifier,
+    search_entities.PaginatedJobsSearchResults?>(() {
   return GetAllJobsNotifier();
 });
 final getGroupedJobsProvider =

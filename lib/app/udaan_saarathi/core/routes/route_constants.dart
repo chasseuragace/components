@@ -11,6 +11,7 @@ class RouteConstants {
   static const kInterviewListScreen = '/interview_list';
   static const kJobDetailScreen = '/job_detail';
   static const kOtpScreen = '/otp_screen';
+  static const kNotificationScreen = '/notification_screen';
 
   //profile screens.......
   static const kProfileScreen = '/profile_screen';

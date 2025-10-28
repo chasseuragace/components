@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
 
@@ -312,11 +313,11 @@ class _NotificationCardWidgetState extends State<NotificationCardWidget>
       case NotificationStatus.shortlisted:
         return const Color(0xFF10B981);
       case NotificationStatus.rejected:
-        return const Color(0xFFEF4444);
+        return AppColors.kred;
       case NotificationStatus.underReview:
-        return const Color(0xFFF59E0B);
+        return AppColors.korange;
       case NotificationStatus.interview:
-        return const Color(0xFF8B5CF6);
+        return AppColors.primaryColor;
     }
   }
 
