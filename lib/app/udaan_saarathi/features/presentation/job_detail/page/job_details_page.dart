@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/favorites/providers/providers.dart';
@@ -14,9 +15,9 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 final selectedJobIdProvider = StateProvider<String?>((ref) => null);
 
 class JobDetailPage extends ConsumerStatefulWidget {
-  final MobileJobEntity job;
 
-  const JobDetailPage({super.key, required this.job});
+
+  const JobDetailPage({super.key, });
 
   @override
   ConsumerState<JobDetailPage> createState() => _JobDetailPageState();
@@ -27,16 +28,16 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final job = widget.job;
+
 
     final jobdataprovider = ref.watch(getJobsByIdProvider);
-    final isApplied = ref.watch(jobAppliedProvider(job.id));
+  
 
     return Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
         appBar: SarathiAppBar(
           title: Text("Job Detail"),
-          actions: [
+          actions: true? []:[
             Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -50,12 +51,12 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
                   size: 20,
                 ),
                 onPressed: () async {
-                  await ref
-                      .read(addFavoritesProvider.notifier)
-                      .addFavorites(job.id);
-                  setState(() {
-                    isSaved = !isSaved;
-                  });
+                  // await ref
+                  //     .read(addFavoritesProvider.notifier)
+                  //     .addFavorites(job);
+                  // setState(() {
+                  //   isSaved = !isSaved;
+                  // });
                 },
               ),
             ),
@@ -72,7 +73,8 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
         body: jobdataprovider.when(
           data: (MobileJobEntity? data) {
             // Prefer fetched data; fall back to the job passed into the page
-            final effective = data ?? job;
+            final effective = data !;
+            final isApplied = ref.watch(jobAppliedProvider(effective.id));
             return body(effective, isApplied);
           },
           error: (Object error, StackTrace stackTrace) {
@@ -151,11 +153,19 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
 
       // use this if required instead of action buttons
       BottomActionButtons(
-        onApply: (widget.job.isActive && !isApplied)
-            ? () => _applyToJob(context, widget.job)
+        onApply: (job.isActive && !isApplied)
+            ? () => _applyToJob(context, job)
             : null,
         onContact: () {
-          // your contact logic
+          final phoneNumber = job.manpowerPhone;
+          if (phoneNumber != null && phoneNumber.isNotEmpty) {
+            _makePhoneCall(phoneNumber);
+          } else {
+            CustomSnackbar.showFailureSnackbar(
+              context,
+              'Phone number not available',
+            );
+          }
         },
         onWebView: () {
           // your webview logic
@@ -210,6 +220,30 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         CustomSnackbar.showFailureSnackbar(context, "Failed to apply job");
       });
+    }
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    try {
+      print("phone $phoneUri");
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      } else {
+        if (mounted) {
+          CustomSnackbar.showFailureSnackbar(
+            context,
+            'Could not launch phone dialer',
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        CustomSnackbar.showFailureSnackbar(
+          context,
+          'Error launching phone dialer: $e',
+        );
+      }
     }
   }
 }

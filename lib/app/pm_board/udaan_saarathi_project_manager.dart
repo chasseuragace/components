@@ -86,7 +86,7 @@ class UdaanSaarathiProjectManager extends StatelessWidget {
           ),
           buildScreen(const SetPreferenceScreen()),
           buildScreen(const HomePage()),
-          buildScreen(JobDetailPage(job: blueCollarJobQatar)),
+          // buildScreen(JobDetailPage(job: blueCollarJobQatar)),
         ]
       ].map((e) => KeepAlive(child: e)).toList(),
     );

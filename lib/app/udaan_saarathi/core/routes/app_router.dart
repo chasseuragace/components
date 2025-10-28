@@ -70,10 +70,10 @@ final class AppRouter {
         return MaterialPageRoute(
             builder: (context) => const InterviewsListPage());
       case RouteConstants.kJobDetailScreen:
-        final args = settings.arguments as MobileJobEntity;
+       
         return MaterialPageRoute(
             builder: (context) => JobDetailPage(
-                  job: args,
+                
                 ));
       case RouteConstants.kOtpScreen:
         final args = settings.arguments as List;

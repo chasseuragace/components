@@ -158,6 +158,7 @@ class MobileJobModel extends MobileJobEntity {
     super.convertedSalary,
     super.applications,
     super.policy,
+    super.manpowerPhone,
   });
 
   factory MobileJobModel.fromJson(Map<String, dynamic> json) {
@@ -194,6 +195,7 @@ class MobileJobModel extends MobileJobEntity {
       convertedSalary: json['convertedSalary'] as String?,
       applications: json['applications'] as int? ?? 0,
       policy: json['policy'] as String? ?? 'Standard',
+      manpowerPhone: json['manpowerPhone'] as String?,
     );
   }
 
@@ -224,6 +226,7 @@ class MobileJobModel extends MobileJobEntity {
       'convertedSalary': convertedSalary,
       'applications': applications,
       'policy': policy,
+      'manpowerPhone': manpowerPhone,
     };
   }
 }

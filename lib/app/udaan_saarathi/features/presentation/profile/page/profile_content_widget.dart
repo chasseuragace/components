@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/image_upload/image_pick_and_crop_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
     as cand;
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/widgets/image_source_selection_prompt.dart';
@@ -56,6 +58,14 @@ class _ProfileContentWidgetState extends ConsumerState<ProfileContentWidget> {
                   if (source == null) {
                     return;
                   }
+                  final image =
+                      await ref.read(imagePickAndCropProvider).pickAndCropImage(
+                    imageSource: source,
+                    imageRatioPresets: [
+                      CropAspectRatioPreset.square,
+                    ],
+                  );
+                  print(image?.path);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),

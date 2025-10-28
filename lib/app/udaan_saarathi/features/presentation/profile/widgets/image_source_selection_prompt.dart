@@ -8,7 +8,11 @@ class ImageSourceSelectionPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog.adaptive(
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.all(8.0),

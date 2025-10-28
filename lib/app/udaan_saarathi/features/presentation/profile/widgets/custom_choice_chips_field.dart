@@ -59,17 +59,17 @@ class CustomChoiceChipsField<T> extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             errorText: field.errorText,
           ),
           child: Row(
-            spacing: 18,
-           mainAxisAlignment: MainAxisAlignment.center,
-           
+            spacing: 8,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: options.map((opt) {
               final selected = field.value == opt.value;
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical:4.0),
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: ChoiceChip(
                   label: opt.child ?? Text(opt.value.toString()),
                   selected: selected,
@@ -83,7 +83,8 @@ class CustomChoiceChipsField<T> extends StatelessWidget {
                     color: selected ? const Color(0xFF2196F3) : Colors.black87,
                     fontWeight: FontWeight.w500,
                   ),
-                  shape: const StadiumBorder(side: BorderSide(color: Color(0xFF2196F3))),
+                  shape: const StadiumBorder(
+                      side: BorderSide(color: Color(0xFF2196F3))),
                   backgroundColor: Colors.white,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

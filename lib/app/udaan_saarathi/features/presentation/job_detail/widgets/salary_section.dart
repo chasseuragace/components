@@ -50,7 +50,7 @@ class SalarySection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Display overall salary range if available
           if (job.salary != null && job.salary != 'Not specified') ...[
             Container(
@@ -88,7 +88,7 @@ class SalarySection extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          
+
           // Display all positions with their individual salaries
           if (job.positions.isNotEmpty) ...[
             const Text(
@@ -100,19 +100,18 @@ class SalarySection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            
             ...job.positions.asMap().entries.map((entry) {
               final index = entry.key;
               final position = entry.value;
               final isLast = index == job.positions.length - 1;
-              
+
               return Column(
                 children: [
                   _buildPositionCard(position),
                   if (!isLast) const SizedBox(height: 12),
                 ],
               );
-            }).toList(),
+            }),
           ] else ...[
             Container(
               padding: const EdgeInsets.all(16),
@@ -135,7 +134,7 @@ class SalarySection extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildPositionCard(position) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -176,13 +175,13 @@ class SalarySection extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
           const Divider(height: 1, color: Color(0xFFE2E8F0)),
           const SizedBox(height: 12),
-          
+
           // Base salary
-          if (position.baseSalary != null && 
+          if (position.baseSalary != null &&
               position.baseSalary != 'Not specified') ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,16 +196,16 @@ class SalarySection extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    if (position.currency != null && 
-                        position.currency != 'N/A')
-                      Text(
-                        '${position.currency} ',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF059669),
-                        ),
-                      ),
+                    // if (position.currency != null &&
+                    //     position.currency != 'N/A')
+                    //   Text(
+                    //     '${position.currency} ',
+                    //     style: const TextStyle(
+                    //       fontSize: 14,
+                    //       fontWeight: FontWeight.w600,
+                    //       color: Color(0xFF059669),
+                    //     ),
+                    //   ),
                     Text(
                       position.baseSalary!,
                       style: const TextStyle(
@@ -220,9 +219,9 @@ class SalarySection extends StatelessWidget {
               ],
             ),
           ],
-          
+
           // Converted salary
-          if (position.convertedSalary != null && 
+          if (position.convertedSalary != null &&
               position.convertedSalary != 'Not available') ...[
             const SizedBox(height: 8),
             Row(
@@ -257,9 +256,9 @@ class SalarySection extends StatelessWidget {
               ],
             ),
           ],
-          
+
           // Requirements if available
-          if (position.requirements != null && 
+          if (position.requirements != null &&
               position.requirements!.isNotEmpty) ...[
             const SizedBox(height: 12),
             const Divider(height: 1, color: Color(0xFFE2E8F0)),
@@ -274,27 +273,27 @@ class SalarySection extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             ...position.requirements!.take(3).map((req) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.check_circle_outline,
-                    size: 14,
-                    color: Color(0xFF059669),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      req,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF475569),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        size: 14,
+                        color: Color(0xFF059669),
                       ),
-                    ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          req,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF475569),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
         ],
       ),

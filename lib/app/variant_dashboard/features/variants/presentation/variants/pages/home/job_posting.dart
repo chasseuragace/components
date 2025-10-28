@@ -31,6 +31,7 @@ class MobileJobEntity {
 
   final int? applications;
   final String? policy;
+  final String? manpowerPhone; // Phone number for contacting manpower/agency
   MobileJobEntity({
     required this.id,
     required this.postingTitle,
@@ -56,5 +57,6 @@ class MobileJobEntity {
     this.convertedSalary,
     this.applications,
     this.policy,
+    this.manpowerPhone,
   });
 }

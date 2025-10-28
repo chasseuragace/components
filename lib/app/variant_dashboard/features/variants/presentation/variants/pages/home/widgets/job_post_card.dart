@@ -11,6 +11,9 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/job_apply_dialog.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
+import '../../../../../../../../udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
+import '../../../../../../../../udaan_saarathi/features/presentation/jobs/providers/providers.dart';
+
 // Provider to track if a job has been applied by job_posting_id
 
 class JobPostingCard extends ConsumerStatefulWidget {
@@ -208,11 +211,19 @@ class _JobPostingCardState extends ConsumerState<JobPostingCard> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextButton(
-                      onPressed: () =>
-                          //  _showJobDetails(context, widget.posting),
-                          Navigator.pushNamed(
-                              context, RouteConstants.kJobDetailScreen,
-                              arguments: widget.posting)
+                      onPressed: () {
+                        ref
+                            .read(selectedJobIdProvider.notifier)
+                            .update((cb) => widget.posting.id);
+                        ref
+                            .read(getJobsByIdProvider.notifier)
+                            .getJobsById(widget.posting.id);
+
+                        Navigator.pushNamed(
+                          context,
+                          RouteConstants.kJobDetailScreen,
+                        );
+                      }
 
                       // Navigator.push(
                       //     context,

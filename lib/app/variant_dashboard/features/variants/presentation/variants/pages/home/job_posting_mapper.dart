@@ -56,6 +56,7 @@ class JobPostingMapper {
       convertedSalary: convertedSalaryStr,
       applications: null,
       policy: null,
+      manpowerPhone: '+977-9841234567', // Placeholder phone number for demo
     );
   }
 

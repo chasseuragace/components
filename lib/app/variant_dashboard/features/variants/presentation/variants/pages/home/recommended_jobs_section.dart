@@ -22,7 +22,7 @@ class RecommendedJobsSection extends ConsumerWidget {
     });
     return Padding(
       padding: EdgeInsets.symmetric(
-              horizontal: kHorizontalMargin, vertical: kVerticalMargin)
+              horizontal: kHorizontalMargin, vertical: kVerticalMargin / 2)
           .copyWith(bottom: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

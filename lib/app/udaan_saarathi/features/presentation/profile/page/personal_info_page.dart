@@ -234,6 +234,7 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
           'phone': item.phone ?? '',
           'passport_number': item.passportNumber ?? '',
           'gender': item.gender ?? '',
+          // 'email': item.email ?? '',
           'address_display': _formatAddress(item.address),
         };
         setState(() {
@@ -282,6 +283,16 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                   icon: Icons.phone,
                   keyboardType: TextInputType.phone,
                   validator: (value) => CustomValidator.phoneValidator(value),
+                ),
+                const SizedBox(height: 16),
+
+                CustomFormBuilderTextField(
+                  name: 'email',
+                  label: 'Email',
+                  hint: 'e.g. johndoe@example.com',
+                  icon: Icons.email,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) => CustomValidator.emailValidator(value),
                 ),
                 const SizedBox(height: 16),
                 // Gender (required) - Choice chips in a row (custom styled)
