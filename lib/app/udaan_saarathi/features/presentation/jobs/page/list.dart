@@ -25,10 +25,10 @@ class _JobsListPageState extends ConsumerState<JobsListPage> {
     // listenToUpdateJobsAction(context);
     return Scaffold(
       body: jobsState.when(
-        data: (items) => items.isEmpty
+        data: (items) => items?.data.isEmpty ?? true
             ? Center(child: Text('No items available'))
             : JobListingsScreen(
-                jobs: items,
+                jobs: items!.data,
               )
         // ListView.builder(
         //     itemCount: items.length,

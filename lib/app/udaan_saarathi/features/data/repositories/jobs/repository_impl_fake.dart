@@ -1,12 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:openapi/openapi.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/grouped_jobs_model.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/jobs_search_result_model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/jobs/mobile_job_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart' as search_entities;
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart'
+    as search_entities;
 
 import '../../../../core/config/api_config.dart';
 import '../../../../core/errors/failures.dart';
@@ -33,7 +34,6 @@ import '../../datasources/jobs/remote_data_source.dart';
 //     name: 'Guest',
 //   ),
 // ];
-
 
 final List<JobsEntity> jobPostings = [
   JobsEntity(
@@ -282,12 +282,17 @@ class JobsRepositoryFake implements JobsRepository {
   final CandidatesApi _api;
   final JobsApi jobsApi;
   @override
-  Future<Either<Failure, List<JobsEntity>>> getAllItems() async {
+  Future<Either<Failure, search_entities.PaginatedJobsSearchResults>> getAllItems() async {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
 
-      return right(jobPostings.map((model) => model).toList());
+      final data = await jobsApi.publicJobsControllerSearchJobs();
+      final paginatedResults =
+          PaginatedJobsSearchResultsModel.fromJson(data.data!.toJson());
+
+      // Return the full paginated response
+      return right(paginatedResults);
     } catch (error) {
       return left(ServerFailure());
     }
@@ -311,7 +316,8 @@ class JobsRepositoryFake implements JobsRepository {
   }
 
   @override
-  Future<Either<Failure, search_entities.PaginatedJobsSearchResults>> searchJobs(JobSearchDTO dto) async {
+  Future<Either<Failure, search_entities.PaginatedJobsSearchResults>>
+      searchJobs(JobSearchDTO dto) async {
     try {
       // Simulate delay
       await Future.delayed(Duration(milliseconds: 300));
@@ -326,7 +332,8 @@ class JobsRepositoryFake implements JobsRepository {
           sortBy: dto.sortBy,
           order: dto.order);
 
-      return right(PaginatedJobsSearchResultsModel.fromJson(data.data!.toJson()));
+      return right(
+          PaginatedJobsSearchResultsModel.fromJson(data.data!.toJson()));
     } catch (error, s) {
       print(error);
       print(s);

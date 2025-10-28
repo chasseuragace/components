@@ -31,7 +31,7 @@ class JobSearchDTO {
 }
 
 abstract class JobsRepository {
-  Future<Either<Failure, List<JobsEntity>>> getAllItems();
+  Future<Either<Failure, search_entities.PaginatedJobsSearchResults>> getAllItems();
   Future<Either<Failure, MobileJobEntity>> getItemById(String id);
   Future<Either<Failure, Unit>> addItem(JobsEntity entity);
   Future<Either<Failure, Unit>> updateItem(JobsEntity entity);
