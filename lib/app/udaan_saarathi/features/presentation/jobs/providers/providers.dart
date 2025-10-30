@@ -162,6 +162,73 @@ final paginatedSearchProvider =
   return PaginatedSearchNotifier(ref);
 });
 
+/// All Jobs pagination using the search endpoint with empty filters
+class AllJobsPaginationNotifier extends StateNotifier<PaginatedSearchState> {
+  AllJobsPaginationNotifier(this.ref) : super(PaginatedSearchState.initial());
+  final Ref ref;
+
+  Future<void> reset({int limit = 10}) async {
+    // baseDto with no filters to fetch "all"
+    final dto = const JobSearchDTO(page: 1, limit: 10);
+    state = state.copyWith(
+      isLoading: true,
+      items: [],
+      page: 0,
+      limit: limit,
+      total: 0,
+      hasMore: false,
+      baseDto: dto,
+    );
+    await _fetch(page: 1);
+  }
+
+  Future<void> loadNext() async {
+    if (state.isLoading || !state.hasMore) return;
+    final next = state.page + 1;
+    await _fetch(page: next);
+  }
+
+  Future<void> _fetch({required int page}) async {
+    state = state.copyWith(isLoading: true);
+    final result = await ref.read(searchJobsUseCaseProvider)(JobSearchDTO(
+      keyword: null,
+      country: null,
+      minSalary: null,
+      maxSalary: null,
+      currency: null,
+      page: page,
+      limit: state.limit,
+      sortBy: null,
+      order: null,
+    ));
+    result.fold(
+      (_) => state = state.copyWith(isLoading: false, hasMore: false),
+      (paginated) {
+        final newItems = List<JobsEntity>.from(state.items)
+          ..addAll(paginated.data);
+        final receivedEmpty = paginated.data.isEmpty;
+        final hasMore = receivedEmpty
+            ? false
+            : ((paginated.page * paginated.limit) < paginated.total);
+        state = state.copyWith(
+          items: newItems,
+          page: paginated.page,
+          limit: paginated.limit,
+          total: paginated.total,
+          hasMore: hasMore,
+          isLoading: false,
+        );
+      },
+    );
+  }
+}
+
+final paginatedAllJobsProvider =
+    StateNotifierProvider<AllJobsPaginationNotifier, PaginatedSearchState>(
+        (ref) {
+  return AllJobsPaginationNotifier(ref);
+});
+
 class GetAllJobsNotifier
     extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
   @override

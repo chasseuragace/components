@@ -33,11 +33,20 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
     _allJobs = widget.jobs;
     _filteredJobs = _allJobs;
     _searchController.addListener(_onSearchChanged);
+    // Kick off initial all jobs pagination
+    Future.microtask(() {
+      ref.read(paginatedAllJobsProvider.notifier).reset(limit: 10);
+    });
     _scrollController.addListener(() {
       final position = _scrollController.position;
-      if (position.extentAfter > 700) {
-        print("object");
-        ref.read(paginatedSearchProvider.notifier).loadNext();
+      // Trigger when scrolled to bottom (with small threshold)
+      if (position.pixels >= position.maxScrollExtent - 24) {
+        final searchState = ref.read(paginatedSearchProvider);
+        if (searchState.baseDto != null) {
+          ref.read(paginatedSearchProvider.notifier).loadNext();
+        } else {
+          ref.read(paginatedAllJobsProvider.notifier).loadNext();
+        }
       }
     });
   }
@@ -172,7 +181,10 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final paginated = ref.watch(paginatedSearchProvider);
+    final paginatedSearch = ref.watch(paginatedSearchProvider);
+    final paginatedAll = ref.watch(paginatedAllJobsProvider);
+    final paginated =
+        (paginatedSearch.baseDto != null) ? paginatedSearch : paginatedAll;
     final providerFilters = ref.watch(filtersProvider);
     final providerQuery = ref.watch(searchQueryProvider);
     return Scaffold(
