@@ -25,6 +25,7 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
   final Map<String, dynamic> _activeFilters = {};
   List<JobsEntity> _allJobs = [];
   List<JobsEntity> _filteredJobs = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -32,12 +33,20 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
     _allJobs = widget.jobs;
     _filteredJobs = _allJobs;
     _searchController.addListener(_onSearchChanged);
+    _scrollController.addListener(() {
+      final position = _scrollController.position;
+      if (position.extentAfter > 700) {
+        print("object");
+        ref.read(paginatedSearchProvider.notifier).loadNext();
+      }
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _debounceTimer?.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -158,17 +167,18 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
     ref.read(searchQueryProvider.notifier).state = '';
     _applyFilters();
     // Clear remote search results when nothing to search
-    ref.read(searchJobsProvider.notifier).clearResults();
+    ref.read(paginatedSearchProvider.notifier).clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final searchState = ref.watch(searchJobsProvider);
+    final paginated = ref.watch(paginatedSearchProvider);
     final providerFilters = ref.watch(filtersProvider);
     final providerQuery = ref.watch(searchQueryProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           // Custom App Bar
           SliverAppBar(
@@ -311,14 +321,14 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${_activeSearchResultsCount(searchState)} Jobs Found',
+                    '${_activeSearchResultsCountPaged(paginated)} Jobs Found',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF1E293B),
                     ),
                   ),
-                  if (_hasAnyResults(searchState))
+                  if (_hasAnyResultsPaged(paginated))
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -359,10 +369,16 @@ class _JobListingsScreenState extends ConsumerState<JobListingsScreen> {
           // Job Listings
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
-            sliver: _buildResultSliver(searchState),
+            sliver: _buildResultSliverPaged(paginated),
           ),
 
           // Bottom Padding
+          if (paginated.isLoading && (paginated.items.isNotEmpty))
+            const SliverToBoxAdapter(
+                child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator()),
+            )),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),
@@ -540,7 +556,7 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
             (filters['currency'] as String).trim().isNotEmpty);
 
     if (!hasSearch) {
-      ref.read(searchJobsProvider.notifier).clearResults();
+      ref.read(paginatedSearchProvider.notifier).clear();
       return;
     }
 
@@ -572,26 +588,19 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
       order: order,
     );
     print(dto.currency);
-    ref.read(searchJobsProvider.notifier).searchJobs(dto);
+    ref
+        .read(paginatedSearchProvider.notifier)
+        .reset(dto, limit: dto.limit ?? 10);
   }
 
-  int _activeSearchResultsCount(
-      AsyncValue<search_entities.PaginatedJobsSearchResults?> searchState) {
-    return searchState.when(
-      data: (data) => data?.data.length ?? _filteredJobs.length,
-      loading: () => _filteredJobs.length,
-      error: (_, __) => 0,
-    );
+  int _activeSearchResultsCountPaged(PaginatedSearchState paginated) {
+    if (paginated.baseDto == null) return _filteredJobs.length;
+    return paginated.items.length;
   }
 
-  bool _hasAnyResults(
-      AsyncValue<search_entities.PaginatedJobsSearchResults?> searchState) {
-    return searchState.when(
-      data: (data) =>
-          (data?.data.isNotEmpty ?? false) || _filteredJobs.isNotEmpty,
-      loading: () => _filteredJobs.isNotEmpty,
-      error: (_, __) => false,
-    );
+  bool _hasAnyResultsPaged(PaginatedSearchState paginated) {
+    if (paginated.baseDto == null) return _filteredJobs.isNotEmpty;
+    return paginated.items.isNotEmpty;
   }
 
   // Extract a salary amount in NPR from a Position's Salary entity
@@ -808,63 +817,48 @@ extension _RemoteSearchHelpers on _JobListingsScreenState {
     );
   }
 
-  Widget _buildResultSliver(
-      AsyncValue<search_entities.PaginatedJobsSearchResults?> searchState) {
-    return searchState.when(
-      loading: () {
-        // if (_filteredJobs.isEmpty) {
-        //   return SliverToBoxAdapter(
-        //     child: EmptyStateWidget(
-        //       hasActiveFilters:
-        //           _activeFilters.isNotEmpty || _searchQuery.isNotEmpty,
-        //       onClearFilters: _clearAllFilters,
-        //     ),
-        //   );
-        // }
-        // return SliverList(delegate: _buildLocalListDelegate());
+  Widget _buildResultSliverPaged(PaginatedSearchState paginated) {
+    if (paginated.baseDto == null) {
+      if (_filteredJobs.isEmpty) {
         return SliverToBoxAdapter(
-            child: Center(child: CircularProgressIndicator()));
-      },
-      error: (err, _) => SliverToBoxAdapter(child: _buildError(err)),
-      data: (data) {
-        if (data == null) {
-          if (_filteredJobs.isEmpty) {
-            return SliverToBoxAdapter(
-              child: EmptyStateWidget(
-                hasActiveFilters:
-                    _activeFilters.isNotEmpty || _searchQuery.isNotEmpty,
-                onClearFilters: _clearAllFilters,
-              ),
-            );
-          }
-          return SliverList(delegate: _buildLocalListDelegate());
-        }
-
-        final results = data.data;
-        if (results.isEmpty) {
-          return SliverToBoxAdapter(
-            child: EmptyStateWidget(
-              hasActiveFilters: true,
-              onClearFilters: _clearAllFilters,
-            ),
-          );
-        }
-
-        return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final item = results[index];
-              return Padding(
-                padding: EdgeInsets.only(bottom: kVerticalMargin),
-                child: JobCard(
-                  job: item,
-                ),
-              );
-            },
-            childCount: results.length,
+          child: EmptyStateWidget(
+            hasActiveFilters:
+                _activeFilters.isNotEmpty || _searchQuery.isNotEmpty,
+            onClearFilters: _clearAllFilters,
           ),
         );
-      },
+      }
+      return SliverList(delegate: _buildLocalListDelegate());
+    }
+
+    if (paginated.isLoading && paginated.items.isEmpty) {
+      return const SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator()));
+    }
+
+    if (paginated.items.isEmpty) {
+      return SliverToBoxAdapter(
+        child: EmptyStateWidget(
+          hasActiveFilters: true,
+          onClearFilters: _clearAllFilters,
+        ),
+      );
+    }
+
+    final results = paginated.items;
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final item = results[index];
+          return Padding(
+            padding: EdgeInsets.only(bottom: kVerticalMargin),
+            child: JobCard(
+              job: item,
+            ),
+          );
+        },
+        childCount: results.length,
+      ),
     );
   }
 }

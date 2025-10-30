@@ -37,6 +37,131 @@ final filtersProvider =
     StateNotifierProvider<FiltersNotifier, Map<String, dynamic>>(
         (ref) => FiltersNotifier());
 
+/// Paginated search state
+class PaginatedSearchState {
+  final List<JobsEntity> items;
+  final int page;
+  final int limit;
+  final int total;
+  final bool isLoading;
+  final bool hasMore;
+  final JobSearchDTO? baseDto;
+
+  const PaginatedSearchState({
+    required this.items,
+    required this.page,
+    required this.limit,
+    required this.total,
+    required this.isLoading,
+    required this.hasMore,
+    required this.baseDto,
+  });
+
+  factory PaginatedSearchState.initial() => const PaginatedSearchState(
+        items: [],
+        page: 0,
+        limit: 10,
+        total: 0,
+        isLoading: false,
+        hasMore: false,
+        baseDto: null,
+      );
+
+  PaginatedSearchState copyWith({
+    List<JobsEntity>? items,
+    int? page,
+    int? limit,
+    int? total,
+    bool? isLoading,
+    bool? hasMore,
+    JobSearchDTO? baseDto,
+  }) {
+    return PaginatedSearchState(
+      items: items ?? this.items,
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      total: total ?? this.total,
+      isLoading: isLoading ?? this.isLoading,
+      hasMore: hasMore ?? this.hasMore,
+      baseDto: baseDto ?? this.baseDto,
+    );
+  }
+}
+
+class PaginatedSearchNotifier extends StateNotifier<PaginatedSearchState> {
+  PaginatedSearchNotifier(this.ref) : super(PaginatedSearchState.initial());
+  final Ref ref;
+
+  Future<void> reset(JobSearchDTO baseDto, {int limit = 10}) async {
+    state = state.copyWith(
+      isLoading: true,
+      items: [],
+      page: 0,
+      limit: limit,
+      total: 0,
+      hasMore: false,
+      baseDto: baseDto,
+    );
+    await _fetch(page: 1);
+  }
+
+  Future<void> loadNext() async {
+    if (state.isLoading || !state.hasMore) return;
+    final nextPage = state.page + 1;
+    await _fetch(page: nextPage);
+  }
+
+  Future<void> _fetch({required int page}) async {
+    print("fetching");
+    final dto = state.baseDto;
+    print(dto);
+    if (dto == null) return;
+    state = state.copyWith(isLoading: true);
+    final result = await ref.read(searchJobsUseCaseProvider)(JobSearchDTO(
+      keyword: dto.keyword,
+      country: dto.country,
+      minSalary: dto.minSalary,
+      maxSalary: dto.maxSalary,
+      currency: dto.currency,
+      page: page,
+      limit: state.limit,
+      sortBy: dto.sortBy,
+      order: dto.order,
+    ));
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(isLoading: false, hasMore: false);
+      },
+      (paginated) {
+        final newItems = List<JobsEntity>.from(state.items)
+          ..addAll(paginated.data);
+        final bool receivedEmptyPage = paginated.data.isEmpty;
+        final bool computedHasMore = receivedEmptyPage
+            ? false
+            : ((paginated.page * paginated.limit) < paginated.total);
+        state = state.copyWith(
+          items: newItems,
+          page: paginated.page,
+          limit: paginated.limit,
+          total: paginated.total,
+          hasMore: computedHasMore,
+          isLoading: false,
+        );
+      },
+    );
+  }
+
+  void clear() {
+    state = PaginatedSearchState.initial();
+  }
+}
+
+final paginatedSearchProvider =
+    StateNotifierProvider<PaginatedSearchNotifier, PaginatedSearchState>((ref) {
+  return PaginatedSearchNotifier(ref);
+});
+
 class GetAllJobsNotifier
     extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
   @override

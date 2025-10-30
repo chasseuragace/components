@@ -72,8 +72,12 @@ class _JobDetailPageState extends ConsumerState<JobDetailPage> {
         ),
         body: jobdataprovider.when(
           data: (MobileJobEntity? data) {
+            // If data is null (e.g., first frame before fetch completes), show a loader
+            if (data == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
             // Prefer fetched data; fall back to the job passed into the page
-            final effective = data !;
+            final effective = data;
             final isApplied = ref.watch(jobAppliedProvider(effective.id));
             return body(effective, isApplied);
           },
