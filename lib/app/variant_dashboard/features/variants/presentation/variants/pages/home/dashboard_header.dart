@@ -116,7 +116,7 @@ class DashboardHeader extends ConsumerWidget {
                 children: [
                   _buildQuickStat(
                     'Applications',
-                    analytics.byStatus.applied.toString(),
+                    analytics.total.toString(),
                     Icons.send_rounded,
                     onTap: () {
                       Navigator.pushNamed(
