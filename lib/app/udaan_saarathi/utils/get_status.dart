@@ -64,6 +64,8 @@ String getStatusText(ApplicationStatus status) {
       return 'Rejected';
     case ApplicationStatus.accepted:
       return 'Accepted';
+    case ApplicationStatus.shortlisted:
+      return 'Shortlisted';
   }
 }
 

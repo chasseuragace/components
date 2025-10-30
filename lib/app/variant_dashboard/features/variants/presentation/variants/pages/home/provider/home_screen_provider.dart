@@ -136,36 +136,7 @@ class HomeScreenProvider extends ChangeNotifier {
           ),
         ],
         _applications = [
-          ApplicaitonsEntity(
-            id: 'app_001',
-            candidateId: 'cand_001',
-            jobPostingId: 'post_001',
-            status: ApplicationStatus.interviewScheduled,
-            posting: MobileJobEntity(
-              id: 'post_003',
-              postingTitle: 'Hospitality Staff Recruitment - Multiple Roles',
-              country: 'Qatar',
-              city: 'Doha',
-              agency: 'Gulf Hospitality Agency',
-              employer: 'Doha Grand Hotel',
-              description:
-                  'Hiring skilled hospitality staff for hotel operations and customer service.',
-              contractTerms:
-                  ContractTerms(duration: '1 year', type: 'Full-time'),
-              postedDate: DateTime.now().subtract(Duration(days: 7)),
-              preferenceText: 'Electrician',
-              positions: [],
-            ),
-            // status: ApplicationStatus.interviewScheduled,
-            appliedAt: '2023-01-01',
-            interviewDetail: InterviewDetail(
-              id: 'int_001',
-              scheduledAt: DateTime.now().add(Duration(days: 3)),
-              location: 'Lakeside, Pokhara',
-              contact: 'HR Team - +977-61-123456',
-              notes: 'Interview with the founding team',
-            ),
-          ),
+        
         ],
         _analytics = DashboardAnalytics(
           recommendedJobsCount: 15,
@@ -234,8 +205,8 @@ class HomeScreenProvider extends ChangeNotifier {
         .where(
           (app) =>
               app.status == ApplicationStatus.interviewScheduled &&
-              app.interviewDetail != null &&
-              app.interviewDetail!.scheduledAt.isAfter(DateTime.now()),
+              app.interview != null &&
+              DateTime.parse(app.interview!.interviewDateAd).isAfter(DateTime.now()),
         )
         .toList();
   }

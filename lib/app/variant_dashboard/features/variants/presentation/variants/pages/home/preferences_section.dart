@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/preferences/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/providers/preferences_config_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/preferences_modal.dart';
@@ -8,6 +9,7 @@ import 'package:variant_dashboard/app/variant_dashboard/features/variants/presen
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/widgets/preference_chip.dart';
 
 import '../../../../../../../udaan_saarathi/features/domain/entities/preferences/entity.dart';
+
 
 class PreferencesSection extends ConsumerWidget {
   // Changed to ConsumerWidget
@@ -54,12 +56,48 @@ class PreferencesSection extends ConsumerWidget {
           Builder(builder: (context) {
             return apiPreferences.when(
               data: (data) {
+                final visibleItems =  data.take(5).toList();
+                final remainingCount = data.length > 5 ? data.length - 5 : 0;
+                
                 return Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
-                  children: data
-                      .map<Widget>((pref) => _buildPreferenceChip(pref))
-                      .toList(),
+                  children: [
+                    ...visibleItems.map((pref) => _buildPreferenceChip(pref)),
+                    if (remainingCount > 0 )
+                    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF4F7DF9), Color(0xFF6C5CE7)],
+          // colors: [AppColors.primaryColor, AppColors.primaryDarkColor],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+       
+            Container(
+            
+              height: 20,
+             
+             
+            ),
+            const SizedBox(width: 8),
+         
+          Text(
+            "+$remainingCount More items",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+                      ),
+                  ],
                 );
               },
               error: (error, stackTrace) {

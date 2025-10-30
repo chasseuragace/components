@@ -9,7 +9,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/prefe
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/preferences/widgets/selected_job_title_card.dart';
 
 class PreferencesModal extends ConsumerStatefulWidget {
-  const PreferencesModal({super.key});
+  const   PreferencesModal({super.key});
   // Changed to ConsumerStatefulWidget
   @override
   _PreferencesModalState createState() => _PreferencesModalState();

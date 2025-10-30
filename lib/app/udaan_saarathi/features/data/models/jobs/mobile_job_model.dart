@@ -121,9 +121,9 @@ class JobPositionModel extends JobPosition {
 
   factory JobPositionModel.fromJRawson(Map<String, dynamic> json) {
 
-
-final base = (json['converted_salaries'] as List).where((e)=> e['currency'] != 'NPR').first;
-final basesalaryAmount = "${base['currency']} ${base['amount']} ";
+print("salary test  $json");
+final base = json['monthly_salary_amount'];
+final basesalaryAmount = "${json['salary_currency']} ${base} ";
 final converted = (json['converted_salaries'] as List).where((e)=> e['currency'] == 'NPR').first;
 final convertedSalaryAmount = "${converted['currency']} ${converted['amount']}";
 

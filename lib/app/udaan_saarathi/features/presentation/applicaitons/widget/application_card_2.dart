@@ -58,7 +58,7 @@ class ApplicationCard2 extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Applied ${DateTime.parse(application.appliedAt!).timeAgo}',
+                'Applied ${application.appliedAt!.timeAgo}',
                 style: TextStyle(fontSize: 12, color: AppColors.kgreyShade600),
               ),
               StatusBadge(status: application.status),
@@ -86,7 +86,7 @@ class ApplicationCard2 extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    application.posting?.postingTitle ?? "",
+                    application.jobPosting?.title ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -96,7 +96,7 @@ class ApplicationCard2 extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    application.posting?.employer ?? "",
+                    application.jobPosting?.employer?.companyName ?? "",
                     style:
                         TextStyle(fontSize: 14, color: AppColors.textSecondary),
                   ),
@@ -109,7 +109,7 @@ class ApplicationCard2 extends ConsumerWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        application.posting?.country ?? "",
+                        application.jobPosting?.country ?? "",
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColors.kgreyShade700,
@@ -241,7 +241,7 @@ class ApplicationCard2 extends ConsumerWidget {
           ),
         ),
         content: Text(
-          'Are you sure you want to withdraw your application for ${application.posting?.postingTitle}?',
+          'Are you sure you want to withdraw your application for ${application.jobPosting?.title}?',
           style: TextStyle(fontSize: 14, color: AppColors.kgreyShade700),
         ),
         actions: [
