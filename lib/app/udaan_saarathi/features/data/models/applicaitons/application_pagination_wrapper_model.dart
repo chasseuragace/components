@@ -1,4 +1,5 @@
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/applicaitons/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/application_pagination_wrapper.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 
 /// Model for paginated application results with JSON serialization

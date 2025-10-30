@@ -3,6 +3,7 @@ import 'package:openapi/openapi.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/config/api_config.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/applicaitons/application_details_model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/repositories/auth/token_storage.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/application_pagination_wrapper.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/apply_job_d_t_o_entity.dart';
 
 import '../../../../core/errors/failures.dart';

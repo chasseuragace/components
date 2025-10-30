@@ -10,7 +10,7 @@ class JobNotificationsPage2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return ApplicaitonsListPage();
+  
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FC),
       appBar: SarathiAppBar(
