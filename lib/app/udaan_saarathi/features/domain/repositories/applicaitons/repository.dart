@@ -6,7 +6,7 @@ import '../../entities/applicaitons/entity.dart';
 import '../../../../core/errors/failures.dart';
 
 abstract class ApplicaitonsRepository {
-  Future<Either<Failure, ApplicationPaginationWrapper>> getAllItems();
+  Future<Either<Failure, ApplicationPaginationWrapper>> getAllItems({int page=1, String? status});
   Future<Either<Failure, ApplicationDetailsEntity>> getItemById(String id);
 
   Future<Either<Failure, Unit>> updateItem(ApplicaitonsEntity entity);

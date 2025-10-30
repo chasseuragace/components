@@ -1,11 +1,64 @@
+import 'package:collection/collection.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 
 class ApplicationPaginationWrapper {
-  List<ApplicaitonsEntity> items;
-  int? total, page, limit;
+  final List<ApplicaitonsEntity> items;
+  final int? total;
+  final int? page;
+  final int? limit;
+  final bool isLoadingMore;
 
-  ApplicationPaginationWrapper(
-      {required this.items, this.total, this.page, this.limit});
+  const ApplicationPaginationWrapper({
+    required this.items,
+    this.total,
+    this.page,
+    this.limit,
+    this.isLoadingMore = false,
+  });
+
+  bool get hasReachedEnd {
+    if (total == null || limit == null) return false;
+    return page != null && page! * limit! >= total!;
+  }
+
+  bool get hasData => items.isNotEmpty;
+
+  bool get hasMoreToLoad {
+    if (total == null || limit == null) return false;
+    return page == null || page! * limit! < total!;
+  }
+
+  ApplicationPaginationWrapper copyWith({
+    List<ApplicaitonsEntity>? items,
+    int? total,
+    int? page,
+    int? limit,
+    bool? isLoadingMore,
+  }) {
+    return ApplicationPaginationWrapper(
+      items: items ?? this.items,
+      total: total ?? this.total,
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ApplicationPaginationWrapper &&
+        other.runtimeType == runtimeType &&
+        other.total == total &&
+        other.page == page &&
+        other.limit == limit &&
+        other.isLoadingMore == isLoadingMore &&
+        const DeepCollectionEquality().equals(other.items, items);
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, total, page, limit, isLoadingMore, items);
 }
 
 // id

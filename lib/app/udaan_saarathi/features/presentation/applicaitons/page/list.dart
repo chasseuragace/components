@@ -2,13 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/applicaitons/model.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/application_pagination_wrapper.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/applications_tabbed_view.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/empty_application_widget.dart';
-import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
-
-import '../../../domain/entities/applicaitons/entity.dart';
-import '../providers/providers.dart';
 import 'detail_by_id.dart';
 
 class ApplicaitonsListPage extends ConsumerStatefulWidget {
@@ -23,65 +21,66 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ApplicaitonsState = ref.watch(getAllApplicaitonsProvider);
-    final dashboardData = ref.watch(
-      jobDashboardDataProvider,
-    ); // Access data via ref
-    final recentApplications = dashboardData.applications.take(3).toList();
+    return ApplicationsTabbedView();
+    // Using the new family provider with null status to get all applications
+    final applicationsAsync = ref.watch(applicationsListProvider(null));
+    
+    // Set up delete listener
     listenToDeleteApplicaitonsAction(context);
-    // TODO: Set up listeners for other actions
-    // listenToAddApplicaitonsAction(context);
-    // listenToUpdateApplicaitonsAction(context);
+
     return Scaffold(
       appBar: SarathiAppBar(
-        // backgroundColor: Colors.white,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
-        title: Text("Applications List"),
+        title: const Text("Applications List"),
       ),
-      body: ApplicaitonsState.when(
-        data: (items) => items.isEmpty
-            ? EmptyApplicationsState(
-                onFindJobs: () {
-                  // Implement find jobs logic here
-                },
-              )
-            : Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    print(items);
-                    final item = items[index];
-                    // return ApplicationCard2(
-                    //     isApplicaionList: true, application: items[index]);
-                    return ListTile(
-                      subtitle: Text(item.id),
-                      title: Text((item as ApplicaitonsModel).toJson().toString().split(",").join("\n")
-                          ), // Adjust this based on your entity properties
-
-                      onTap: () {
-                        // Set the selected application ID
-                        ref.read(selectedApplicationIdProvider.notifier).state =
-                            item.id;
-                        // Navigate to detail page
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ApplicationDetailPage(),
-                          ),
-                        );
-                      },
+      body: applicationsAsync.when(
+        data: (wrapper) {
+          if (wrapper.items.isEmpty) {
+            return EmptyApplicationsState(
+              onFindJobs: () {
+                // Implement find jobs logic here
+              },
+            );
+          }
+          
+          return RefreshIndicator(
+            onRefresh: () => ref.refresh(applicationsListProvider(null).future),
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              itemCount: wrapper.items.length,
+              itemBuilder: (context, index) {
+                final item = wrapper.items[index];
+                return ListTile(
+                  title: Text(item.jobPosting?.title ?? 'Application ${item.id}'),
+                  subtitle: Text('Status: ${item.status.toString().split('.').last}'),
+                  onTap: () {
+                    // Set the selected application ID
+                    ref.read(selectedApplicationIdProvider.notifier).state = item.id;
+                    // Navigate to detail page
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ApplicationDetailPage(),
+                      ),
                     );
                   },
-                ),
+                );
+              },
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Error: $error'),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () => ref.refresh(applicationsListProvider(null)),
+                child: const Text('Retry'),
               ),
-        loading: () => Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text(error.toString())),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -101,25 +100,28 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
             barrierContext = context;
             return Container(
               color: Colors.black38,
-              child: Center(child: CircularProgressIndicator()),
+              child: const Center(child: CircularProgressIndicator()),
             );
           },
         );
-      } else if (previous?.isLoading == true && next.hasError) {
-        Navigator.of(barrierContext!).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to delete: ${next.error}")),
-        );
-        Future.delayed(Duration(seconds: 5), () {
-          ref.refresh(deleteApplicaitonsProvider);
-        });
-      } else if (previous?.isLoading == true && next.hasValue) {
-        Navigator.of(barrierContext!).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Successfully deleted")),
-        );
-        // Refresh the list after successful deletion
-        ref.refresh(getAllApplicaitonsProvider);
+      } else if (previous?.isLoading == true) {
+        // Close the loading dialog if it's open
+        if (barrierContext != null && Navigator.canPop(barrierContext!)) {
+          Navigator.of(barrierContext!).pop();
+        }
+        
+        if (next.hasError) {
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to delete: ${next.error}')),
+          );
+        } else if (next.hasValue) {
+          // Show success message and refresh the applications list
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Successfully deleted')),
+          );
+          ref.invalidate(applicationsListProvider);
+        }
       }
     });
   }
@@ -148,27 +150,34 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
 
   void _showDeleteConfirmation(
       BuildContext context, WidgetRef ref, String itemId) async {
-    final result = await showDialog(
+    final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirm Deletion'),
-        content: Text('Are you sure you want to delete this item?'),
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this item?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: Text('Delete'),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
+    
     if (result == true) {
-      ref.read(deleteApplicaitonsProvider.notifier).delete(itemId);
+      try {
+        await ref.read(deleteApplicaitonsProvider.notifier).delete(itemId);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting item: $e')),
+          );
+        }
+      }
     }
   }
 }

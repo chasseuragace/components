@@ -4,14 +4,18 @@ import '../../entities/applicaitons/entity.dart';
 import '../../repositories/applicaitons/repository.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
+import 'params.dart';
 
-class GetAllApplicaitonsUseCase implements UseCase<ApplicationPaginationWrapper, NoParm> {
+class GetAllApplicaitonsUseCase implements UseCase<ApplicationPaginationWrapper, GetAllApplicationsParams> {
   final ApplicaitonsRepository repository;
 
-  GetAllApplicaitonsUseCase (this.repository);
+  const GetAllApplicaitonsUseCase(this.repository);
 
   @override
-  Future<Either<Failure,ApplicationPaginationWrapper>> call(NoParm params) async {
-    return  repository.getAllItems();
+  Future<Either<Failure, ApplicationPaginationWrapper>> call(GetAllApplicationsParams params) async {
+    return repository.getAllItems(
+      page: params.page,
+      status: params.status,
+    );
   }
 }

@@ -26,11 +26,11 @@ class ApplicaitonsRepositoryFake implements ApplicaitonsRepository {
   }) : _storage = storage;
 
   @override
-  Future<Either<Failure, ApplicationPaginationWrapper>> getAllItems() async {
+  Future<Either<Failure, ApplicationPaginationWrapper>> getAllItems({int page=1, String? status}) async {
     try {
       final candidateId = await _storage.getCandidateId();
       final result =
-          await api.applicationControllerListForCandidate(id: candidateId!);
+          await api.applicationControllerListForCandidate(id: candidateId!, page: page.toString(), status: status,limit: 2.toString());
       final items = result.data?.items
           .map((e) => ApplicaitonsModel.fromJson(e.toJson()))
           .toList();
