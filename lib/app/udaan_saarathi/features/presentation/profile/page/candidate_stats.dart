@@ -14,90 +14,95 @@ class CandidateStats extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final analytics = ref.watch(getCandidatAnalytocseByIdProvider);
 
-    return analytics.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.all(24),
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (err, st) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Text(
-          'Failed to load stats',
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.red),
-        ),
-      ),
-      data: (stats) {
-        if (stats == null) {
-          return const SizedBox.shrink();
-        }
-
-        final items = <({String label, int value, Color color})>[
-          (label: 'Total Candidates', value: stats.total, color: Colors.blue),
-          (
-            label: 'Active Candidates',
-            value: stats.active,
-            color: Colors.green
-          ),
-          (
-            label: 'Applied',
-            value: stats.byStatus.applied,
-            color: Colors.indigo
-          ),
-          (
-            label: 'Shortlisted',
-            value: stats.byStatus.shortlisted,
-            color: Colors.deepPurple
-          ),
-          (
-            label: 'Interview Scheduled',
-            value: stats.byStatus.interviewScheduled,
-            color: Colors.orange
-          ),
-          (
-            label: 'Interview Rescheduled',
-            value: stats.byStatus.interviewRescheduled,
-            color: Colors.teal
-          ),
-          (
-            label: 'Interview Passed',
-            value: stats.byStatus.interviewPassed,
-            color: Colors.lightGreen
-          ),
-          (
-            label: 'Interview Failed',
-            value: stats.byStatus.interviewFailed,
-            color: Colors.redAccent
-          ),
-          (
-            label: 'Withdrawn',
-            value: stats.byStatus.withdrawn,
-            color: Colors.brown
-          ),
-        ];
-
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.7,
-          ),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return _StatCard(
-              value: item.value.toString(),
-              label: item.label,
-              color: item.color,
-            );
-          },
-        );
+    return GestureDetector(
+      onDoubleTap: (){
+        ref.invalidate(getCandidatAnalytocseByIdProvider);
       },
+      child: analytics.when(
+        loading: () => const Padding(
+          padding: EdgeInsets.all(24),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (err, st) => Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            'Failed to load stats',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.red),
+          ),
+        ),
+        data: (stats) {
+          if (stats == null) {
+            return const SizedBox.shrink();
+          }
+      
+          final items = <({String label, int value, Color color})>[
+            (label: 'Total Candidates', value: stats.total, color: Colors.blue),
+            (
+              label: 'Active Candidates',
+              value: stats.active,
+              color: Colors.green
+            ),
+            (
+              label: 'Applied',
+              value: stats.byStatus.applied,
+              color: Colors.indigo
+            ),
+            (
+              label: 'Shortlisted',
+              value: stats.byStatus.shortlisted,
+              color: Colors.deepPurple
+            ),
+            (
+              label: 'Interview Scheduled',
+              value: stats.byStatus.interviewScheduled,
+              color: Colors.orange
+            ),
+            (
+              label: 'Interview Rescheduled',
+              value: stats.byStatus.interviewRescheduled,
+              color: Colors.teal
+            ),
+            (
+              label: 'Interview Passed',
+              value: stats.byStatus.interviewPassed,
+              color: Colors.lightGreen
+            ),
+            (
+              label: 'Interview Failed',
+              value: stats.byStatus.interviewFailed,
+              color: Colors.redAccent
+            ),
+            (
+              label: 'Withdrawn',
+              value: stats.byStatus.withdrawn,
+              color: Colors.brown
+            ),
+          ];
+      
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.7,
+            ),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return _StatCard(
+                value: item.value.toString(),
+                label: item.label,
+                color: item.color,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

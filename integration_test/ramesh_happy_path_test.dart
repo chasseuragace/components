@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/storage/local_storage.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/applicaitons/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
@@ -53,7 +52,7 @@ void main() {
       print('📱 From village dreams to job applications...\n');
 
       // Step 1: Generate Random Phone Number
-      final uniquePhone = generateUniquePhone();
+      final uniquePhone = '9862146252';
       print('📞 Step 1: Generated unique phone: +977$uniquePhone');
 
       // Step 2: Register
@@ -133,13 +132,43 @@ void main() {
       // 4.5.a Add Skills (also used for languages as per UI label)
       final profileNotifier = container.read(profileProvider.notifier);
       final skillsData = [
-        {'title': 'Electrical Wiring', 'years': 5, 'duration_months': 0, 'documents': <String>[]},
-        {'title': 'Industrial Maintenance', 'years': 3, 'duration_months': 0, 'documents': <String>[]},
-        {'title': 'Circuit Installation', 'years': 4, 'duration_months': 0, 'documents': <String>[]},
+        {
+          'title': 'Electrical Wiring',
+          'years': 5,
+          'duration_months': 0,
+          'documents': <String>[]
+        },
+        {
+          'title': 'Industrial Maintenance',
+          'years': 3,
+          'duration_months': 0,
+          'documents': <String>[]
+        },
+        {
+          'title': 'Circuit Installation',
+          'years': 4,
+          'duration_months': 0,
+          'documents': <String>[]
+        },
         // Languages captured via the same API as per Skills page label
-        {'title': 'Nepali (Language)', 'years': 0, 'duration_months': 0, 'documents': <String>[]},
-        {'title': 'Hindi (Language)', 'years': 0, 'duration_months': 0, 'documents': <String>[]},
-        {'title': 'English (Language)', 'years': 0, 'duration_months': 0, 'documents': <String>[]},
+        {
+          'title': 'Nepali (Language)',
+          'years': 0,
+          'duration_months': 0,
+          'documents': <String>[]
+        },
+        {
+          'title': 'Hindi (Language)',
+          'years': 0,
+          'duration_months': 0,
+          'documents': <String>[]
+        },
+        {
+          'title': 'English (Language)',
+          'years': 0,
+          'duration_months': 0,
+          'documents': <String>[]
+        },
       ];
       await profileNotifier.addSkills(skillsData);
 
@@ -177,19 +206,23 @@ void main() {
       ];
       await profileNotifier.addExperience(experienceItems);
 
-      print('✅ Job profile updated via profileProvider (skills, education, trainings, experience)');
+      print(
+          '✅ Job profile updated via profileProvider (skills, education, trainings, experience)');
 
       // Step 5: List Job Titles
       print('\n📋 Step 5: Fetch Available Job Titles');
       print('🔍 Ramesh explores available job categories...');
-      final jobTitlesNotifier = container.read(getAllJobTitleProvider.notifier);
-      await jobTitlesNotifier.build();
-
-      final jobTitlesState = container.read(getAllJobTitleProvider);
-      final jobTitles = jobTitlesState.value ?? [];
+      await container.read(getAllJobTitleProvider.notifier).build();
+      int wait =0;
+      do {
+        await Future.delayed(const Duration(milliseconds: 100));
+        wait++;
+      } while (container.read(getAllJobTitleProvider).isLoading && wait < 100);
+final jobTitles = container.read(getAllJobTitleProvider).requireValue;
 
       if (jobTitles.isEmpty) {
-        print('⚠️ No job titles available at the moment. Continuing journey...');
+        print(
+            '⚠️ No job titles available at the moment. Continuing journey...');
         throw "Riverpod jobs State didnt show Data";
       } else {
         print('✅ Found ${jobTitles.length} job categories');
@@ -273,90 +306,95 @@ void main() {
         var jobFound = false;
         for (final group in groupedJobs.groups) {
           if (group.jobs.isNotEmpty) {
-            final firstJob = group.jobs.first;
-            print('💼 Ramesh found his perfect opportunity!');
-            print('🎯 Target Job:');
-            print('   📋 Position: ${firstJob.postingTitle}');
-            print('   📍 Location: ${firstJob.country}');
-            print(
-                '   💰 International Salary: ${firstJob.salary.currency ?? ''} ${firstJob.salary.monthlyMin ?? 'Competitive'} - ${firstJob.salary.monthlyMax ?? firstJob.salary.monthlyMin ?? 'Competitive'} per month');
-            
-            // Log converted salary (NPR equivalent) if available - matching backend test
-            if (firstJob.salary.converted.isNotEmpty) {
-              final nprConversion = firstJob.salary.converted.where((c) => c.currency == 'NPR').firstOrNull;
-              final usdConversion = firstJob.salary.converted.where((c) => c.currency == 'USD').firstOrNull;
-              
-              if (nprConversion != null) {
-                print('   🇳🇵 Nepali Equivalent: NPR ${nprConversion.amount} (${firstJob.salary.currency} ${firstJob.salary.monthlyMin} = NPR ${nprConversion.amount})');
-              }
-              if (usdConversion != null) {
-                print('   🇺🇸 USD Equivalent: USD ${usdConversion.amount}');
-              }
-              
-              // Log all conversions for debugging - matching backend test
-              final allConversions = firstJob.salary.converted.map((c) => '${c.currency} ${c.amount}').join(', ');
-              print('   💱 All conversions available: $allConversions');
-              
-              // Test assertion: Ensure we have converted salary data like backend test
-              expect(firstJob.salary.converted.isNotEmpty, isTrue, 
-                reason: 'Job should have converted salary data like backend test');
-              
-              // Verify NPR conversion exists (common requirement)
-              final hasNprConversion = firstJob.salary.converted.any((c) => c.currency == 'NPR');
-              expect(hasNprConversion, isTrue, 
-                reason: 'NPR conversion should be available for all jobs with runtime conversion system');
-              
-              if (hasNprConversion) {
-                print('   ✅ NPR conversion verified - matching backend test requirement');
-              }
-            } else {
-              print('   ⚠️ No salary conversions available for this job');
-              print('   📝 Note: Backend test expects converted salary - may need API data fix');
-            }
-            
-            print(
-                '   🏢 Agency: ${firstJob.agency.name ?? 'Professional Agency'}');
-
-            print('\n✍️ Ramesh writes his application...');
-
-            final applicationEntity = ApplyJobDTOEntity(
-             
-              jobPostingId: firstJob.id,
-              candidateId: candidateId,
-              note:'Dear Sir/Madam, I am very interested in this ${firstJob.postingTitle} position. I have relevant experience and am ready to work abroad. I am hardworking and reliable. Thank you for considering my application. - Ramesh Bahadur',
-            
-              name: 'Job Application',
-            );
-
-            final applicationsNotifier =
-                container.read(applyJobProvider.notifier);
-
-            try {
-              await applicationsNotifier.applyJob(applicationEntity);
-
-              final applicationState = container.read(applyJobProvider);
-              await applicationState.when(
-                data: (_) async {
-                  print(
-                      '🎉 SUCCESS! Ramesh\'s application has been submitted!');
-                  print('📧 Application sent with heartfelt personal message');
-                  print('📱 Ramesh receives confirmation on his phone');
-                },
-                loading: () async {
-                  print('⏳ Submitting application...');
-                },
-                error: (error, stack) async {
-                  print('❌ Application failed: $error');
-                },
-              );
-            } catch (e) {
-              print('❌ Application submission error: $e');
+            for (final job in group.jobs) {
+              print('💼 Ramesh found a potential opportunity!');
+              print('🎯 Target Job:');
+              print('   📋 Position: ${job.postingTitle}');
+              print('   📍 Location: ${job.country}');
               print(
-                  '😔 Ramesh encounters a technical issue but doesn\'t give up');
-            }
+                  '   💰 International Salary: ${job.salary.currency ?? ''} ${job.salary.monthlyMin ?? 'Competitive'} - ${job.salary.monthlyMax ?? job.salary.monthlyMin ?? 'Competitive'} per month');
 
-            jobFound = true;
-            break;
+              if (job.salary.converted.isNotEmpty) {
+                final nprConversion = job.salary.converted
+                    .where((c) => c.currency == 'NPR')
+                    .firstOrNull;
+                final usdConversion = job.salary.converted
+                    .where((c) => c.currency == 'USD')
+                    .firstOrNull;
+
+                if (nprConversion != null) {
+                  print(
+                      '   🇳🇵 Nepali Equivalent: NPR ${nprConversion.amount} (${job.salary.currency} ${job.salary.monthlyMin} = NPR ${nprConversion.amount})');
+                }
+                if (usdConversion != null) {
+                  print('   🇺🇸 USD Equivalent: USD ${usdConversion.amount}');
+                }
+
+                final allConversions = job.salary.converted
+                    .map((c) => '${c.currency} ${c.amount}')
+                    .join(', ');
+                print('   💱 All conversions available: $allConversions');
+
+                expect(job.salary.converted.isNotEmpty, isTrue,
+                    reason:
+                        'Job should have converted salary data like backend test');
+
+                final hasNprConversion =
+                    job.salary.converted.any((c) => c.currency == 'NPR');
+                expect(hasNprConversion, isTrue,
+                    reason:
+                        'NPR conversion should be available for all jobs with runtime conversion system');
+
+                if (hasNprConversion) {
+                  print(
+                      '   ✅ NPR conversion verified - matching backend test requirement');
+                }
+              } else {
+                print('   ⚠️ No salary conversions available for this job');
+                print(
+                    '   📝 Note: Backend test expects converted salary - may need API data fix');
+              }
+
+              print(
+                  '   🏢 Agency: ${job.agency.name ?? 'Professional Agency'}');
+              print('\n✍️ Ramesh writes his application...');
+
+              final applicationEntity = ApplyJobDTOEntity(
+                jobPostingId: job.id,
+                candidateId: candidateId,
+                note:
+                    'Dear Sir/Madam, I am very interested in this ${job.postingTitle} position. I have relevant experience and am ready to work abroad. I am hardworking and reliable. Thank you for considering my application. - Ramesh Bahadur',
+                name: 'Job Application',
+              );
+
+              final applicationsNotifier =
+                  container.read(applyJobProvider.notifier);
+
+              try {
+                await applicationsNotifier.applyJob(applicationEntity);
+
+                final applicationState = container.read(applyJobProvider);
+                await applicationState.when(
+                  data: (_) async {
+                    print(
+                        '🎉 SUCCESS! Ramesh\'s application has been submitted!');
+                    print(
+                        '📧 Application sent with heartfelt personal message');
+                    print('📱 Ramesh receives confirmation on his phone');
+                  },
+                  loading: () async {
+                    print('⏳ Submitting application...');
+                  },
+                  error: (error, stack) async {
+                    print('❌ Application failed: $error');
+                  },
+                );
+              } catch (e) {
+                print('❌ Application submission error: $e');
+                print(
+                    '😔 Ramesh encounters a technical issue but doesn\'t give up');
+              }
+            }
           }
         }
 
@@ -385,100 +423,121 @@ void main() {
         limit: 10,
       );
 
-      print('🔎 Searching for: "${searchParams.keyword}" in ${searchParams.country}');
-      print('💰 Salary range: ${searchParams.minSalary} - ${searchParams.maxSalary}');
+      print(
+          '🔎 Searching for: "${searchParams.keyword}" in ${searchParams.country}');
+      print(
+          '💰 Salary range: ${searchParams.minSalary} - ${searchParams.maxSalary}');
 
       try {
         await searchNotifier.searchJobs(searchParams);
-        await Future.delayed(const Duration(milliseconds: 500)); // Wait for search
+        await Future.delayed(
+            const Duration(milliseconds: 500)); // Wait for search
 
         final searchState = container.read(searchJobsProvider);
-        
-        if (searchState.hasValue && searchState.value != null && searchState.value!.data.isNotEmpty) {
+
+        if (searchState.hasValue &&
+            searchState.value != null &&
+            searchState.value!.data.isNotEmpty) {
           final searchResults = searchState.value!;
           print('✅ Search successful! Found ${searchResults.data.length} jobs');
           print('📊 Total results: ${searchResults.total}');
-          print('📄 Page ${searchResults.page} of ${(searchResults.total / searchResults.limit).ceil()}');
+          print(
+              '📄 Page ${searchResults.page} of ${(searchResults.total / searchResults.limit).ceil()}');
 
           // Show first few results with converted salary info
           for (int i = 0; i < searchResults.data.take(3).length; i++) {
             final job = searchResults.data[i];
-            print('   ${i + 1}. ${job.postingTitle} - ${job.city}, ${job.country}');
-            
+            print(
+                '   ${i + 1}. ${job.postingTitle} - ${job.city}, ${job.country}');
+
             // Check converted salary in search results - matching backend test
             if (job.positions.isNotEmpty) {
               final firstPosition = job.positions.first;
               final salary = firstPosition.salary;
-              print('      💰 Base: ${salary.currency} ${salary.monthlyAmount}');
-              
+              print(
+                  '      💰 Base: ${salary.currency} ${salary.monthlyAmount}');
+
               if (salary.converted.isNotEmpty) {
-                final nprConversion = salary.converted.where((c) => c.currency == 'NPR').firstOrNull;
+                final nprConversion = salary.converted
+                    .where((c) => c.currency == 'NPR')
+                    .firstOrNull;
                 if (nprConversion != null) {
                   print('      🇳🇵 NPR: ${nprConversion.amount}');
                 }
-                final allConversions = salary.converted.map((c) => '${c.currency} ${c.amount}').join(', ');
+                final allConversions = salary.converted
+                    .map((c) => '${c.currency} ${c.amount}')
+                    .join(', ');
                 print('      💱 Conversions: $allConversions');
-                
+
                 // Assert that search results have NPR conversions with runtime system
                 expect(salary.converted.any((c) => c.currency == 'NPR'), isTrue,
-                  reason: 'Search results should have NPR conversions with runtime conversion system');
+                    reason:
+                        'Search results should have NPR conversions with runtime conversion system');
               } else {
                 print('      ⚠️ No conversions available');
                 // This should not happen with runtime conversion system
                 expect(salary.converted.isNotEmpty, isTrue,
-                  reason: 'Runtime conversion system should provide conversions for all jobs');
+                    reason:
+                        'Runtime conversion system should provide conversions for all jobs');
               }
             }
           }
 
           print('🎉 Search functionality working perfectly!');
-          
+
           // Step 7.6: Test Job Detail Functionality (matching backend mobile test)
           print('\n📱 Step 7.6: Test Job Detail Functionality');
           print('🎯 Ramesh taps on a job to see detailed information...');
-          
+
           final firstJob = searchResults.data.first;
-          final jobDetailNotifier = container.read(getJobsByIdProvider.notifier);
-          
+          final jobDetailNotifier =
+              container.read(getJobsByIdProvider.notifier);
+
           try {
             print('📱 Loading job details for: ${firstJob.postingTitle}');
             await jobDetailNotifier.getJobsById(firstJob.id);
             await Future.delayed(const Duration(milliseconds: 500));
-            
+
             final jobDetailState = container.read(getJobsByIdProvider);
-            
+
             if (jobDetailState.hasValue && jobDetailState.value != null) {
               final jobDetail = jobDetailState.value!;
               print('✅ Job detail loaded successfully!');
               print('📱 Mobile-optimized job details:');
               print('   📋 Position: ${jobDetail.postingTitle}');
-              print('   📍 Location: ${jobDetail.location ?? '${jobDetail.city}, ${jobDetail.country}'}');
+              print(
+                  '   📍 Location: ${jobDetail.location ?? '${jobDetail.city}, ${jobDetail.country}'}');
               print('   💰 Salary Range: ${jobDetail.salary ?? 'Competitive'}');
-              
+
               // Match percentage (if available)
               if (jobDetail.matchPercentage != null) {
-                print('   📊 Match: ${jobDetail.matchPercentage}% - Skills alignment verified');
+                print(
+                    '   📊 Match: ${jobDetail.matchPercentage}% - Skills alignment verified');
               }
-              
+
               // Check positions for detailed salary info - converted salary exists at position level
               if (jobDetail.positions.isNotEmpty) {
-                print('   📦 Available Positions: ${jobDetail.positions.length}');
-                
+                print(
+                    '   📦 Available Positions: ${jobDetail.positions.length}');
+
                 for (int i = 0; i < jobDetail.positions.length; i++) {
                   final position = jobDetail.positions[i];
                   print('   \n   Position ${i + 1}: ${position.title}');
-                  
-                  if (position.baseSalary != null && position.baseSalary != 'Not specified') {
+
+                  if (position.baseSalary != null &&
+                      position.baseSalary != 'Not specified') {
                     print('      💵 Base Salary: ${position.baseSalary}');
                   }
-                  
-                  if (position.convertedSalary != null && position.convertedSalary != 'Not available') {
-                    print('      💱 Converted Salary: ${position.convertedSalary}');
+
+                  if (position.convertedSalary != null &&
+                      position.convertedSalary != 'Not available') {
+                    print(
+                        '      💱 Converted Salary: ${position.convertedSalary}');
                     print('      ✅ Position-level converted salary verified');
                   } else {
                     print('      ⚠️ No converted salary for this position');
                   }
-                  
+
                   if (position.currency != null && position.currency != 'N/A') {
                     print('      💰 Currency: ${position.currency}');
                   }
@@ -486,7 +545,7 @@ void main() {
               } else {
                 print('   ⚠️ No positions available for this job');
               }
-              
+
               print('🎉 Job detail functionality working perfectly!');
             } else if (jobDetailState.hasError) {
               print('❌ Job detail error: ${jobDetailState.error}');
@@ -495,17 +554,20 @@ void main() {
             }
           } catch (e) {
             print('⚠️ Job detail test encountered error: $e');
-            print('📝 Note: This is expected if job detail API is not configured');
+            print(
+                '📝 Note: This is expected if job detail API is not configured');
           }
-          
+
           // EARLY RETURN: Stop here to see converted salary logs clearly
           print('\n🔍 CONVERTED SALARY VERIFICATION COMPLETE');
-          print('💱 Check the logs above for NPR/USD conversions in search AND job details');
+          print(
+              '💱 Check the logs above for NPR/USD conversions in search AND job details');
           return;
         } else if (searchState.hasError) {
           print('❌ Search error: ${searchState.error}');
         } else {
-          print('📭 No search results found, but search functionality is working');
+          print(
+              '📭 No search results found, but search functionality is working');
         }
       } catch (e) {
         print('⚠️ Search test encountered error: $e');
@@ -552,7 +614,8 @@ void main() {
       print('   ✅ Position-level converted salaries (not job-level)');
       print('   ✅ Each position has its own convertedSalary field');
       print('   ✅ Frontend properly uses positions[].convertedSalary');
-      print('   ✅ Job-level convertedSalary deprecated in favor of position-level');
+      print(
+          '   ✅ Job-level convertedSalary deprecated in favor of position-level');
     });
   });
 }

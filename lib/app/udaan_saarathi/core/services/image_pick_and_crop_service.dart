@@ -56,39 +56,4 @@ class ImagePickerServiceImpl implements ImagePickAndCropService {
     return croppedFile;
   }
 
-  // @override
-  // Future<String> compress(XFile image) async {
-  //   // // Get the original image file
-  //   final originalFile = File(image.path);
-
-  //   // Print the original image size and properties
-  //   print("Original Image Size: ${await originalFile.length()} bytes");
-  //   print("Original Image Path: ${originalFile.path}");
-
-  //   const quality = 70;
-  //   final result = await FlutterImageCompress.compressWithList(
-  //     await image.readAsBytes(),
-  //     minHeight: 1024,
-  //     minWidth: 1024,
-  //     quality: quality,
-  //   );
-
-  //   // Create a new XFile from the compressed data
-  //   final XFile compressed = XFile.fromData(result);
-  //   final name = DateTime.now().millisecondsSinceEpoch;
-
-  //   // Save the compressed image
-  //   final compressedPath =
-  //       "${(await getApplicationDocumentsDirectory()).path}/$name.jpg";
-  //   await compressed.saveTo(compressedPath);
-
-  //   // // Get the compressed image file
-  //   final compressedFile = File(compressedPath);
-
-  //   // Print the compressed image size and properties
-  //   print("Compressed Image Size: ${await compressedFile.length()} bytes");
-  //   print("Compressed Image Path: ${compressedFile.path}");
-
-  //   return compressedPath;
-  // }
 }
