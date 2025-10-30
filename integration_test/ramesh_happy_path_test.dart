@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/storage/local_storage.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/candidate/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/address.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/providers/auth_controller.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
@@ -208,6 +210,28 @@ void main() {
 
       print(
           '✅ Job profile updated via profileProvider (skills, education, trainings, experience)');
+
+      // 4.6: Update Personal Profile (new fields)
+      final updateCandidateNotifier = container.read(updateCandidateProvider.notifier);
+      final personalProfile = CandidateModel(
+        id: candidateId,
+        rawJson: {},
+        fullName: 'Ramesh Bahadur',
+        email: 'ramesh.bahadur@example.com',
+        gender: 'Male',
+        passportNumber: 'P1234567',
+        address:  AddressEntity(
+          name: 'RameshPur Nagarpalika',
+          coordinates: CoordinatesEntity(lat: 27.7172, lng: 85.3240),
+          province: 'Baglung',
+          district: 'Baglung',
+          municipality: 'Baglung',
+          ward: '1',
+        ),
+       
+      );
+      await updateCandidateNotifier.updateCandidate(personalProfile);
+      print('✅ Personal profile updated with new fields (email, gender)');
 
       // Step 5: List Job Titles
       print('\n📋 Step 5: Fetch Available Job Titles');

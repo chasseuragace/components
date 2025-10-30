@@ -150,6 +150,8 @@ class CandidateRepositoryFake implements CandidateRepository {
       
       final body = CandidateUpdateDto(
         fullName: entity.fullName,
+        email: entity.email,
+        gender: entity.gender == 'Male' ? CandidateUpdateDtoGenderEnum.male : entity.gender == 'Female'? CandidateUpdateDtoGenderEnum.female:null,
         address: entity.address != null
             ? AddressDto(
                 name: entity.address!.name,

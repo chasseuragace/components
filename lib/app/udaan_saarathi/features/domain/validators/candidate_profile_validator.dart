@@ -20,11 +20,7 @@ class CandidateProfileValidator {
       errors.add('Full name must not exceed 100 characters');
     }
 
-    if (candidate.phone == null || candidate.phone!.trim().isEmpty) {
-      errors.add('Phone number is required');
-    } else if (!_isValidPhoneNumber(candidate.phone!)) {
-      errors.add('Phone number format is invalid');
-    }
+   
 
     // Validate optional fields
     if (candidate.passportNumber != null && candidate.passportNumber!.isNotEmpty) {

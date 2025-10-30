@@ -39,17 +39,17 @@ class CandidateStats extends ConsumerWidget {
           }
       
           final items = <({String label, int value, Color color})>[
-            (label: 'Total Candidates', value: stats.total, color: Colors.blue),
-            (
-              label: 'Active Candidates',
-              value: stats.active,
-              color: Colors.green
-            ),
-            (
-              label: 'Applied',
-              value: stats.byStatus.applied,
-              color: Colors.indigo
-            ),
+            (label: 'Total Applicaitons', value: stats.total, color: Colors.blue),
+            // (
+            //   label: 'Active Candidates',
+            //   value: stats.active,
+            //   color: Colors.green
+            // ),
+            // (
+            //   label: 'Applied',
+            //   value: stats.byStatus.applied,
+            //   color: Colors.indigo
+            // ),
             (
               label: 'Shortlisted',
               value: stats.byStatus.shortlisted,
@@ -60,11 +60,11 @@ class CandidateStats extends ConsumerWidget {
               value: stats.byStatus.interviewScheduled,
               color: Colors.orange
             ),
-            (
-              label: 'Interview Rescheduled',
-              value: stats.byStatus.interviewRescheduled,
-              color: Colors.teal
-            ),
+            // (
+            //   label: 'Interview Rescheduled',
+            //   value: stats.byStatus.interviewRescheduled,
+            //   color: Colors.teal
+            // ),
             (
               label: 'Interview Passed',
               value: stats.byStatus.interviewPassed,

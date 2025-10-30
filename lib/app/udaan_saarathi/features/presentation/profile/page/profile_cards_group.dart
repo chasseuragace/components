@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/candidate/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/profile/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart'
     as cand;
@@ -32,9 +33,12 @@ class ProfileCardsGroup extends ConsumerWidget {
       final candState = ref.watch(cand.getCandidateByIdProvider);
       final candItem = candState.valueOrNull;
       const personalTotal =
-          5; // full_name, phone, passport_number, gender, unified address
+          6; // full_name, phone, passport_number, gender, unified address
       int personalCompleted = 0;
       if (candItem != null) {
+        // include for email 
+        if ((candItem.email ?? '').toString().trim().isNotEmpty)
+          personalCompleted++;
         if ((candItem.fullName ?? '').toString().trim().isNotEmpty)
           personalCompleted++;
         if ((candItem.phone ?? '').toString().trim().isNotEmpty)
@@ -53,6 +57,7 @@ class ProfileCardsGroup extends ConsumerWidget {
 
       return Column(
         children: [
+         if(false) Text((candItem as CandidateModel).toJson().toString().split(',').join('\n') ?? ""),
           if (false)
             Text(items.map((e) => (e as ProfileModel).toJson()).toString()),
           body(

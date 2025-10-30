@@ -234,7 +234,7 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
           'phone': item.phone ?? '',
           'passport_number': item.passportNumber ?? '',
           'gender': item.gender ?? '',
-          // 'email': item.email ?? '',
+          'email': item.email ?? '',
           'address_display': _formatAddress(item.address),
         };
         setState(() {

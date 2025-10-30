@@ -7,6 +7,7 @@ class CandidateModel extends CandidateEntity {
     required super.rawJson,
     super.fullName,
     super.phone,
+    super.email,
     super.address,
     super.passportNumber,
     super.gender,
@@ -20,6 +21,7 @@ class CandidateModel extends CandidateEntity {
       id: json['id'] as String,
       fullName: json['full_name'] as String?,
       phone: json['phone'] as String?,
+      email: json['email'] as String?,
       address: json['address'] is Map<String, dynamic>
           ? AddressEntity.fromJson(json['address'] as Map<String, dynamic>)
           : null,
@@ -37,6 +39,7 @@ class CandidateModel extends CandidateEntity {
       'id': id,
       'full_name': fullName,
       'phone': phone,
+      'email': email,
       'address': address?.toJson(),
       'passport_number': passportNumber,
       'gender': gender,
