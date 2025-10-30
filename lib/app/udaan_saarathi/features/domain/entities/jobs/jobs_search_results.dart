@@ -200,13 +200,35 @@ class PaginatedJobsSearchResults {
   final int total;
   final int page;
   final int limit;
+  final bool hasMore;
+  final bool isLoadingMore;
 
   const PaginatedJobsSearchResults({
     required this.data,
     required this.total,
     required this.page,
     required this.limit,
+    this.hasMore = true,
+    this.isLoadingMore = false,
   });
+
+  PaginatedJobsSearchResults copyWith({
+    List<JobsEntity>? data,
+    int? total,
+    int? page,
+    int? limit,
+    bool? hasMore,
+    bool? isLoadingMore,
+  }) {
+    return PaginatedJobsSearchResults(
+      data: data ?? this.data,
+      total: total ?? this.total,
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      hasMore: hasMore ?? this.hasMore,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -216,14 +238,18 @@ class PaginatedJobsSearchResults {
           _listEquals(data, other.data) &&
           total == other.total &&
           page == other.page &&
-          limit == other.limit;
+          limit == other.limit &&
+          hasMore == other.hasMore &&
+          isLoadingMore == other.isLoadingMore;
 
   @override
   int get hashCode =>
       data.hashCode ^
       total.hashCode ^
       page.hashCode ^
-      limit.hashCode;
+      limit.hashCode ^
+      hasMore.hashCode ^
+      isLoadingMore.hashCode;
 }
 
 /// Helper function to compare lists

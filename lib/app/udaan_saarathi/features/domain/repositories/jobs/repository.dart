@@ -5,7 +5,10 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jo
 import '../../entities/jobs/entity.dart';
 import '../../../../core/errors/failures.dart';
 
+import 'package:meta/meta.dart';
+
 /// DTO for job search parameters
+@immutable
 class JobSearchDTO {
   final String? keyword;
   final String? country;
@@ -23,11 +26,62 @@ class JobSearchDTO {
     this.minSalary,
     this.maxSalary,
     this.currency,
-    this.page,
-    this.limit,
+    this.page = 1,
+    this.limit = 2,
     this.sortBy,
     this.order,
   });
+
+  JobSearchDTO copyWith({
+    String? keyword,
+    String? country,
+    double? minSalary,
+    double? maxSalary,
+    String? currency,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? order,
+  }) {
+    return JobSearchDTO(
+      keyword: keyword ?? this.keyword,
+      country: country ?? this.country,
+      minSalary: minSalary ?? this.minSalary,
+      maxSalary: maxSalary ?? this.maxSalary,
+      currency: currency ?? this.currency,
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      sortBy: sortBy ?? this.sortBy,
+      order: order ?? this.order,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JobSearchDTO &&
+          runtimeType == other.runtimeType &&
+          keyword == other.keyword &&
+          country == other.country &&
+          minSalary == other.minSalary &&
+          maxSalary == other.maxSalary &&
+          currency == other.currency &&
+          page == other.page &&
+          limit == other.limit &&
+          sortBy == other.sortBy &&
+          order == other.order;
+
+  @override
+  int get hashCode =>
+      keyword.hashCode ^
+      country.hashCode ^
+      minSalary.hashCode ^
+      maxSalary.hashCode ^
+      currency.hashCode ^
+      page.hashCode ^
+      limit.hashCode ^
+      sortBy.hashCode ^
+      order.hashCode;
 }
 
 abstract class JobsRepository {

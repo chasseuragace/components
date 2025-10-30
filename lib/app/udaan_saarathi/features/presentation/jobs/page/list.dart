@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/job_listings_screen.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/paginated_job_listings_screen.dart';
 
 import '../../../domain/entities/jobs/entity.dart';
 import '../providers/providers.dart';
@@ -18,6 +19,7 @@ class _JobsListPageState extends ConsumerState<JobsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    return PaginatedJobListingsScreen();
     final jobsState = ref.watch(getAllJobsProvider);
     listenToDeleteJobsAction(context);
     // TODO: Set up listeners for other actions

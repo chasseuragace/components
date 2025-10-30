@@ -1,8 +1,8 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/entity_mobile.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/grouped_jobs.dart';
-import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart'
-    as search_entities;
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/jobs/jobs_search_results.dart' as search_entities;
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
@@ -127,21 +127,87 @@ class DeleteJobsNotifier extends AsyncNotifier {
 
 class SearchJobsNotifier
     extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
+  int _currentPage = 1;
+  bool _hasReachedMax = false;
+  static const int _itemsPerPage = 2;
+  JobSearchDTO? _lastSearchParams;
+  
   @override
   Future<search_entities.PaginatedJobsSearchResults?> build() async {
     return null; // Initially null
   }
 
   Future<void> searchJobs(JobSearchDTO searchParams) async {
+    _currentPage = 1; // Reset to first page on new search
+    _hasReachedMax = false;
+    _lastSearchParams = searchParams;
     state = const AsyncValue.loading();
-    final result = await ref.read(searchJobsUseCaseProvider)(searchParams);
+    
+    final result = await _fetchPage(searchParams.copyWith(
+      page: 1,
+      limit: _itemsPerPage,
+    ));
+    
     state = result.fold(
       (failure) => AsyncValue.error(failure, StackTrace.current),
-      (results) => AsyncValue.data(results),
+      (results) => AsyncValue.data(results.copyWith(
+        hasMore: results.data.length >= _itemsPerPage,
+      )),
+    );
+  }
+
+  Future<void> loadNextPage() async {
+    if (state.isLoading || _hasReachedMax || _lastSearchParams == null) return;
+    
+    final currentState = state.valueOrNull;
+    if (currentState == null) return;
+    
+    // Update state to show loading indicator at the bottom
+    // state = AsyncValue.data(currentState.copyWith(isLoadingMore: true));
+    
+    final nextPage = _currentPage + 1;
+    final result = await _fetchPage(_lastSearchParams!.copyWith(
+      page: nextPage,
+      limit: _itemsPerPage,
+    ));
+    
+    result.fold(
+      (failure) {
+        // Revert loading state on error
+        state = AsyncValue.data(currentState);
+        state = AsyncValue.error(failure, StackTrace.current);
+      },
+      (newPage) {
+        _currentPage = nextPage;
+        _hasReachedMax = newPage.data.length < _itemsPerPage;
+        
+        state = AsyncValue.data(search_entities.PaginatedJobsSearchResults(
+          data: currentState != null ? [...currentState.data, ...newPage.data] : newPage.data,
+          page: nextPage,
+          hasMore: !_hasReachedMax,
+          isLoadingMore: false,
+          total: newPage.total,
+          limit: _itemsPerPage,
+        ));
+      },
+    );
+  }
+
+  Future<Either<Failure, search_entities.PaginatedJobsSearchResults>> _fetchPage(
+    JobSearchDTO params,
+  ) async {
+    return await ref.read(searchJobsUseCaseProvider)(
+      params.copyWith(
+        page: params.page ?? _currentPage,
+        limit: params.limit ?? _itemsPerPage,
+      ),
     );
   }
 
   void clearResults() {
+    _currentPage = 1;
+    _hasReachedMax = false;
+    _lastSearchParams = null;
     state = const AsyncValue.data(null);
   }
 }
