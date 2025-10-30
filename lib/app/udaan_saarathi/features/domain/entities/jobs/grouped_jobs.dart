@@ -25,6 +25,7 @@ class GroupJobEntity {
   final DateTime? postingDateAd;
   final String? cutoutUrl;
   final int fitnessScore;
+  final dynamic positions;
 
   GroupJobEntity({
     required this.id,
@@ -38,6 +39,7 @@ class GroupJobEntity {
     this.postingDateAd,
     this.cutoutUrl,
     required this.fitnessScore,
+    required this.positions,
   });
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
 
 class JobNotificationsPage extends StatelessWidget {
@@ -7,6 +8,7 @@ class JobNotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
@@ -75,6 +77,7 @@ class NotificationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     // Uncomment the line below to show empty state
     // return const EmptyNotificationsState();
 

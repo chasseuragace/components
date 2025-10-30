@@ -119,6 +119,24 @@ class JobPositionModel extends JobPosition {
     );
   }
 
+  factory JobPositionModel.fromJRawson(Map<String, dynamic> json) {
+
+
+final base = (json['converted_salaries'] as List).where((e)=> e['currency'] != 'NPR').first;
+final basesalaryAmount = "${base['currency']} ${base['amount']} ";
+final converted = (json['converted_salaries'] as List).where((e)=> e['currency'] == 'NPR').first;
+final convertedSalaryAmount = "${converted['currency']} ${converted['amount']}";
+
+    return JobPositionModel(
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? 'Untitled Position',
+      baseSalary: basesalaryAmount,
+      convertedSalary: convertedSalaryAmount,
+      currency: json['salary_currency'] as String? ?? 'N/A',
+      requirements: (json['notes'] )!=null? [ (json['notes'] )]:[]
+        
+    );
+  }
   Map<String, dynamic> toJson() {
     return {
       'id': id,

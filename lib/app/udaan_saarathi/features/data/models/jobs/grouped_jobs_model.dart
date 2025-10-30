@@ -53,6 +53,7 @@ class GroupJobModel extends GroupJobEntity {
     DateTime? postingDateAd,
     String? cutoutUrl,
     required int fitnessScore,
+    required dynamic positions,
   }) : super(
           id: id,
           postingTitle: postingTitle,
@@ -65,6 +66,7 @@ class GroupJobModel extends GroupJobEntity {
           postingDateAd: postingDateAd,
           cutoutUrl: cutoutUrl,
           fitnessScore: fitnessScore,
+          positions: positions,
         );
 
   factory GroupJobModel.fromJson(Map<String, dynamic> json) {
@@ -77,6 +79,7 @@ class GroupJobModel extends GroupJobEntity {
     final employerJson = (json['employer'] as Map?)?.cast<String, dynamic>() ?? {};
 
     return GroupJobModel(
+      positions: json['positions'],
       id: (json['id'] ?? '').toString(),
       postingTitle: (json['posting_title'] ?? '').toString(),
       country: (json['country'] ?? '').toString(),

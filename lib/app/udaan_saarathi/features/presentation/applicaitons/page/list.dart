@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/applicaitons/model.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/application_card_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/widget/empty_application_widget.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/provider/home_screen_provider.dart';
@@ -57,12 +58,12 @@ class _ApplicaitonsListPageState extends ConsumerState<ApplicaitonsListPage> {
                   itemBuilder: (context, index) {
                     print(items);
                     final item = items[index];
-                    return ApplicationCard2(
-                        isApplicaionList: true, application: items[index]);
+                    // return ApplicationCard2(
+                    //     isApplicaionList: true, application: items[index]);
                     return ListTile(
                       subtitle: Text(item.id),
-                      title: Text(item.status
-                          .name), // Adjust this based on your entity properties
+                      title: Text((item as ApplicaitonsModel).toJson().toString().split(",").join("\n")
+                          ), // Adjust this based on your entity properties
 
                       onTap: () {
                         // Set the selected application ID

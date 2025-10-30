@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/storage/local_storage.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/data/models/candidate/model.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/apply_job_d_t_o_entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/candidate/address.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
@@ -383,7 +384,9 @@ final jobTitles = container.read(getAllJobTitleProvider).requireValue;
                   '   🏢 Agency: ${job.agency.name ?? 'Professional Agency'}');
               print('\n✍️ Ramesh writes his application...');
 
+String positionId = (job.positions as List).first['id'];
               final applicationEntity = ApplyJobDTOEntity(
+                positionId:positionId,
                 jobPostingId: job.id,
                 candidateId: candidateId,
                 note:

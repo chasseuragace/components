@@ -21,7 +21,7 @@ class JobPostingMapper {
   /// Core mapping: GroupJobEntity -> JobPosting
   static MobileJobEntity fromGroupJob(GroupJobEntity job) {
     final positions = _positionsFromPrimaryTitles(job);
-
+    final originalPositions = _positionsFromData(job);
     final baseSalaryStr = _formatBaseSalary(job.salary);
     final convertedSalaryStr = _formatConvertedSalary(job.salary);
 
@@ -38,7 +38,7 @@ class JobPostingMapper {
       city: job.city ?? '',
       agency: job.agency.name ?? '',
       employer: job.employer.companyName ?? '',
-      positions: positions,
+      positions: originalPositions,
       description: _buildDescription(job, baseSalaryStr, convertedSalaryStr),
       contractTerms: _buildContractTerms(),
       isActive: true, // Backend field not provided, default to active
@@ -169,5 +169,12 @@ class JobPostingMapper {
       return '${(value / 1000).toStringAsFixed(1)}K';
     }
     return value.toStringAsFixed(0);
+  }
+  
+  static _positionsFromData(GroupJobEntity job) {
+   
+   return (job.positions as List?)?.map((e)=> JobPositionModel.fromJRawson(e)).toList();
+   
+    // return job.positions;
   }
 }

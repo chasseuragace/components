@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/shared/custom_appbar.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/widgets/notification_card_widget.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/size_config.dart';
 
@@ -9,6 +10,7 @@ class JobNotificationsPage2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  return ApplicaitonsListPage();
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FC),
       appBar: SarathiAppBar(

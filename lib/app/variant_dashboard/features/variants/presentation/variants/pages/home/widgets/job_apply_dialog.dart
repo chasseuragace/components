@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/colors/app_colors.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/apply_job_d_t_o_entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/applicaitons/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_provider.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
@@ -454,6 +455,7 @@ class _ApplyJobDialogState extends ConsumerState<ApplyJobDialog>
         ? 'Applied via mobile app'
         : _noteController.text.trim();
     final application = ApplyJobDTOEntity(
+      positionId: '',
       candidateId: candidateId,
       jobPostingId: widget.postingId,
       note: note,
