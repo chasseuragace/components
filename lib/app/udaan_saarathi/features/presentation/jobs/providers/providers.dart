@@ -129,31 +129,46 @@ class SearchJobsNotifier
     extends AsyncNotifier<search_entities.PaginatedJobsSearchResults?> {
   int _currentPage = 1;
   bool _hasReachedMax = false;
+  bool _isInitialized = false;
   static const int _itemsPerPage = 2;
   JobSearchDTO? _lastSearchParams;
   
   @override
   Future<search_entities.PaginatedJobsSearchResults?> build() async {
-    return null; // Initially null
+    // Only perform initial load if not already initialized
+    if (!_isInitialized) {
+      _isInitialized = true;
+      return null;
+    }
+    return state.valueOrNull;
   }
 
   Future<void> searchJobs(JobSearchDTO searchParams) async {
+    // Skip if we're already loading with the same parameters
+    if (state.isLoading && _lastSearchParams == searchParams) return;
+    
     _currentPage = 1; // Reset to first page on new search
     _hasReachedMax = false;
     _lastSearchParams = searchParams;
+    
     state = const AsyncValue.loading();
     
-    final result = await _fetchPage(searchParams.copyWith(
-      page: 1,
-      limit: _itemsPerPage,
-    ));
-    
-    state = result.fold(
-      (failure) => AsyncValue.error(failure, StackTrace.current),
-      (results) => AsyncValue.data(results.copyWith(
-        hasMore: results.data.length >= _itemsPerPage,
-      )),
-    );
+    try {
+      final result = await _fetchPage(searchParams.copyWith(
+        page: 1,
+        limit: _itemsPerPage,
+      ));
+      
+      state = result.fold(
+        (failure) => AsyncValue.error(failure, StackTrace.current),
+        (results) => AsyncValue.data(results.copyWith(
+          hasMore: results.data.length >= _itemsPerPage,
+          isLoadingMore: false,
+        )),
+      );
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
   }
 
   Future<void> loadNextPage() async {
@@ -166,6 +181,7 @@ class SearchJobsNotifier
     // state = AsyncValue.data(currentState.copyWith(isLoadingMore: true));
     
     final nextPage = _currentPage + 1;
+    print("fetch page /search");
     final result = await _fetchPage(_lastSearchParams!.copyWith(
       page: nextPage,
       limit: _itemsPerPage,

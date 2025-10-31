@@ -7,6 +7,8 @@ class RouteConstants {
   static const kAppNavigation = '/app_home_navigation';
   static const kSetPreferences = '/set_preferences';
   static const kApplicationsListScreen = '/application_list';
+  static const kApplicationsShortlistedTab = '/application_list/shortlisted';
+  static const kApplicationsInterviewTab = '/application_list/interview';
   static const kNotificationDetailScreen = '/notification_detail';
   static const kInterviewListScreen = '/interview_list';
   static const kJobDetailScreen = '/job_detail';

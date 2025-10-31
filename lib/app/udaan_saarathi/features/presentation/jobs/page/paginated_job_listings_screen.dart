@@ -50,6 +50,7 @@ class _PaginatedJobListingsScreenState
     extends ConsumerState<PaginatedJobListingsScreen> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
+  Timer? _scrollDebounceTimer;
   final ScrollController _scrollController = ScrollController();
   final String _searchQuery = '';
 
@@ -58,8 +59,12 @@ class _PaginatedJobListingsScreenState
     super.initState();
     _searchController.addListener(_onSearchChanged);
     _scrollController.addListener(_onScroll);
-    Future.delayed(Duration(seconds: 1), () {
-      _initialLoad();
+    
+    // Delay the initial load slightly to allow the UI to build
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _performSearch();
+      }
     });
   }
 
@@ -67,27 +72,47 @@ class _PaginatedJobListingsScreenState
   void dispose() {
     _searchController.dispose();
     _debounceTimer?.cancel();
+    _scrollDebounceTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
 
-  void _initialLoad() {
-    final searchParams = _buildSearchParams();
-    ref.read(searchJobsProvider.notifier).searchJobs(searchParams);
-  }
+  // Removed _initialLoad as it's now handled by _performSearch
+
+  String _lastSearchQuery = '';
 
   void _onSearchChanged() {
+    final currentQuery = _searchController.text.trim();
+    
+    // Only proceed if the text has actually changed
+    if (currentQuery == _lastSearchQuery) return;
+    
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      _performSearch();
+    
+    _debounceTimer = Timer(const Duration(milliseconds: 800), () {
+      _lastSearchQuery = currentQuery; // Update the last known query
+      if (mounted) {
+        _performSearch();
+      }
     });
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
+ 
+    if (_scrollController.position.pixels <
         _scrollController.position.maxScrollExtent - 200) {
-      _loadMore();
+      return;
     }
+
+    // Cancel any pending load more operations
+    _scrollDebounceTimer?.cancel();
+    
+    // Schedule a new load more operation with a small delay
+    _scrollDebounceTimer = Timer(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        _loadMore();
+      }
+    });
   }
 
   void _showFilterModal() {
@@ -111,6 +136,7 @@ class _PaginatedJobListingsScreenState
   }
 
   void _loadMore() {
+   
     final searchState = ref.read(searchJobsProvider);
     final canLoadMore = searchState.valueOrNull?.hasMore ?? false;
     final isLoadingMore = searchState.valueOrNull?.isLoadingMore ?? false;

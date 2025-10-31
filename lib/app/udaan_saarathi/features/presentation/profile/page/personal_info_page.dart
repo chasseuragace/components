@@ -277,6 +277,7 @@ class _PersonalInfoFormPageState extends ConsumerState<PersonalInfoFormPage> {
                 const SizedBox(height: 16),
                 // Phone
                 CustomFormBuilderTextField(
+                  enabled: false,
                   name: 'phone',
                   label: 'Phone',
                   hint: 'e.g. +977 9841000000',

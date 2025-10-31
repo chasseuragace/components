@@ -4,7 +4,19 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/ap
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/providers/providers.dart';
 
 class ApplicationsTabbedView extends ConsumerStatefulWidget {
-  const ApplicationsTabbedView({super.key});
+  final String? initialTab;
+  
+  const ApplicationsTabbedView({
+    super.key,
+    this.initialTab,
+  });
+  
+  // Helper method to create a route with initial tab
+  static Route<dynamic> route({String? initialTab}) {
+    return MaterialPageRoute(
+      builder: (context) => ApplicationsTabbedView(initialTab: initialTab),
+    );
+  }
 
   @override
   ConsumerState<ApplicationsTabbedView> createState() => _ApplicationsTabbedViewState();
@@ -26,6 +38,16 @@ class _ApplicationsTabbedViewState extends ConsumerState<ApplicationsTabbedView>
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
+    
+    // Set initial tab if provided
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.initialTab != null) {
+        final index = _getTabIndex(widget.initialTab!);
+        if (index != -1) {
+          _tabController.animateTo(index);
+        }
+      }
+    });
   }
 
   @override
@@ -53,6 +75,16 @@ class _ApplicationsTabbedViewState extends ConsumerState<ApplicationsTabbedView>
         }).toList(),
       ),
     );
+  }
+
+  int _getTabIndex(String tabName) {
+    final lowerTabName = tabName.toLowerCase();
+    for (int i = 0; i < _tabs.length; i++) {
+      if (_tabs[i].toLowerCase() == lowerTabName) {
+        return i;
+      }
+    }
+    return -1; // Not found
   }
 
   String? _getStatusFromTab(String tab) {

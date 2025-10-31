@@ -130,7 +130,12 @@ class DashboardHeader extends ConsumerWidget {
                     'Shortlists',
                     analytics.byStatus.shortlisted.toString(),
                     Icons.list_alt,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        RouteConstants.kApplicationsShortlistedTab,
+                      );
+                    },
                   ),
                   const SizedBox(width: 16),
                   _buildQuickStat(
@@ -140,7 +145,7 @@ class DashboardHeader extends ConsumerWidget {
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        RouteConstants.kInterviewListScreen,
+                        RouteConstants.kApplicationsInterviewTab,
                       );
                     },
                   ),

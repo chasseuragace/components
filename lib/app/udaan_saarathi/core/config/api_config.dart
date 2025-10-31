@@ -21,10 +21,8 @@ class ApiConfig {
       responseBody: true,
       error: true,
       logPrint: (obj) {
-        // Route logs through debugPrint-friendly sink if needed
-        // For now, standard print is sufficient.
-        // ignore: avoid_print
-        print(obj);
+        
+        print("${obj}");
       },
     ));
 

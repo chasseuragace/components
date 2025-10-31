@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/core/routes/route_constants.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/domain/entities/notifications/entity.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_home_navigation/app_home_navigation_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/applications_tabbed_view.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/applicaitons/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/login_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/otp_page.dart';
@@ -41,7 +42,13 @@ final class AppRouter {
             builder: (context) => const SetPreferenceScreen());
       case RouteConstants.kApplicationsListScreen:
         return MaterialPageRoute(
-            builder: (context) => const ApplicaitonsListPage());
+            builder: (context) => const ApplicationsTabbedView());
+      case RouteConstants.kApplicationsShortlistedTab:
+        return MaterialPageRoute(
+            builder: (context) => ApplicationsTabbedView(initialTab: 'Shortlisted'));
+      case RouteConstants.kApplicationsInterviewTab:
+        return MaterialPageRoute(
+            builder: (context) => ApplicationsTabbedView(initialTab: 'Interview'));
       case RouteConstants.kNotificationDetailScreen:
         final args = settings.arguments as JobNotificationEntity;
         return MaterialPageRoute(

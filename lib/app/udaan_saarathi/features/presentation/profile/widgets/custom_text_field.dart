@@ -13,9 +13,11 @@ class CustomFormBuilderTextField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final Widget? suffixIcon;
+  final bool enabled;
 
   const CustomFormBuilderTextField({
     super.key,
+    this.enabled = true,
     required this.name,
     required this.label,
     required this.hint,
@@ -38,6 +40,7 @@ class CustomFormBuilderTextField extends StatelessWidget {
       maxLines: maxLines,
       validator: validator,
       readOnly: readOnly,
+      enabled: enabled,
       onTap: onTap,
       style: const TextStyle(
         fontSize: 16,
