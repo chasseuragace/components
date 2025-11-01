@@ -30,6 +30,7 @@ class _ApplicationsTabbedViewState extends ConsumerState<ApplicationsTabbedView>
     'Applied',
     'Shortlisted',
     'Interview',
+    'Interview Rescheduled',
     'Selected',
     'Rejected',
   ];
@@ -95,6 +96,8 @@ class _ApplicationsTabbedViewState extends ConsumerState<ApplicationsTabbedView>
         return 'shortlisted';
       case 'interview':
         return 'interview_scheduled';
+      case 'interview rescheduled':
+        return 'interview_rescheduled';
       case 'selected':
         return 'interview_passed';
       case 'rejected':

@@ -60,11 +60,11 @@ class CandidateStats extends ConsumerWidget {
               value: stats.byStatus.interviewScheduled,
               color: Colors.orange
             ),
-            // (
-            //   label: 'Interview Rescheduled',
-            //   value: stats.byStatus.interviewRescheduled,
-            //   color: Colors.teal
-            // ),
+            (
+              label: 'Interview Rescheduled',
+              value: stats.byStatus.interviewRescheduled,
+              color: Colors.teal
+            ),
             (
               label: 'Interview Passed',
               value: stats.byStatus.interviewPassed,

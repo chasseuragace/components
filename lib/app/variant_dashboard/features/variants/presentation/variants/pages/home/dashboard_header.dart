@@ -7,6 +7,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_h
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/candidate/providers/providers.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/utils.dart';
 import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/pages/home/greetings.dart';
+import 'package:variant_dashboard/app/variant_dashboard/features/variants/presentation/variants/widgets/notification_icon_widget.dart';
 
 class DashboardHeader extends ConsumerWidget {
   // Changed to ConsumerWidget
@@ -62,29 +63,7 @@ class DashboardHeader extends ConsumerWidget {
                   Expanded(
                     child: Greetings(),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, RouteConstants.kNotificationScreen);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.2),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          width: 2,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.notifications,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ),
+                  const NotificationIconWidget(),
                   SizedBox(width: kHorizontalMargin / 2),
                   GestureDetector(
                     onTap: () {
@@ -140,7 +119,9 @@ class DashboardHeader extends ConsumerWidget {
                   const SizedBox(width: 16),
                   _buildQuickStat(
                     'Interviews',
-                    analytics.byStatus.interviewScheduled.toString(),
+                    // 1 (2 rescheduledd) foramat
+                    "${analytics.byStatus.interviewScheduled} (${analytics.byStatus.interviewRescheduled} rescheduled)",
+                    // (analytics.byStatus.interviewScheduled  (analytics.byStatus.interviewRescheduled )).toString(),
                     Icons.event_rounded,
                     onTap: () {
                       Navigator.pushNamed(

@@ -7,6 +7,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/app_h
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/homepage/page/home_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/jobs/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/profile/page/profile_screen.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/search/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/utils/custom_dialog.dart';
 
 class AppHomeNavigationPage extends ConsumerWidget {
@@ -15,7 +16,8 @@ class AppHomeNavigationPage extends ConsumerWidget {
   static final _pages = <Widget>[
     const HomePage(),
     JobsListPage(),
-    const AgencyListingScreen(),
+    const AgencyListingScreen(), // Keep deprecated page for backward compatibility
+    const SearchListPage(), // New search page
     const ProfilePage(),
   ];
 
@@ -68,6 +70,10 @@ class AppHomeNavigationPage extends ConsumerWidget {
                 icon: Icon(Icons.apartment_outlined),
                 activeIcon: Icon(Icons.apartment),
                 label: 'Agency'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.search_outlined),
+                activeIcon: Icon(Icons.search),
+                label: 'Search'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline),
                 activeIcon: Icon(Icons.person),

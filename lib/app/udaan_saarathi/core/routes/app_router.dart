@@ -9,6 +9,7 @@ import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/auth/pages/register_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/interviews/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/job_detail/page/job_details_page.dart';
+import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification/page/list.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notification_detail/notification_detail_page.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/notifications/page/notification_page_2.dart';
 import 'package:variant_dashboard/app/udaan_saarathi/features/presentation/onboarding/page/list.dart';
@@ -89,7 +90,7 @@ final class AppRouter {
                 ));
       case RouteConstants.kNotificationScreen:
         return MaterialPageRoute(
-            builder: (context) => const JobNotificationsPage2());
+            builder: (context) => const NotificationListPage());
       default:
         return MaterialPageRoute(builder: (context) => const SplashScreen());
     }

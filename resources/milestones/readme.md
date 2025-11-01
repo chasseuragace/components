@@ -12,9 +12,9 @@ read the acknowledgement
             - the module gen
             - project setup gen 
         - use are setting up 
-            /Users/ajaydahal/code/variant_dashboard/lib/app/udaan_saarathi
+            /Users/code_shared/code/variant_dashboard/lib/app/udaan_saarathi
             as of now as usinf 
-            - /Users/ajaydahal/code/variant_dashboard/lib/app/app.dart
+            - /Users/code_shared/code/variant_dashboard/lib/app/app.dart
                 - createprovider for app mode 
                 - confivure it through config file in lib/config.dart
                     - create readme for the config file
@@ -31,7 +31,7 @@ read the acknowledgement
                             - the persona
                                 - the knowledge 
                                     - everything said by htis readme and
-                                    - /Users/ajaydahal/code/variant_dashboard/resources
+                                    - /Users/code_shared/code/variant_dashboard/resources
                             - 
                  -rojan will  use inspector widget 
                     - data will be 
@@ -123,15 +123,15 @@ read the acknowledgement
             yes 
         - 
 - what i did 
-    - created /Users/ajaydahal/code/variant_dashboard/lib/app/udaan_saarathi/pm_board.dart
+    - created /Users/code_shared/code/variant_dashboard/lib/app/udaan_saarathi/pm_board.dart
     - hooked up 
         provider required at 
-        /Users/ajaydahal/code/variant_dashboard/lib/app/provider.dart
+        /Users/code_shared/code/variant_dashboard/lib/app/provider.dart
         to be used here 
-        /Users/ajaydahal/code/variant_dashboard/lib/app/provider.dart
+        /Users/code_shared/code/variant_dashboard/lib/app/provider.dart
 
 - create tabs in the 
-    -/Users/ajaydahal/code/variant_dashboard/lib/app/provider.dart
+    -/Users/code_shared/code/variant_dashboard/lib/app/provider.dart
     - render fake content 
         - create module 
             - data-domain-providers 
@@ -167,7 +167,7 @@ read the acknowledgement
     - consistently 
         - usign template 
         - what does the template give s
-    - just generated hte boilerplates using /Users/ajaydahal/code/variant_dashboard/simpler_generator_folders.yaml and its extensikon simple flutter generator
+    - just generated hte boilerplates using /Users/code_shared/code/variant_dashboard/simpler_generator_folders.yaml and its extensikon simple flutter generator
         - created script to rename unwanted capital in import[this is a required step]
         - important note on core 
     - i need to put hte reference to the jobs dto next 

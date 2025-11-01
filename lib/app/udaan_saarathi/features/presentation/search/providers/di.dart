@@ -6,6 +6,7 @@ import '../../../domain/usecases/search/get_by_id.dart';
 import '../../../domain/usecases/search/add.dart';
 import '../../../domain/usecases/search/update.dart';
 import '../../../domain/usecases/search/delete.dart';
+import '../../../domain/usecases/search/search.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getAllSearchUseCaseProvider = Provider<GetAllSearchUseCase>((ref) {
@@ -26,6 +27,10 @@ final updateSearchUseCaseProvider = Provider<UpdateSearchUseCase>((ref) {
 
 final deleteSearchUseCaseProvider = Provider<DeleteSearchUseCase>((ref) {
   return DeleteSearchUseCase(ref.watch(rSearchRepositoryProvider));
+});
+
+final searchAgenciesUseCaseProvider = Provider<SearchAgenciesUseCase>((ref) {
+  return SearchAgenciesUseCase(ref.watch(rSearchRepositoryProvider));
 });
 
 final rSearchRepositoryProvider = Provider((ref) {

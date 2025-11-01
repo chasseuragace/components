@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../domain/entities/search/entity.dart';
+import '../../../domain/entities/search/search_params.dart';
+import '../../../domain/entities/search/paginated_search_result.dart';
 import '../../../domain/repositories/search/repository.dart';
 import '../../datasources/search/local_data_source.dart';
 import '../../datasources/search/remote_data_source.dart';
@@ -59,6 +61,16 @@ class SearchRepositoryImpl implements SearchRepository {
     try {
       await remoteDataSource.deleteItem(id);
       return right(unit);
+    } catch (error) {
+      return left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, PaginatedSearchResult>> searchAgencies(SearchParams params) async {
+    try {
+      final result = await remoteDataSource.searchAgencies(params);
+      return right(result);
     } catch (error) {
       return left(ServerFailure());
     }
